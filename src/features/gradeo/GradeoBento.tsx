@@ -5,13 +5,30 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useModeStore } from '@/store/useModeStore'
 import { useTranslation } from '@/hooks/useTranslation'
 import { MapPin, Star, Users, DatabaseZap, Lock, Code2, Server, Mouse } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
 // Sub-component: Live Stats Widget
 function LiveStatsWidget() {
   const isDeveloperMode = useModeStore((state) => state.isDeveloperMode)
   const { t, lang } = useTranslation()
-  const reviews = 21 // Live from Supabase
-  const professors = 919 // Live from Supabase
+  const [reviews, setReviews] = useState<number | string>("...")
+  const [professors, setProfessors] = useState<number | string>("...")
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const [profRes, revRes] = await Promise.all([
+          supabase.from('professors').select('*', { count: 'exact', head: true }),
+          supabase.from('reviews').select('*', { count: 'exact', head: true })
+        ])
+        if (profRes.count !== null) setProfessors(profRes.count)
+        if (revRes.count !== null) setReviews(revRes.count)
+      } catch (error) {
+        console.error("Live DB Error:", error)
+      }
+    }
+    fetchStats()
+  }, [])
 
   return (
     <div className="flex flex-col h-full justify-between p-6 bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden relative group">
@@ -89,14 +106,31 @@ function LocationWidget() {
 function TopRatedWidget() {
   const isDeveloperMode = useModeStore((state) => state.isDeveloperMode)
   const { t } = useTranslation()
-  // REAL DATA INJECTED FROM: https://lrmaddnwbroksubduyet.supabase.co
-  const profs = [
-    { name: "Roger Alarcon", score: 5.0 },
-    { name: "Rolando Malca", score: 5.0 },
-    { name: "Hector Zelada", score: 4.8 },
-    { name: "Jessie Bravo", score: 4.5 },
-    { name: "Karhy Cipriano", score: 4.0 },
-  ]
+  
+  const [profs, setProfs] = useState<{name: string, score: string}[]>([])
+
+  useEffect(() => {
+    async function loadTopProfs() {
+      try {
+        const { data } = await supabase
+          .from('professors')
+          .select('first_name, last_name, total_score')
+          .order('total_score', { ascending: false })
+          .order('review_count', { ascending: false })
+          .limit(5)
+        
+        if (data && data.length > 0) {
+          setProfs(data.map(p => ({
+            name: `${p.first_name} ${p.last_name}`,
+            score: Number(p.total_score).toFixed(1)
+          })))
+        }
+      } catch (err) {
+        console.error("Live DB Error:", err)
+      }
+    }
+    loadTopProfs()
+  }, [])
 
   return (
     <div className="h-full bg-zinc-900 border border-zinc-800 rounded-3xl p-6 flex flex-col overflow-hidden relative">

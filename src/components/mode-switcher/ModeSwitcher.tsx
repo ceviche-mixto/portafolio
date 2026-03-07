@@ -14,39 +14,16 @@ export function ModeSwitcher() {
   return (
     <div className="fixed top-6 right-6 z-[100] flex items-center bg-zinc-900/80 backdrop-blur-md rounded-full p-1 border border-zinc-700/50 shadow-2xl">
       <button
-        onClick={() => isDeveloperMode && toggleMode()}
+        onClick={toggleMode}
         className={cn(
-          "relative flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer",
-          !isDeveloperMode ? "text-zinc-900" : "text-zinc-400 hover:text-white"
+          "relative flex items-center gap-2 px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold transition-transform active:scale-95 shadow-md cursor-pointer",
+          isDeveloperMode 
+            ? "bg-green-950/80 border border-green-500/50 text-green-400" 
+            : "bg-white text-zinc-900 border border-transparent"
         )}
       >
-        {!isDeveloperMode && (
-          <motion.div
-            layoutId="mode-switcher-bg"
-            className="absolute inset-0 bg-white rounded-full"
-            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-          />
-        )}
-        <Briefcase className="w-4 h-4 z-10" />
-        <span className="z-10">{t.mode.recruiter}</span>
-      </button>
-
-      <button
-        onClick={() => !isDeveloperMode && toggleMode()}
-        className={cn(
-          "relative flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer",
-          isDeveloperMode ? "text-green-400" : "text-zinc-400 hover:text-white"
-        )}
-      >
-        {isDeveloperMode && (
-          <motion.div
-            layoutId="mode-switcher-bg"
-            className="absolute inset-0 bg-green-950/80 rounded-full border border-green-500/50"
-            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-          />
-        )}
-        <Terminal className="w-4 h-4 z-10" />
-        <span className="z-10">{t.mode.developer}</span>
+        {isDeveloperMode ? <Terminal className="w-4 h-4 z-10" /> : <Briefcase className="w-4 h-4 z-10" />}
+        <span className="z-10">{isDeveloperMode ? t.mode.developer : t.mode.recruiter}</span>
       </button>
     </div>
   )

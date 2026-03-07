@@ -90,7 +90,7 @@ export function DeveloperOverlay() {
           </motion.div>
 
           {/* Mini Terminal (Bottom Left) */}
-          <div className="absolute bottom-6 left-6 pointer-events-auto">
+          <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 pointer-events-auto">
             <AnimatePresence mode="wait">
               {!isTerminalOpen ? (
                 <motion.button
@@ -110,7 +110,7 @@ export function DeveloperOverlay() {
                   initial={{ y: 50, opacity: 0, scale: 0.9, originY: 1, originX: 0 }}
                   animate={{ y: 0, opacity: 1, scale: 1 }}
                   exit={{ y: 50, opacity: 0, scale: 0.9 }}
-                  className="w-[28rem] bg-black/80 backdrop-blur-md border border-zinc-800 rounded-lg overflow-hidden shadow-2xl"
+                  className="w-[85vw] md:w-[28rem] max-w-[400px] md:max-w-none bg-black/80 backdrop-blur-md border border-zinc-800 rounded-lg overflow-hidden shadow-2xl"
                 >
                   <div className="bg-zinc-900 border-b border-zinc-800 p-2 flex items-center justify-between">
                     <div className="flex items-center gap-2">

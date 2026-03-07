@@ -198,7 +198,7 @@ export function GradeoScrollyTelling({ progress }: { progress: number }) {
   if (progress > 0.85) layer = 4
 
   return (
-    <div className="sticky top-32 h-[60vh] w-full bg-zinc-950 border border-zinc-800 rounded-3xl flex items-center justify-center overflow-hidden shadow-2xl">
+    <div className="sticky top-24 md:top-32 h-[70vh] md:h-[60vh] w-full bg-zinc-950 border border-zinc-800 rounded-3xl flex items-center justify-center overflow-hidden shadow-2xl p-4">
       <AnimatePresence mode="wait">
         {layer === 0 && (
           <motion.div key="layer0" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="text-center flex flex-col items-center justify-center h-full">
@@ -210,7 +210,9 @@ export function GradeoScrollyTelling({ progress }: { progress: number }) {
                />
                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent" />
              </div>
-             <p className="mt-8 text-zinc-400 font-medium font-mono uppercase tracking-widest text-sm animate-pulse flex items-center justify-center gap-2">
+             <h3 className="md:hidden mt-8 text-2xl font-bold text-white text-balance">{t.gradeo.lifecycleTitle}</h3>
+             <p className="md:hidden mt-4 text-zinc-500 text-sm max-w-[250px] text-balance mx-auto leading-relaxed">{t.scrolly.instruction}</p>
+             <p className="hidden md:flex mt-8 text-zinc-400 font-medium font-mono uppercase tracking-widest text-sm animate-pulse items-center justify-center gap-2">
                  <Mouse className="w-5 h-5 text-emerald-500" /> {t.gradeo.scrollIndicator}
              </p>
           </motion.div>
@@ -223,6 +225,7 @@ export function GradeoScrollyTelling({ progress }: { progress: number }) {
               <div className="h-20 bg-zinc-800 rounded-lg mb-2" />
             </div>
             <p className="mt-6 text-zinc-400 font-medium font-mono">{t.scrolly.step1Title}</p>
+            <p className="md:hidden mt-2 text-zinc-500 text-sm max-w-[280px] text-balance mx-auto leading-relaxed">{t.scrolly.step1Desc}</p>
           </motion.div>
         )}
         {layer === 2 && (
@@ -233,6 +236,7 @@ export function GradeoScrollyTelling({ progress }: { progress: number }) {
                </motion.div>
              </div>
              <p className="mt-6 text-zinc-400 font-medium">{t.scrolly.step2Title}</p>
+             <p className="md:hidden mt-2 text-zinc-500 text-sm max-w-[280px] text-balance mx-auto leading-relaxed">{t.scrolly.step2Desc}</p>
           </motion.div>
         )}
         {layer === 3 && (
@@ -241,12 +245,14 @@ export function GradeoScrollyTelling({ progress }: { progress: number }) {
               <Server className="w-20 h-20 text-emerald-500" />
             </div>
              <p className="mt-6 text-zinc-400 font-medium font-mono bg-emerald-500/10 text-emerald-400 py-1 px-3 rounded-full border border-emerald-500/20 inline-block">{t.scrolly.step3Title}</p>
+             <p className="md:hidden mt-4 text-zinc-500 text-sm max-w-[280px] text-balance mx-auto leading-relaxed">{t.scrolly.step3Desc}</p>
           </motion.div>
         )}
         {layer === 4 && (
           <motion.div key="layer4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center">
             <Lock className="w-20 h-20 text-white inline-block mb-6" />
             <h3 className="text-2xl font-bold text-white mb-2">{t.scrolly.step4Title}</h3>
+            <p className="md:hidden mt-2 text-zinc-500 text-sm max-w-[280px] text-balance mx-auto leading-relaxed">{t.scrolly.step4Desc}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -256,7 +262,7 @@ export function GradeoScrollyTelling({ progress }: { progress: number }) {
 
 export function GradeoBento() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[200px]">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto md:auto-rows-[200px]">
       <div className="md:col-span-1 md:row-span-2">
         <LiveStatsWidget />
       </div>

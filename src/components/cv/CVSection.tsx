@@ -58,7 +58,7 @@ export function CVSection() {
         </motion.div>
 
         {/* Bento Grid Layout aligned with Scroll */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[240px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto md:auto-rows-[240px]">
           
           {/* Profile Widget - Span 2 cols */}
           <motion.div

@@ -172,44 +172,6 @@ export default function Home() {
 
             {/* Right side: Sticky Interactive Widget */}
             <div className="h-full relative">
-              <div className="md:hidden flex flex-col mb-8 text-center min-h-[160px] relative">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={scrollyLayer}
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <h3 className="text-2xl font-bold text-white mb-4">
-                      {scrollyLayer === 0 ? t.gradeo.lifecycleTitle : 
-                       scrollyLayer === 1 ? t.scrolly.step1Title :
-                       scrollyLayer === 2 ? t.scrolly.step2Title :
-                       scrollyLayer === 3 ? t.scrolly.step3Title : t.scrolly.step4Title}
-                    </h3>
-                    <p className="text-zinc-400 text-sm text-balance">
-                      {scrollyLayer === 0 ? t.scrolly.instruction :
-                       scrollyLayer === 1 ? t.scrolly.step1Desc :
-                       scrollyLayer === 2 ? t.scrolly.step2Desc :
-                       scrollyLayer === 3 ? t.scrolly.step3Desc : t.scrolly.step4Desc}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
-
-                <AnimatePresence>
-                  {scrollyLayer < 4 && (
-                    <motion.div 
-                      initial={{ opacity: 0 }} 
-                      animate={{ opacity: 1 }} 
-                      exit={{ opacity: 0 }} 
-                      className="flex items-center justify-center gap-2 text-zinc-500 animate-pulse mt-6"
-                    >
-                      <Mouse className="w-4 h-4 text-emerald-500" />
-                      <span className="text-xs font-medium uppercase tracking-widest">{t.gradeo.scrollIndicator}</span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
               <GradeoScrollyTelling progress={gradeoProgress} />
             </div>
 

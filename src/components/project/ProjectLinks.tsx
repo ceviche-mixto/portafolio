@@ -1,14 +1,18 @@
 "use client"
 
 import * as React from "react"
-import { ExternalLink, Github } from "lucide-react"
+import { ExternalLink, Github, Lock } from "lucide-react"
 
 /**
- * Par de enlaces «Ver en vivo» / «Código» de un proyecto.
+ * Enlaces de un proyecto: «Ver en vivo» y «Código».
  *
- * Si `demo` es `null` el botón no se renderiza, en lugar de dejar un enlace roto:
- * así el sitio puede publicarse antes de tener la URL de producción y no miente
- * sobre lo que hay detrás.
+ * Un botón sólo aparece si su URL existe: enlazar a un repositorio privado o a
+ * un dominio que aún no está desplegado da un 404 al visitante, que es peor que
+ * no ofrecer el enlace.
+ *
+ * Cuando no hay repositorio público pero el código existe, se dice en lugar de
+ * callar. El silencio se lee como «no hay nada»; «disponible a petición» es
+ * cierto y además le da al reclutador un siguiente paso.
  */
 export function ProjectLinks({
   repo,
@@ -17,6 +21,8 @@ export function ProjectLinks({
   codeLabel,
   newTabHint,
   projectName,
+  codeOnRequest = false,
+  onRequestLabel,
 }: {
   repo: string | null
   demo: string | null
@@ -24,8 +30,12 @@ export function ProjectLinks({
   codeLabel: string
   newTabHint: string
   projectName: string
+  codeOnRequest?: boolean
+  onRequestLabel?: string
 }) {
-  if (!repo && !demo) return null
+  const showRequestNote = !repo && codeOnRequest && onRequestLabel
+
+  if (!repo && !demo && !showRequestNote) return null
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -35,23 +45,31 @@ export function ProjectLinks({
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${liveLabel} — ${projectName} (${newTabHint})`}
-          className="flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-bold text-emerald-950 transition-colors hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-bold text-emerald-950 transition-colors hover:bg-emerald-400"
         >
           <ExternalLink className="h-4 w-4" aria-hidden="true" />
           {liveLabel}
         </a>
       )}
+
       {repo && (
         <a
           href={repo}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${codeLabel} — ${projectName} (${newTabHint})`}
-          className="flex items-center gap-2 rounded-full border border-zinc-700 px-5 py-2.5 text-sm font-bold text-zinc-200 transition-colors hover:border-zinc-500 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="flex items-center gap-2 rounded-full border border-zinc-700 px-5 py-2.5 text-sm font-bold text-zinc-200 transition-colors hover:border-zinc-500 hover:text-white"
         >
           <Github className="h-4 w-4" aria-hidden="true" />
           {codeLabel}
         </a>
+      )}
+
+      {showRequestNote && (
+        <p className="flex items-center gap-2 rounded-full border border-dashed border-zinc-700 px-4 py-2 text-xs font-medium text-zinc-300">
+          <Lock className="h-3.5 w-3.5 text-zinc-400" aria-hidden="true" />
+          {onRequestLabel}
+        </p>
       )}
     </div>
   )

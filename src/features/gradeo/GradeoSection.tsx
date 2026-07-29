@@ -52,6 +52,8 @@ export function GradeoSection({ stats }: { stats: GradeoStats }) {
               codeLabel={t.gradeo.viewCode}
               newTabHint={t.nav.newTab}
               projectName="GRADEO"
+              codeOnRequest={PROJECTS.gradeo.codeOnRequest}
+              onRequestLabel={t.projects.codeOnRequest}
             />
           </div>
         </Reveal>

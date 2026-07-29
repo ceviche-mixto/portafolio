@@ -130,6 +130,8 @@ export function ProjectsSection() {
                   codeLabel={t.gradeo.viewCode}
                   newTabHint={t.nav.newTab}
                   projectName={copy.name}
+                  codeOnRequest={links.codeOnRequest}
+                  onRequestLabel={t.projects.codeOnRequest}
                 />
               </article>
             </Reveal>

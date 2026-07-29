@@ -115,6 +115,7 @@ const es = {
     roleLabel: 'Rol',
     stackLabel: 'Stack',
     highlightsLabel: 'Lo interesante',
+    codeOnRequest: 'Código disponible a petición',
     farmaplus: {
       name: 'FARMAPLUS',
       tagline: 'ERP de farmacia con facturación electrónica peruana.',
@@ -300,6 +301,7 @@ const en: TranslationDict = {
     roleLabel: 'Role',
     stackLabel: 'Stack',
     highlightsLabel: 'What is interesting',
+    codeOnRequest: 'Code available on request',
     farmaplus: {
       name: 'FARMAPLUS',
       tagline: 'Pharmacy ERP with Peruvian electronic invoicing.',

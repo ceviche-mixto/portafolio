@@ -6,10 +6,31 @@
  * están puestos con el mejor valor deducible del repositorio, no inventados.
  */
 
-/** Dominio canónico. Necesario para metadataBase, sitemap e imágenes OG. */
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ??
-  'https://giancarlolarios.dev' // REVISAR: dominio definitivo del portafolio
+/**
+ * Dominio canónico, para `metadataBase`, sitemap e imágenes Open Graph.
+ *
+ * Se resuelve en cadena para que sea correcto en cada entorno sin configurar
+ * nada. Antes había aquí un dominio de ejemplo, que es peor que no tener
+ * ninguno: publica URLs absolutas que no existen.
+ *
+ *   1. NEXT_PUBLIC_SITE_URL — tu dominio propio, cuando lo tengas.
+ *   2. Las variables de sistema de Vercel — el dominio de producción real del
+ *      proyecto, expuesto automáticamente en cada despliegue.
+ *   3. localhost, para desarrollo.
+ */
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL
+  if (explicit) return explicit.replace(/\/$/, '')
+
+  const vercelHost =
+    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ??
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+  if (vercelHost) return `https://${vercelHost.replace(/\/$/, '')}`
+
+  return 'http://localhost:3000'
+}
+
+export const SITE_URL = resolveSiteUrl()
 
 /** Identidad. Un solo título profesional, usado en todo el sitio (ver C-03). */
 export const IDENTITY = {
@@ -35,17 +56,35 @@ export const SOCIALS = {
 } as const
 
 /**
- * Proyectos. `demo: null` oculta el botón "Ver en vivo" en lugar de renderizar
- * un enlace roto, así que es seguro dejarlo así hasta que tengas la URL.
+ * Proyectos.
+ *
+ * `null` oculta el botón correspondiente en lugar de renderizar un enlace roto
+ * (ver `ProjectLinks`). Un enlace que da 404 a un reclutador es peor que no
+ * ofrecer enlace, así que aquí sólo va lo que existe y es público.
+ *
+ * Estado comprobado el 29 de julio de 2026:
+ * - `ceviche-mixto/gradeo` existe pero es **privado**: un visitante vería un 404,
+ *   así que el enlace queda oculto. Si haces el repositorio público, cambia
+ *   `repo` por la URL y el botón aparece solo.
+ * - FARMAPLUS todavía no tiene repositorio en la cuenta. Cuando lo publiques,
+ *   pon aquí su URL.
  */
 export const PROJECTS = {
   gradeo: {
-    repo: 'https://github.com/ceviche-mixto/gradeo', // REVISAR: nombre real del repo
-    demo: null as string | null, // REVISAR: URL de producción de GRADEO
+    // https://github.com/ceviche-mixto/gradeo — privado ahora mismo.
+    repo: null as string | null,
+    demo: null as string | null,
+    /**
+     * Sin enlace público, en lugar de callar se ofrece la vía real: el código
+     * está y se puede compartir en una entrevista. Ponlo en `false` cuando el
+     * repositorio sea público y el botón lo sustituya.
+     */
+    codeOnRequest: true,
   },
   farmaplus: {
-    repo: 'https://github.com/ceviche-mixto/farmaplus', // REVISAR: nombre real del repo
-    demo: null as string | null, // REVISAR: URL de producción de FARMAPLUS
+    repo: null as string | null,
+    demo: null as string | null,
+    codeOnRequest: true,
   },
 } as const
 

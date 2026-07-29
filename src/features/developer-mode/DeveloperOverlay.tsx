@@ -1,50 +1,71 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useModeStore } from '@/store/useModeStore'
-import { useTranslation } from '@/hooks/useTranslation'
-import { Terminal as TerminalIcon, Activity, CheckCircle2, Minimize2, Maximize2 } from 'lucide-react'
+import * as React from "react"
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
+import { useModeStore } from "@/store/useModeStore"
+import { useTranslation } from "@/hooks/useTranslation"
+import { useRealMetrics } from "@/hooks/useRealMetrics"
+import { Terminal as TerminalIcon, Activity, CheckCircle2, Minimize2 } from "lucide-react"
 
-function TypewriterText({ text, delay = 0, className }: { text: string, delay?: number, className?: string }) {
-  const [content, setContent] = useState('')
-  useEffect(() => {
-    let timeout: NodeJS.Timeout
-    let interval: NodeJS.Timeout
-    
-    timeout = setTimeout(() => {
+function TypewriterText({
+  text,
+  delay = 0,
+  className,
+  instant,
+}: {
+  text: string
+  delay?: number
+  className?: string
+  /** Con movimiento reducido el texto aparece completo, sin animar. */
+  instant?: boolean
+}) {
+  const [content, setContent] = React.useState(instant ? text : "")
+
+  React.useEffect(() => {
+    if (instant) {
+      setContent(text)
+      return
+    }
+
+    let interval: ReturnType<typeof setInterval> | undefined
+    const timeout = setTimeout(() => {
       let i = 0
       interval = setInterval(() => {
         setContent(text.slice(0, i + 1))
         i++
-        if (i >= text.length) clearInterval(interval)
+        if (i >= text.length && interval) clearInterval(interval)
       }, 10)
     }, delay)
-    
+
     return () => {
       clearTimeout(timeout)
-      clearInterval(interval)
+      if (interval) clearInterval(interval)
     }
-  }, [text, delay])
-  
+  }, [text, delay, instant])
+
   return <span className={className}>{content}</span>
+}
+
+/** Fila del HUD. `value` ya viene formateado, o es «n/d» si no se pudo medir. */
+function MetricRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-8">
+      <span className="text-zinc-400">{label}</span>
+      <span className="tabular-nums">{value}</span>
+    </div>
+  )
 }
 
 export function DeveloperOverlay() {
   const isDeveloperMode = useModeStore((state) => state.isDeveloperMode)
   const { t } = useTranslation()
-  const [fps, setFps] = useState(60)
-  const [memory, setMemory] = useState(45)
-  const [isTerminalOpen, setIsTerminalOpen] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
+  const [isTerminalOpen, setIsTerminalOpen] = React.useState(false)
 
-  useEffect(() => {
-    if (!isDeveloperMode) return
-    const interval = setInterval(() => {
-      setFps(Math.floor(58 + Math.random() * 4)) // fluctuates between 58 and 61
-      setMemory(Math.floor(40 + Math.random() * 15))
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [isDeveloperMode])
+  // Sólo se mide mientras el modo está activo: en reposo no hay bucle de rAF.
+  const { fps, frameMs, heapMb } = useRealMetrics(isDeveloperMode)
+
+  const na = t.devConsole.unavailable
 
   return (
     <AnimatePresence>
@@ -55,83 +76,119 @@ export function DeveloperOverlay() {
           exit={{ opacity: 0 }}
           className="pointer-events-none fixed inset-0 z-[90]"
         >
-          {/* Scanlines Effect */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] opacity-20 select-none" />
 
-          {/* Performance HUD (Top Left, shifted down) */}
-          <motion.div 
-            initial={{ x: -50, opacity: 0 }}
+          {/* HUD de rendimiento. Los tres valores son medidos; ver useRealMetrics. */}
+          <motion.div
+            initial={prefersReducedMotion ? undefined : { x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="absolute top-20 left-6 flex flex-col gap-2 font-mono text-xs"
+            className="absolute top-20 left-4 font-mono text-xs md:left-6"
           >
-            <div className="bg-black/80 text-green-400 border border-green-500/30 p-3 rounded-lg backdrop-blur-md shadow-2xl flex flex-col gap-2 pointer-events-auto">
-              <div className="flex items-center gap-2 border-b border-green-500/30 pb-2 mb-1">
-                <Activity className="w-4 h-4" />
-                <span className="font-bold tracking-widest text-green-300">{t.devConsole.monitor}</span>
+            <div className="pointer-events-auto flex flex-col gap-2 rounded-lg border border-green-500/30 bg-black/80 p-3 text-green-400 shadow-2xl backdrop-blur-md">
+              <div className="mb-1 flex items-center gap-2 border-b border-green-500/30 pb-2">
+                <Activity className="h-4 w-4" aria-hidden="true" />
+                <span className="font-bold tracking-widest text-green-300">
+                  {t.devConsole.monitor}
+                </span>
+                {/* Etiqueta explícita: estos números se miden, no se simulan. */}
+                <span className="ml-auto rounded bg-green-500/10 px-1.5 text-[9px] tracking-wider text-green-300 uppercase">
+                  {t.devConsole.measured}
+                </span>
               </div>
+              <MetricRow label="FPS" value={fps === null ? na : String(fps)} />
+              <MetricRow
+                label={t.devConsole.renderLabel}
+                value={frameMs === null ? na : `${frameMs} ms`}
+              />
+              <MetricRow
+                label={t.devConsole.memory}
+                value={heapMb === null ? na : `${heapMb} MB`}
+              />
               <div className="flex justify-between gap-8">
-                <span className="text-zinc-500">FPS</span>
-                <span className={fps >= 60 ? "text-green-400" : "text-yellow-400"}>{fps}</span>
-              </div>
-              <div className="flex justify-between gap-8">
-                <span className="text-zinc-500">{t.devConsole.memory}</span>
-                <span>{memory} MB</span>
-              </div>
-              <div className="flex justify-between gap-8">
-                <span className="text-zinc-500">REACT RENDER</span>
-                <span>{Math.floor(Math.random() * 3) + 1}ms</span>
-              </div>
-              <div className="flex justify-between gap-8">
-                <span className="text-zinc-500">{t.devConsole.network}</span>
-                <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500"/> IDLE</span>
+                <span className="text-zinc-400">{t.devConsole.network}</span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3 text-green-500" aria-hidden="true" />
+                  IDLE
+                </span>
               </div>
             </div>
           </motion.div>
 
-          {/* Mini Terminal (Bottom Left) */}
-          <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 pointer-events-auto">
+          <div className="pointer-events-auto absolute bottom-4 left-4 md:bottom-6 md:left-6">
             <AnimatePresence mode="wait">
               {!isTerminalOpen ? (
                 <motion.button
                   key="btn"
-                  initial={{ scale: 0 }}
+                  type="button"
+                  initial={prefersReducedMotion ? undefined : { scale: 0 }}
                   animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
+                  exit={prefersReducedMotion ? undefined : { scale: 0 }}
                   onClick={() => setIsTerminalOpen(true)}
-                  className="w-12 h-12 bg-black/80 backdrop-blur-md border border-zinc-700 rounded-full flex items-center justify-center hover:bg-zinc-800 transition-colors shadow-2xl relative group"
+                  aria-label={t.devConsole.openTerminal}
+                  className="group relative flex h-12 w-12 items-center justify-center rounded-full border border-zinc-700 bg-black/80 shadow-2xl backdrop-blur-md transition-colors hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400"
                 >
-                  <div className="absolute -inset-1 bg-green-500/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <TerminalIcon className="w-5 h-5 text-green-400 relative z-10" />
+                  <TerminalIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
                 </motion.button>
               ) : (
-                <motion.div 
+                <motion.div
                   key="terminal"
-                  initial={{ y: 50, opacity: 0, scale: 0.9, originY: 1, originX: 0 }}
+                  initial={prefersReducedMotion ? undefined : { y: 50, opacity: 0, scale: 0.9 }}
                   animate={{ y: 0, opacity: 1, scale: 1 }}
-                  exit={{ y: 50, opacity: 0, scale: 0.9 }}
-                  className="w-[85vw] md:w-[28rem] max-w-[400px] md:max-w-none bg-black/80 backdrop-blur-md border border-zinc-800 rounded-lg overflow-hidden shadow-2xl"
+                  exit={prefersReducedMotion ? undefined : { y: 50, opacity: 0, scale: 0.9 }}
+                  className="w-[85vw] max-w-[400px] overflow-hidden rounded-lg border border-zinc-800 bg-black/85 shadow-2xl backdrop-blur-md md:w-[28rem] md:max-w-none"
                 >
-                  <div className="bg-zinc-900 border-b border-zinc-800 p-2 flex items-center justify-between">
+                  <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 p-2">
                     <div className="flex items-center gap-2">
-                      <TerminalIcon className="w-4 h-4 text-zinc-400" />
-                      <span className="text-xs text-zinc-400 font-mono">portfolio@gian:~/gradeo</span>
+                      <TerminalIcon className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+                      <span className="font-mono text-xs text-zinc-300">
+                        portfolio@gian:~/gradeo
+                      </span>
                     </div>
-                    <button onClick={() => setIsTerminalOpen(false)} className="text-zinc-500 hover:text-white p-1 hover:bg-zinc-800 rounded transition-colors">
-                      <Minimize2 className="w-4 h-4" />
+                    <button
+                      type="button"
+                      onClick={() => setIsTerminalOpen(false)}
+                      aria-label={t.devConsole.closeTerminal}
+                      className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400"
+                    >
+                      <Minimize2 className="h-4 w-4" aria-hidden="true" />
                     </button>
                   </div>
-                  <div className="p-4 font-mono text-xs text-zinc-300 h-56 overflow-y-auto flex flex-col gap-1 items-start">
-                    <TypewriterText text={t.devConsole.loading} className="text-green-400" delay={0} />
-                    <TypewriterText text="$ pnpm run dev" className="text-zinc-500" delay={500} />
-                    <TypewriterText text={t.devConsole.ready} delay={800} />
-                    <TypewriterText text="$ whoami" className="text-zinc-500 mt-2" delay={1200} />
-                    <TypewriterText text={t.devConsole.whoamiText1} className="text-blue-400" delay={1500} />
-                    <TypewriterText text={t.devConsole.whoamiText2} className="text-zinc-400" delay={2000} />
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3 }} className="flex items-center gap-2 mt-4">
-                      <span className="text-green-500">portfolio@gian:~/gradeo$ </span>
-                      <span className="animate-pulse w-2 h-4 bg-zinc-400" />
-                    </motion.div>
+                  <div className="flex h-56 flex-col items-start gap-1 overflow-y-auto p-4 font-mono text-xs text-zinc-300">
+                    <TypewriterText
+                      text={t.devConsole.loading}
+                      className="text-green-400"
+                      instant={!!prefersReducedMotion}
+                    />
+                    <TypewriterText
+                      text="$ npm run dev"
+                      className="text-zinc-400"
+                      delay={500}
+                      instant={!!prefersReducedMotion}
+                    />
+                    <TypewriterText
+                      text={t.devConsole.ready}
+                      delay={800}
+                      instant={!!prefersReducedMotion}
+                    />
+                    <TypewriterText
+                      text="$ whoami"
+                      className="mt-2 text-zinc-400"
+                      delay={1200}
+                      instant={!!prefersReducedMotion}
+                    />
+                    <TypewriterText
+                      text={t.devConsole.whoamiText1}
+                      className="text-blue-300"
+                      delay={1500}
+                      instant={!!prefersReducedMotion}
+                    />
+                    <TypewriterText
+                      text={t.devConsole.whoamiText2}
+                      className="text-zinc-300"
+                      delay={2000}
+                      instant={!!prefersReducedMotion}
+                    />
                   </div>
                 </motion.div>
               )}

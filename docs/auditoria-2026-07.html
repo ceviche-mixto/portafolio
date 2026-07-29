@@ -1,0 +1,871 @@
+<title>Auditoría de Portafolio — Julio 2026</title>
+<style>
+  :root {
+    --paper: #F7F8FA;
+    --paper-2: #FFFFFF;
+    --ink: #14181F;
+    --ink-2: #414B5C;
+    --ink-3: #6B7688;
+    --accent: #2E5AAC;
+    --accent-soft: #2E5AAC14;
+    --rule: #C9D1DE;
+    --rule-soft: #E3E8F0;
+    --crit: #A32B2B;
+    --high: #B4761B;
+    --med: #3C7A78;
+    --ok: #2F7D4F;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #10141B;
+      --paper-2: #171C25;
+      --ink: #E4E8EF;
+      --ink-2: #A8B2C2;
+      --ink-3: #788395;
+      --accent: #7BA2E8;
+      --accent-soft: #7BA2E81F;
+      --rule: #2A3342;
+      --rule-soft: #212936;
+      --crit: #E07B7B;
+      --high: #D9A44F;
+      --med: #6FB3B0;
+      --ok: #6BB98A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #10141B;
+    --paper-2: #171C25;
+    --ink: #E4E8EF;
+    --ink-2: #A8B2C2;
+    --ink-3: #788395;
+    --accent: #7BA2E8;
+    --accent-soft: #7BA2E81F;
+    --rule: #2A3342;
+    --rule-soft: #212936;
+    --crit: #E07B7B;
+    --high: #D9A44F;
+    --med: #6FB3B0;
+    --ok: #6BB98A;
+  }
+  :root[data-theme="light"] {
+    --paper: #F7F8FA;
+    --paper-2: #FFFFFF;
+    --ink: #14181F;
+    --ink-2: #414B5C;
+    --ink-3: #6B7688;
+    --accent: #2E5AAC;
+    --accent-soft: #2E5AAC14;
+    --rule: #C9D1DE;
+    --rule-soft: #E3E8F0;
+    --crit: #A32B2B;
+    --high: #B4761B;
+    --med: #3C7A78;
+    --ok: #2F7D4F;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px 96px; }
+  .col { max-width: 68ch; }
+
+  /* ── masthead ── */
+  .masthead { padding: 56px 0 28px; border-bottom: 2px solid var(--ink); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 600; font-size: clamp(30px, 4.6vw, 50px);
+    line-height: 1.06; letter-spacing: -.015em; text-wrap: balance; margin: 14px 0 0;
+  }
+  .standfirst {
+    font-family: var(--serif); font-size: clamp(17px, 2vw, 20px); font-style: italic;
+    color: var(--ink-2); max-width: 60ch; margin-top: 16px; line-height: 1.5;
+  }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: 26px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--ink-3);
+  }
+  .meta b { color: var(--ink-2); font-weight: 500; }
+
+  /* ── section scaffolding ── */
+  section { padding-top: 60px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 1px solid var(--rule); padding-bottom: 10px; margin-bottom: 26px; }
+  .sec-num { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: .08em; flex: none; }
+  h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(22px, 2.7vw, 30px); letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+  h3 { font-family: var(--sans); font-weight: 650; font-size: 16px; letter-spacing: .005em; margin: 32px 0 10px; }
+  p { margin: 0 0 15px; }
+  .col p, .col ul { max-width: 68ch; }
+  ul { margin: 0 0 15px; padding-left: 20px; }
+  li { margin-bottom: 7px; }
+  strong { font-weight: 650; }
+  code {
+    font-family: var(--mono); font-size: .875em; background: var(--rule-soft);
+    padding: .12em .36em; border-radius: 2px; color: var(--ink);
+  }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* ── verdict gauges (instrument band) ── */
+  .band {
+    background: var(--paper-2); border: 1px solid var(--rule);
+    padding: 30px 30px 12px; margin-top: 30px;
+  }
+  .verdict-top {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 28px;
+    padding-bottom: 26px; border-bottom: 1px solid var(--rule-soft); margin-bottom: 26px;
+  }
+  .bigscore { font-family: var(--mono); font-variant-numeric: tabular-nums; line-height: .9; }
+  .bigscore .n { font-size: 74px; font-weight: 500; letter-spacing: -.04em; color: var(--crit); }
+  .bigscore .d { font-size: 22px; color: var(--ink-3); }
+  .bigscore .lbl { display: block; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); margin-top: 12px; }
+  .verdict-txt { flex: 1 1 320px; }
+  .verdict-txt p { margin: 0; font-family: var(--serif); font-size: 18px; line-height: 1.5; color: var(--ink-2); }
+
+  .gauges { display: grid; grid-template-columns: repeat(auto-fit, minmax(272px, 1fr)); gap: 4px 40px; }
+  .gauge { padding: 14px 0; border-bottom: 1px solid var(--rule-soft); }
+  .gauge-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .gauge-name { font-size: 14px; font-weight: 600; }
+  .gauge-val { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 500; }
+  .track { position: relative; height: 7px; background: var(--rule-soft); margin-top: 9px; }
+  .fill { position: absolute; inset: 0 auto 0 0; }
+  .tick { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--rule); }
+  .gauge-note { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; color: var(--ink-3); margin-top: 7px; }
+  .w { --c: var(--crit); }
+  .s-crit { color: var(--crit); } .f-crit { background: var(--crit); }
+  .s-high { color: var(--high); } .f-high { background: var(--high); }
+  .s-med  { color: var(--med);  } .f-med  { background: var(--med);  }
+  .s-ok   { color: var(--ok);   } .f-ok   { background: var(--ok);   }
+
+  /* ── findings ── */
+  .finding {
+    background: var(--paper-2); border: 1px solid var(--rule-soft);
+    border-left: 3px solid var(--rule); padding: 18px 20px; margin-bottom: 10px;
+  }
+  .finding.crit { border-left-color: var(--crit); }
+  .finding.high { border-left-color: var(--high); }
+  .finding.med  { border-left-color: var(--med);  }
+  .f-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .fid {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--ink-3);
+    border: 1px solid var(--rule); padding: 1px 6px; flex: none;
+  }
+  .sev {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .13em; text-transform: uppercase;
+    padding: 2px 7px; flex: none; color: var(--paper-2);
+  }
+  .sev.crit { background: var(--crit); } .sev.high { background: var(--high); }
+  .sev.med { background: var(--med); } .sev.low { background: var(--ink-3); }
+  .ftitle { font-weight: 650; font-size: 15.5px; flex: 1 1 auto; min-width: 220px; }
+  .finding p { margin: 0 0 10px; font-size: 15px; color: var(--ink-2); max-width: 74ch; }
+  .finding p:last-child { margin-bottom: 0; }
+  .ev {
+    font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+    background: var(--paper); border: 1px solid var(--rule-soft);
+    padding: 8px 11px; margin: 0 0 10px; overflow-x: auto; white-space: pre-wrap;
+  }
+  .fix { font-size: 15px; }
+  .fix b { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ok); display: block; margin-bottom: 2px; }
+
+  /* ── tables ── */
+  .tbl-wrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--rule); background: var(--paper-2); }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 560px; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  th {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500; background: var(--paper); white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  td.mono { font-family: var(--mono); font-size: 12.5px; }
+
+  /* ── callout ── */
+  .callout {
+    border: 1px solid var(--accent); border-left-width: 3px;
+    background: var(--accent-soft); padding: 20px 22px; margin: 24px 0;
+  }
+  .callout .eyebrow { color: var(--accent); }
+  .callout h3 { margin-top: 8px; font-family: var(--serif); font-weight: 600; font-size: 19px; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ── phase blocks ── */
+  .phase { border-top: 1px solid var(--rule); padding: 22px 0 4px; }
+  .phase-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  .phase-id { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: .08em; flex: none; }
+  .phase-name { font-family: var(--serif); font-size: 21px; font-weight: 600; flex: 1 1 auto; }
+  .phase-cost { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 12.5px; color: var(--ink-3); flex: none; }
+  .phase-why { font-size: 15px; color: var(--ink-2); margin: 0 0 12px; max-width: 72ch; }
+  .accept {
+    font-size: 14px; border-top: 1px dashed var(--rule); padding-top: 10px; margin-top: 4px; color: var(--ink-2);
+  }
+  .accept b { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+
+  footer { margin-top: 72px; padding-top: 22px; border-top: 2px solid var(--ink); font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 0 18px 64px; }
+    .band { padding: 22px 18px 8px; }
+    .bigscore .n { font-size: 58px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Auditoría técnica · ceviche-mixto/portafolio</div>
+    <h1>El portafolio muestra menos de la mitad de lo que ya construiste</h1>
+    <p class="standfirst">Evaluación de UI/UX, rendimiento y profesionalismo, contrastada contra el estado real de las bases de datos de GRADEO y FARMAPLUS.</p>
+    <div class="meta">
+      <span><b>Fecha</b> 29 jul 2026</span>
+      <span><b>Commit</b> bfa9f3b</span>
+      <span><b>Stack</b> Next.js 16.1.6 · React 19.2.3 · Tailwind 4</span>
+      <span><b>Alcance</b> 1 733 líneas · 20 archivos fuente</span>
+      <span><b>Método</b> build de producción, ESLint, cálculo WCAG, inspección de esquema Postgres</span>
+    </div>
+  </header>
+
+  <div class="callout" style="margin-top:28px">
+    <div class="eyebrow">Estado</div>
+    <h3>Implementada — las seis fases están aplicadas</h3>
+    <p>Este informe conserva el diagnóstico original sin editar, para poder comparar. Los resultados medidos después de la implementación están al final, en la sección&nbsp;10.</p>
+    <p><b>Titulares:</b> JS de primera visita de 547,0 a <b>197,5&nbsp;KB&nbsp;gz</b> (−64&nbsp;%); <b>0</b> violaciones de axe en WCAG&nbsp;2.1&nbsp;A/AA; ESLint de 11 problemas a <b>0</b>; el código ficticio y las métricas simuladas sustituidos por el trigger real y mediciones reales; FARMAPLUS incorporado.</p>
+  </div>
+
+  <section id="veredicto">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Veredicto</h2></div>
+    <div class="col">
+      <p>El portafolio está bien hecho <em>como pieza visual</em>: la orquestación con Framer Motion, el sistema bilingüe tipado y el Developer Mode son ideas por encima del promedio de un portafolio de estudiante. El problema no es el acabado, son dos brechas.</p>
+      <p><strong>La primera es de conversión.</strong> No hay enlace a GitHub, no hay email, no hay CV descargable y GRADEO —que ocupa la mitad del sitio— nunca se enlaza. El sitio convence y luego no ofrece ninguna salida.</p>
+      <p><strong>La segunda es de inventario.</strong> Consulté tus proyectos de Supabase: GRADEO tiene 21 tablas, 919 profesores y un sistema de moderación con roles, PIN y bloqueo por fuerza bruta. Existe además FARMAPLUS, un ERP de farmacia con facturación electrónica SUNAT, creado hace cuatro días. El portafolio no menciona nada de eso.</p>
+    </div>
+
+    <div class="band">
+      <div class="verdict-top">
+        <div class="bigscore">
+          <span class="n">47</span><span class="d">/100</span>
+          <span class="lbl">Índice global ponderado</span>
+        </div>
+        <div class="verdict-txt">
+          <p>Suficiente como demo visual. Insuficiente como herramienta para conseguir entrevistas —y por debajo de lo que tu trabajo real justifica.</p>
+        </div>
+      </div>
+
+      <div class="gauges">
+        <div class="gauge">
+          <div class="gauge-top"><span class="gauge-name">UI / UX y flujo</span><span class="gauge-val s-med">62</span></div>
+          <div class="track"><div class="fill f-med" style="width:62%"></div><div class="tick" style="left:25%"></div><div class="tick" style="left:50%"></div><div class="tick" style="left:75%"></div></div>
+          <div class="gauge-note">Peso 20 % · animación sólida, sin navegación ni CTA</div>
+        </div>
+        <div class="gauge">
+          <div class="gauge-top"><span class="gauge-name">Rendimiento</span><span class="gauge-val s-crit">42</span></div>
+          <div class="track"><div class="fill f-crit" style="width:42%"></div><div class="tick" style="left:25%"></div><div class="tick" style="left:50%"></div><div class="tick" style="left:75%"></div></div>
+          <div class="gauge-note">Peso 20 % · 547 KB gz, 61 % es three.js</div>
+        </div>
+        <div class="gauge">
+          <div class="gauge-top"><span class="gauge-name">Accesibilidad</span><span class="gauge-val s-crit">35</span></div>
+          <div class="track"><div class="fill f-crit" style="width:35%"></div><div class="tick" style="left:25%"></div><div class="tick" style="left:50%"></div><div class="tick" style="left:75%"></div></div>
+          <div class="gauge-note">Peso 15 % · 0 atributos ARIA, idioma incorrecto</div>
+        </div>
+        <div class="gauge">
+          <div class="gauge-top"><span class="gauge-name">Profesionalismo</span><span class="gauge-val s-high">48</span></div>
+          <div class="track"><div class="fill f-high" style="width:48%"></div><div class="tick" style="left:25%"></div><div class="tick" style="left:50%"></div><div class="tick" style="left:75%"></div></div>
+          <div class="gauge-note">Peso 20 % · código ficticio y métricas simuladas</div>
+        </div>
+        <div class="gauge">
+          <div class="gauge-top"><span class="gauge-name">Código y mantenibilidad</span><span class="gauge-val s-med">58</span></div>
+          <div class="track"><div class="fill f-med" style="width:58%"></div><div class="tick" style="left:25%"></div><div class="tick" style="left:50%"></div><div class="tick" style="left:75%"></div></div>
+          <div class="gauge-note">Peso 15 % · 2 errores y 9 avisos de ESLint</div>
+        </div>
+        <div class="gauge">
+          <div class="gauge-top"><span class="gauge-name">SEO y distribución</span><span class="gauge-val s-crit">30</span></div>
+          <div class="track"><div class="fill f-crit" style="width:30%"></div><div class="tick" style="left:25%"></div><div class="tick" style="left:50%"></div><div class="tick" style="left:75%"></div></div>
+          <div class="gauge-note">Peso 10 % · sin imagen OG, sitemap ni hreflang</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="brecha">
+    <div class="sec-head"><span class="sec-num">02</span><h2>El hallazgo principal: GRADEO ya es otro producto</h2></div>
+    <div class="col">
+      <p>El sitio cuenta GRADEO como «reseñas anónimas de profesores con triggers de agregación». Eso describe la V1. El esquema en producción describe algo bastante más ambicioso, y varias de las decisiones más interesantes son justo las que no se ven.</p>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Capacidad real en producción</th><th>Evidencia en la base de datos</th><th>¿Está en el portafolio?</th></tr></thead>
+        <tbody>
+          <tr><td>Cola de moderación con estados</td><td class="mono">reviews.status · approved_by · rejected_by · rejected_at</td><td>No — el sitio implica publicación directa</td></tr>
+          <tr><td>Roles y segundo factor tipo PIN, con bloqueo por intentos</td><td class="mono">profiles.role (owner/admin/auxiliar/user) · security_pin · pin_failures · pin_locked_until</td><td>No</td></tr>
+          <tr><td>Rate limiting anónimo por hash de IP</td><td class="mono">reviewer_ip_hash · review_logs (86 filas)</td><td>No</td></tr>
+          <tr><td>Búsqueda difusa con pg_trgm, lista para índice</td><td class="mono">search_professors_similarity() · idx_professors_name_trgm</td><td>No</td></tr>
+          <tr><td>Valoración en 4 ejes, sólo sobre reseñas aprobadas</td><td class="mono">update_professor_metrics() · rating_personality / methodology / clarity / fairness</td><td>Se muestra una fórmula distinta e inventada</td></tr>
+          <tr><td>Alta colaborativa de profesores con aprobación</td><td class="mono">professor_requests (enum request_type)</td><td>No</td></tr>
+          <tr><td>Reporte de abusos con ciclo de resolución</td><td class="mono">review_reports</td><td>No</td></tr>
+          <tr><td>Modelo relacional M:N universidad / sede / carrera</td><td class="mono">3 tablas puente + campuses + careers</td><td>Se menciona como jerarquía simple</td></tr>
+          <tr><td>Suite de herramientas de estudio</td><td class="mono">user_notes (editor por bloques) · user_tool_data (semestre/horarios/pomodoro)</td><td>No</td></tr>
+          <tr><td>Enlaces de compartir con expiración</td><td class="mono">notes_shares · timetable_shares · grades_shares · pomodoro_shares</td><td>No</td></tr>
+          <tr><td>IA con cuota medida por usuario y mes</td><td class="mono">ai_usage · consume_ai_credit(p_feature, p_limit)</td><td>No</td></tr>
+          <tr><td>Lista de espera con referidos e integración Ko-fi</td><td class="mono">waitlist_entries.referral_code / referred_by / referral_count · increment_waitlist_referral()</td><td>No</td></tr>
+          <tr><td>Captación de anunciantes</td><td class="mono">ad_inquiries</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <div class="eyebrow">Lo que estás dejando fuera</div>
+      <h3>La decisión técnica mejor argumentada de GRADEO no aparece en ningún sitio</h3>
+      <p>Dentro de <code>search_professors_similarity()</code> dejaste escrito por qué usas el operador <code>%</code> de trigramas en lugar de <code>similarity() &gt; umbral</code>: sólo la forma con operador la reconoce el planner como respaldada por índice; a ~900 filas Postgres todavía elige seq scan, pero la consulta queda lista para conmutar sola cuando la tabla crezca.</p>
+      <p>Ese párrafo es exactamente lo que un entrevistador quiere oír: conoces el coste real, mediste, y optimizaste para el crecimiento sin sobre-optimizar el presente. Está enterrado en una función SQL en lugar de ser el centro del case study.</p>
+    </div>
+
+    <div class="col">
+      <h3>Y hay un proyecto entero que no existe en el sitio</h3>
+      <p><strong>FARMAPLUS</strong> (creado el 25 de julio de 2026, 23 tablas) es un ERP/POS de farmacia. Para un reclutador peruano es probablemente más legible que GRADEO, porque es dominio regulado con requisitos verificables:</p>
+      <ul>
+        <li><strong>Facturación electrónica SUNAT</strong> — <code>sunat_documents</code>, <code>document_series</code>. Cumplimiento tributario real, no un CRUD.</li>
+        <li><strong>Trazabilidad por lote y vencimiento</strong> — <code>batches</code> (23 filas), <code>inventory_adjustments</code>. Crítico en farmacia.</li>
+        <li><strong>Arqueo de caja</strong> — <code>cash_registers</code>, <code>cash_movements</code>, <code>sale_payments</code>, <code>payment_methods</code>.</li>
+        <li><strong>Datos farmacológicos</strong> — <code>active_substances</code> y <code>product_active_substances</code> (M:N), <code>laboratories</code>.</li>
+        <li><strong>Compras y proveedores</strong> — <code>purchases</code>, <code>purchase_items</code>, <code>suppliers</code>.</li>
+        <li><strong>Auditoría y roles</strong> — <code>audit_logs</code>, <code>users</code>, <code>roles</code>.</li>
+      </ul>
+      <p>GRADEO demuestra que sabes diseñar un producto; FARMAPLUS demuestra que sabes modelar un negocio con reglas externas que no puedes negociar. Son dos argumentos distintos y necesitas los dos.</p>
+    </div>
+  </section>
+
+  <section id="credibilidad">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Credibilidad — arréglalo primero</h2></div>
+    <div class="col">
+      <p>Agrupo esto aparte porque es el único bloque donde el coste de no actuar no es «peor puntuación», sino perder una entrevista concreta. El Developer Mode invita explícitamente a un revisor técnico a mirar de cerca; conviene que lo que vea sea verdad.</p>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-head"><span class="fid">C-01</span><span class="sev crit">Crítico</span><span class="ftitle">El snippet de «Weighted Average Logic» es ficticio</span></div>
+      <p>El widget presenta como lógica de GRADEO una función con pesos por reseña verificada. En la base de datos no existe <code>isVerified</code> ni ninguna ponderación: el trigger real calcula la media aritmética de 4 ejes y sólo sobre reseñas <code>approved</code>.</p>
+      <div class="ev">Portafolio — src/features/gradeo/GradeoBento.tsx:177-185
+  const weight = r.isVerified ? 1.5 : 1;   ← no existe en el esquema
+
+Producción — update_professor_metrics()
+  _total := (_p + _m + _c + _f) / 4.0;     ← media simple de 4 ejes
+  where professor_id = _prof_id and status = 'approved';
+  total_score = round(_total, 10)  -- 10 decimales para ordenar sin empates
+  metrics     = round(cada eje, 1) -- 1 decimal para las barras de la UI</div>
+      <p class="fix"><b>Corrección</b>Muestra el trigger real. Es mejor material: filtrar por <code>approved</code> revela la moderación, y el contraste entre 10 decimales para ordenar y 1 decimal para pintar es una decisión de ingeniería concreta que puedes defender en una entrevista. La versión inventada no la puedes defender.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">C-02</span><span class="sev high">Alto</span><span class="ftitle">El HUD de rendimiento muestra números aleatorios</span></div>
+      <p>«SYS.PERF.MONITOR» presenta FPS, memoria y tiempo de render como si fueran mediciones. Los tres salen de <code>Math.random()</code>. ESLint ya lo marca como error de pureza de React, porque el valor cambia en cada render sin causa.</p>
+      <div class="ev">src/features/developer-mode/DeveloperOverlay.tsx:43-44
+  setFps(Math.floor(58 + Math.random() * 4))
+  setMemory(Math.floor(40 + Math.random() * 15))
+
+src/features/developer-mode/DeveloperOverlay.tsx:83
+  {Math.floor(Math.random() * 3) + 1}ms
+  → error  react-hooks/purity  Cannot call impure function during render</div>
+      <p class="fix"><b>Corrección</b>Mide de verdad: FPS con un contador sobre <code>requestAnimationFrame</code>, memoria con <code>performance.memory</code> cuando esté disponible. Tiene el mismo coste de implementación y deja de ser un riesgo. Si prefieres el efecto estético, etiquétalo como simulación.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">C-03</span><span class="sev high">Alto</span><span class="ftitle">Tres títulos profesionales distintos en el mismo sitio</span></div>
+      <div class="ev">src/lib/i18n.ts:88   «Ingeniero de Sistemas y Computación»       (hero)
+src/lib/i18n.ts:139  «Ingeniero de Sistemas de Información»      (consola dev)
+src/lib/i18n.ts:147  «Estudiante de Ingeniería de Sistemas...»   (perfil)</div>
+      <p>Además el hero afirma un título de ingeniero mientras el CV dice estudiante. Un reclutador que lea las tres versiones no concluye «tiene varios títulos», concluye «no revisó su propio sitio».</p>
+      <p class="fix"><b>Corrección</b>Elige una fórmula y repítela literal. Si aún estudias, «Estudiante de Ingeniería de Sistemas» con el año en curso es más fuerte que un título ambiguo: es verificable.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">C-04</span><span class="sev med">Medio</span><span class="ftitle">La narrativa omite la moderación y el anti-abuso</span></div>
+      <p>El case study insiste en «sin muros de login, sin fricción» y describe los triggers agregando directamente. La realidad incluye cola de moderación humana y rate limiting por hash de IP. Omitirlo hace que el sistema parezca <em>más ingenuo</em> de lo que es: cualquiera con experiencia se preguntará «¿y qué haces con el spam?», y la respuesta —que ya tienes— no está.</p>
+      <p class="fix"><b>Corrección</b>Convierte el anonimato en el conflicto central: cómo aceptas reseñas sin identificar a nadie y aun así frenas el abuso. Guardar el <em>hash</em> de la IP y no la IP es precisamente la decisión que demuestra criterio.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">C-05</span><span class="sev med">Medio</span><span class="ftitle">El repositorio no arranca recién clonado, y el README miente sobre la versión</span></div>
+      <div class="ev">package.json:2        "name": "app-temp"
+README.md             «Next.js 14+»        → el proyecto usa 16.1.6
+src/lib/supabase.ts:3-6  process.env.NEXT_PUBLIC_SUPABASE_URL!  ← el «!» oculta que falta
+sin .env.example      → createClient(undefined) lanza al importar</div>
+      <p>Si un reclutador clona el repo y ejecuta <code>npm run dev</code>, obtiene un crash sin pista de qué falta. El README no menciona ninguna variable de entorno.</p>
+      <p class="fix"><b>Corrección</b><code>.env.example</code> con las dos claves, sección de configuración en el README, nombre real en <code>package.json</code>, y validación de entorno que falle con un mensaje legible en lugar de un <code>!</code>.</p>
+    </div>
+  </section>
+
+  <section id="conversion">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Conversión: el sitio no tiene salida</h2></div>
+
+    <div class="finding crit">
+      <div class="f-head"><span class="fid">U-01</span><span class="sev crit">Crítico</span><span class="ftitle">No hay ningún enlace a GitHub — pero Instagram aparece dos veces</span></div>
+      <p>Los cuatro enlaces externos del sitio son LinkedIn e Instagram, repetidos en hero y footer. Para un portafolio de desarrollador, GitHub es el enlace que un revisor técnico busca primero. Destacar Instagram por encima del código invierte la señal.</p>
+      <div class="ev">src/app/page.tsx:63,71   hero    → LinkedIn, Instagram
+src/app/page.tsx:186,194 footer  → LinkedIn, Instagram
+GitHub: 0 apariciones en todo el repositorio</div>
+      <p class="fix"><b>Corrección</b>GitHub primero en hero y footer. Instagram, si lo mantienes, al final.</p>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-head"><span class="fid">U-02</span><span class="sev crit">Crítico</span><span class="ftitle">No hay forma de contactarte</span></div>
+      <p>Ni email, ni formulario, ni WhatsApp, ni una frase de disponibilidad. El sitio termina en un footer con dos iconos sociales y un aviso de copyright. Un reclutador convencido en el minuto dos no tiene qué hacer con esa convicción.</p>
+      <p class="fix"><b>Corrección</b>Sección de contacto antes del footer: email visible con <code>mailto:</code> y botón de copiar, más una línea explícita de lo que buscas («disponible para prácticas / junior, Chiclayo o remoto»).</p>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-head"><span class="fid">U-03</span><span class="sev crit">Crítico</span><span class="ftitle">GRADEO se describe en profundidad y nunca se enlaza</span></div>
+      <p>Bento grid, case study modal y una secuencia de scrollytelling de 200 vh dedicados a GRADEO, sin un solo enlace a la aplicación ni al repositorio. Se construye todo el interés y no se ofrece dónde gastarlo.</p>
+      <p class="fix"><b>Corrección</b>Dos botones —«Ver en vivo» y «Código»— junto al título de GRADEO y repetidos al cierre del case study.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">U-04</span><span class="sev high">Alto</span><span class="ftitle">No hay sección de proyectos</span></div>
+      <p>GRADEO es el único proyecto del sitio. FARMAPLUS no aparece, y no existe una estructura donde añadir el siguiente sin rediseñar la página.</p>
+      <p class="fix"><b>Corrección</b>Sección «Proyectos» con una tarjeta por proyecto: problema en una frase, stack, tu rol, una métrica verificable y enlaces. GRADEO conserva su tratamiento extendido como proyecto destacado.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">U-05</span><span class="sev high">Alto</span><span class="ftitle">Hay sección de CV pero no se puede descargar</span></div>
+      <p>«Perfil y Experiencia» reproduce el CV en pantalla; muchos reclutadores necesitan el PDF para adjuntarlo a un proceso interno.</p>
+      <p class="fix"><b>Corrección</b>PDF en <code>/public</code> y botón de descarga en la cabecera de la sección, con versión ES y EN.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">U-06</span><span class="sev high">Alto</span><span class="ftitle">Sin navegación en una página de scroll muy largo</span></div>
+      <p>Entre hero, CV, bento, case study y 200 vh de scrollytelling no hay barra de navegación ni anclas. Los dos únicos controles fijos son idioma y modo. Quien busque tu experiencia debe recorrerlo todo.</p>
+      <p class="fix"><b>Corrección</b>Nav sticky discreta con anclas (Perfil · Proyectos · GRADEO · Contacto) y enlace «saltar al contenido» para teclado.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">U-07</span><span class="sev med">Medio</span><span class="ftitle">Idioma y modo se pierden al recargar</span></div>
+      <p>Ningún store usa <code>persist</code>: recargar devuelve siempre a español y modo reclutador. Un revisor que activó Developer Mode y recarga pierde el contexto sin entender por qué.</p>
+      <div class="ev">src/store/useLanguageStore.ts · src/store/useModeStore.ts
+  → 0 usos del middleware «persist» de zustand</div>
+      <p class="fix"><b>Corrección</b><code>persist</code> en ambos stores; para el idioma, además una cookie para que el servidor pueda emitir el <code>&lt;html lang&gt;</code> correcto (ver A-01).</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">U-08</span><span class="sev med">Medio</span><span class="ftitle">Una celda del bento está vacía para la audiencia principal</span></div>
+      <p>En modo reclutador —el modo por defecto— <code>DeveloperInsightWidget</code> pinta una caja punteada cuyo único contenido es pedir que actives el Developer Mode. Es espacio privilegiado gastado en una instrucción.</p>
+      <div class="ev">src/features/gradeo/GradeoBento.tsx:164-168</div>
+      <p class="fix"><b>Corrección</b>Que la celda muestre algo útil en modo reclutador (impacto, adopción, línea de tiempo) y se transforme en el widget técnico al cambiar de modo. La invitación al Developer Mode va en el propio switch, no ocupando una tarjeta.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">U-09</span><span class="sev med">Medio</span><span class="ftitle">Dos pasos del scrollytelling no ilustran lo que dicen</span></div>
+      <div class="ev">GradeoBento.tsx:235  paso 2 «Edge Payload Routing» → icono de estrella
+GradeoBento.tsx:253  paso 4 «Data Aggregation»    → icono de candado</div>
+      <p>La secuencia explica una arquitectura y en dos de cuatro pasos la imagen contradice el texto. Es justo el tipo de detalle que nota quien lee con atención.</p>
+      <p class="fix"><b>Corrección</b>Enrutamiento en el Edge: nodos y un paquete viajando. Agregación: la fila del profesor recalculándose. El candado encaja mejor en el anonimato, que sí es parte de la historia.</p>
+    </div>
+  </section>
+
+  <section id="rendimiento">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Rendimiento</h2></div>
+    <div class="col">
+      <p>Medido sobre un build de producción real (<code>next build</code>, Turbopack) del commit <code>bfa9f3b</code>.</p>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Medición</th><th class="num">Valor</th><th>Lectura</th></tr></thead>
+        <tbody>
+          <tr><td>JS de cliente, total comprimido</td><td class="num">547,0 KB</td><td>≈ 2,7 × el presupuesto habitual de 200 KB</td></tr>
+          <tr><td>JS de cliente, sin comprimir</td><td class="num">2,1 MB</td><td>—</td></tr>
+          <tr><td>Chunk mayor (three.js)</td><td class="num">333,5 KB</td><td>61 % del total, para una esfera decorativa</td></tr>
+          <tr><td>Peticiones a terceros en la carga inicial</td><td class="num">2</td><td>HDRI en raw.githack.com + iframe de OpenStreetMap</td></tr>
+          <tr><td>Animaciones CSS infinitas simultáneas</td><td class="num">9</td><td>CPU ocupada de forma permanente</td></tr>
+          <tr><td>Rutas prerenderizadas</td><td class="num">2</td><td><code>/</code> y <code>/_not-found</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-head"><span class="fid">P-01</span><span class="sev crit">Crítico</span><span class="ftitle">three.js pesa 333 KB comprimidos y se carga siempre</span></div>
+      <p><code>HeroCanvas</code> se importa de forma estática, así que three.js, fiber y drei entran en el bundle inicial de todos los visitantes —incluidos móviles y quienes prefieren movimiento reducido— para renderizar una esfera de fondo al 50 % de opacidad. Además <code>useFrame</code> sigue ejecutándose a 60 fps cuando el hero ya salió de pantalla.</p>
+      <div class="ev">src/app/page.tsx:5        import estático de HeroCanvas
+src/components/3d/HeroCanvas.tsx:40-49
+  · sin dynamic import        · sin límite de dpr
+  · sin control de frameloop  · sin desmontaje fuera del viewport</div>
+      <p class="fix"><b>Corrección</b><code>next/dynamic</code> con <code>ssr: false</code>, montar sólo si el hero está visible y no hay <code>prefers-reduced-motion</code>, <code>dpr={[1, 1.5]}</code>, pausar el loop al salir del viewport y un degradado CSS como fallback. En móvil, quedarse en el degradado.</p>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-head"><span class="fid">P-02</span><span class="sev crit">Crítico</span><span class="ftitle">El hero depende de un CDN de terceros para iluminarse</span></div>
+      <p><code>Environment preset="city"</code> descarga en tiempo de ejecución un HDRI desde un proxy de GitHub. Es una dependencia externa en la ruta crítica del hero: si ese host responde lento o está bloqueado, la iluminación de tu primera impresión se degrada, y no controlas nada de eso.</p>
+      <div class="ev">src/components/3d/HeroCanvas.tsx:47   &lt;Environment preset="city" /&gt;
+  → potsdamer_platz_1k.hdr
+  → https://raw.githack.com/pmndrs/drei-assets/456060a2.../hdri/</div>
+      <p class="fix"><b>Corrección</b>Quita <code>Environment</code>: ya tienes <code>ambientLight</code> y <code>directionalLight</code>, y el material apenas usa el mapa de entorno. Si quieres conservar el reflejo, aloja el <code>.hdr</code> en <code>/public</code> y pásalo con <code>files</code>.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">P-03</span><span class="sev high">Alto</span><span class="ftitle">Cada frame de scroll re-renderiza toda la página</span></div>
+      <p><code>useMotionValueEvent</code> llama a <code>setGradeoProgress</code> en cada cambio del progreso de scroll. Como el estado vive en <code>Home</code>, todo el árbol —hero, CV, bento, footer— se reconcilia decenas de veces por segundo mientras se hace scroll. El valor continuo sólo se usa para decidir entre 5 capas discretas.</p>
+      <div class="ev">src/app/page.tsx:25-38
+  const [gradeoProgress, setGradeoProgress] = useState(0)
+  useMotionValueEvent(rawGradeoProgress, "change", latest =>
+    setGradeoProgress(latest))          ← estado en el componente raíz
+  ...
+  if (gradeoProgress > 0.15) scrollyLayer = 1   ← sólo importa el umbral</div>
+      <p class="fix"><b>Corrección</b>Calcula la capa dentro del callback y llama a <code>setState</code> sólo cuando cambia respecto a la anterior: pasas de ~60 renders por segundo a 4 en todo el recorrido.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">P-04</span><span class="sev high">Alto</span><span class="ftitle">Las métricas «en vivo» llegan después de la hidratación</span></div>
+      <p><code>page.tsx</code> empieza con <code>"use client"</code>, así que toda la página es cliente y no aprovecha React Server Components. Las dos consultas a Supabase salen del navegador tras hidratar: las tarjetas muestran <code>"..."</code> y luego saltan al número. Es peor LCP y desplazamiento de layout justo en el widget que quieres que se vea.</p>
+      <div class="ev">src/app/page.tsx:1                    "use client"  (raíz de la página)
+src/features/gradeo/GradeoBento.tsx:14-31   useState("...") + useEffect → fetch
+src/features/gradeo/GradeoBento.tsx:112-133 segunda consulta tras hidratación</div>
+      <p class="fix"><b>Corrección</b>Server Component o route handler con <code>revalidate: 300</code> que devuelva conteos y top-5 ya resueltos. Renderizas el número real en el HTML, quitas el salto y dejas de exponer las credenciales de GRADEO en el bundle (ver C-07).</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">P-05</span><span class="sev med">Medio</span><span class="ftitle">El mapa incrustado es un tercero en la carga inicial</span></div>
+      <p>El iframe de OpenStreetMap tiene <code>loading="lazy"</code> —correcto— pero está cerca del viewport inicial, así que en pantallas grandes se pide de inmediato. Aporta un marco decorativo con filtros CSS encima.</p>
+      <div class="ev">src/features/gradeo/GradeoBento.tsx:76-83</div>
+      <p class="fix"><b>Corrección</b>Captura estática optimizada por defecto y carga del iframe sólo al interactuar. Mantiene el efecto y elimina la petición externa del arranque.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">P-06</span><span class="sev med">Medio</span><span class="ftitle"><code>next.config.ts</code> está vacío</span></div>
+      <p>Sin cabeceras de caché, sin cabeceras de seguridad, sin configuración de imágenes. Para un proyecto que presume de arquitectura, es el archivo donde un revisor esperaría ver criterio.</p>
+      <p class="fix"><b>Corrección</b>Cabeceras de seguridad básicas y política de caché explícita para estáticos.</p>
+    </div>
+  </section>
+
+  <section id="accesibilidad">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Accesibilidad</h2></div>
+    <div class="col">
+      <p>Es la dimensión más baja y la más rápida de arreglar. En todo el código fuente hay <strong>cero</strong> atributos <code>aria-label</code>, <code>aria-pressed</code>, <code>aria-live</code> o <code>title</code>. Varias empresas descartan candidaturas frontend por esto, y en un sitio que se vende como cuidado, es una contradicción visible.</p>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-head"><span class="fid">A-01</span><span class="sev crit">Crítico</span><span class="ftitle">El documento se declara en inglés mientras muestra español</span></div>
+      <p><code>&lt;html lang="en"&gt;</code> está fijo en el layout, pero el idioma por defecto del store es español. Un lector de pantalla aplicará pronunciación inglesa a texto español: prácticamente ininteligible. También afecta a la separación de sílabas y a los buscadores.</p>
+      <div class="ev">src/app/layout.tsx:36        &lt;html lang="en" ...&gt;
+src/store/useLanguageStore.ts:10   language: 'es'   ← por defecto</div>
+      <p class="fix"><b>Corrección</b>Guarda el idioma en cookie, léelo en el layout de servidor y emite <code>&lt;html lang={lang}&gt;</code>. Encaja con la corrección de persistencia de U-07.</p>
+    </div>
+
+    <div class="finding crit">
+      <div class="f-head"><span class="fid">A-02</span><span class="sev crit">Crítico</span><span class="ftitle">Cuatro enlaces de sólo icono sin nombre accesible</span></div>
+      <p>Los enlaces a LinkedIn e Instagram contienen únicamente un SVG. Un lector de pantalla los anuncia como «enlace» sin más. Incumple WCAG 2.4.4 y 4.1.2.</p>
+      <div class="ev">src/app/page.tsx:63, 71, 186, 194
+  aria-label en todo el repositorio: 0</div>
+      <p class="fix"><b>Corrección</b><code>aria-label="LinkedIn (abre en una pestaña nueva)"</code> y equivalente en cada uno.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">A-03</span><span class="sev high">Alto</span><span class="ftitle">Sin respeto por <code>prefers-reduced-motion</code></span></div>
+      <p>Nueve animaciones infinitas (<code>animate-pulse</code>, <code>animate-ping</code>, <code>animate-bounce</code>), transformaciones ligadas al scroll, un bucle 3D y un efecto de máquina de escribir, sin ninguna vía de desactivación. Para personas con trastornos vestibulares esto va de incómodo a inutilizable. WCAG 2.3.3.</p>
+      <div class="ev">grep en src/: 9 animaciones infinitas · 0 referencias a reduced-motion</div>
+      <p class="fix"><b>Corrección</b><code>useReducedMotion</code> de Framer Motion para desactivar scroll-driven y 3D, y variantes <code>motion-safe:</code> de Tailwind en las clases de animación.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">A-04</span><span class="sev high">Alto</span><span class="ftitle">Contraste insuficiente en 17 usos de texto</span></div>
+      <p>Ratios calculados sobre <code>bg-zinc-950</code> (#09090B). AA exige 4,5:1 para texto normal.</p>
+      <div class="ev">text-zinc-400  →  7,76:1   correcto
+text-zinc-500  →  4,12:1   insuficiente   · 15 usos
+text-zinc-600  →  2,57:1   muy por debajo ·  2 usos
+                            page.tsx:88 (indicador de scroll)
+                            GradeoBento.tsx:166 (aviso del Developer Mode)
+Colores de acento (emerald, blue, yellow, green, red): todos correctos</div>
+      <p class="fix"><b>Corrección</b>Sube a <code>zinc-400</code> el texto informativo. Reserva <code>zinc-500</code> para elementos decorativos no textuales. El aviso del Developer Mode es el peor caso: es una instrucción, y es lo más difícil de leer de la página.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">A-05</span><span class="sev med">Medio</span><span class="ftitle">Iframe sin <code>title</code></span></div>
+      <div class="ev">src/features/gradeo/GradeoBento.tsx:76   &lt;iframe ... /&gt;   sin title</div>
+      <p class="fix"><b>Corrección</b><code>title="Mapa del campus USAT, Chiclayo"</code>. WCAG 4.1.2.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">A-06</span><span class="sev med">Medio</span><span class="ftitle">Los dos switches no comunican su estado</span></div>
+      <p>Ambos son <code>&lt;button&gt;</code> sin <code>aria-pressed</code>. El de idioma sólo contiene «ES» o «EN», sin decir que alterna idioma ni cuál está activo.</p>
+      <div class="ev">src/components/mode-switcher/ModeSwitcher.tsx:17
+src/components/mode-switcher/LanguageSwitcher.tsx:15</div>
+      <p class="fix"><b>Corrección</b><code>aria-pressed</code> en el de modo; en el de idioma, <code>aria-label="Cambiar a inglés"</code> y <code>lang</code> en las etiquetas.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">A-07</span><span class="sev med">Medio</span><span class="ftitle">El scrollytelling es invisible para lectores de pantalla</span></div>
+      <p>El panel intercambia título y descripción mediante <code>AnimatePresence</code> según el progreso de scroll, sin región activa que lo anuncie. Toda la explicación arquitectónica —el corazón técnico del sitio— no llega. Tampoco hay alternativa para quien navega con teclado.</p>
+      <div class="ev">src/app/page.tsx:128-155</div>
+      <p class="fix"><b>Corrección</b><code>aria-live="polite"</code> en el contenedor del texto y los 4 pasos también como lista estática accesible (puede ir en <code>sr-only</code>), para que el contenido exista sin depender del scroll.</p>
+    </div>
+  </section>
+
+  <section id="codigo">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Código, SEO y distribución</h2></div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">D-01</span><span class="sev high">Alto</span><span class="ftitle">ESLint: 2 errores y 9 avisos</span></div>
+      <div class="ev">errores
+  DeveloperOverlay.tsx:83  react-hooks/purity  Math.random en render
+  DeveloperOverlay.tsx:15  prefer-const        'timeout' nunca se reasigna
+avisos (imports y variables sin usar)
+  GradeoCaseStudy.tsx:11,13   DialogClose, X
+  DeveloperOverlay.tsx:7      Maximize2
+  ModeSwitcher.tsx:4          motion
+  LanguageSwitcher.tsx:4,7    motion, cn
+  GradeoBento.tsx:13          lang</div>
+      <p class="fix"><b>Corrección</b>Déjalo en cero y añade <code>lint</code> como paso de CI. Un repositorio público con errores de lint es lo primero que ve quien abre el proyecto.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">D-02</span><span class="sev med">Medio</span><span class="ftitle">Tres <code>dangerouslySetInnerHTML</code> para cadenas traducidas</span></div>
+      <p>Se usa para meter <code>&lt;br/&gt;</code> y <code>&lt;strong&gt;</code> desde el diccionario. Con traducciones estáticas no es una vía de XSS, pero es innecesario y un revisor lo marcará por reflejo —además de dificultar que las traducciones dejen de ser estáticas más adelante.</p>
+      <div class="ev">page.tsx:57 · GradeoBento.tsx:166 · GradeoCaseStudy.tsx:56</div>
+      <p class="fix"><b>Corrección</b>Divide las cadenas en partes tipadas y compón con JSX.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">S-01</span><span class="sev high">Alto</span><span class="ftitle">Compartir el enlace no genera tarjeta visual</span></div>
+      <p>Hay <code>openGraph</code> con título y descripción, pero sin <code>metadataBase</code> ni <code>images</code>. En LinkedIn o WhatsApp —por donde realmente circula un portafolio— aparece como texto plano. Para un sitio cuyo argumento es visual, es la peor primera impresión posible.</p>
+      <div class="ev">src/app/layout.tsx:20-28   sin metadataBase · sin images · sin twitter</div>
+      <p class="fix"><b>Corrección</b><code>metadataBase</code> y una imagen OG generada con <code>next/og</code>, una por idioma.</p>
+    </div>
+
+    <div class="finding high">
+      <div class="f-head"><span class="fid">S-02</span><span class="sev high">Alto</span><span class="ftitle">Metadatos sólo en inglés en un sitio que abre en español</span></div>
+      <p>Título y descripción están fijos en inglés mientras la interfaz arranca en español, y no hay <code>alternates.languages</code>. Buscadores y previsualizaciones muestran un idioma distinto del que verá quien haga clic.</p>
+      <p class="fix"><b>Corrección</b><code>generateMetadata</code> según la cookie de idioma y declaración de alternativas hreflang.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">S-03</span><span class="sev med">Medio</span><span class="ftitle">Sin sitemap, robots, analítica ni páginas de error propias</span></div>
+      <p>Faltan <code>sitemap.ts</code> y <code>robots.ts</code>; no hay analítica, así que no sabes si alguien llega ni dónde abandona; y no hay <code>error.tsx</code>, <code>loading.tsx</code> ni <code>not-found.tsx</code> propios, por lo que un fallo muestra la pantalla genérica de Next.</p>
+      <p class="fix"><b>Corrección</b>Los tres archivos de rutas, analítica de Vercel y páginas de error con la identidad del sitio.</p>
+    </div>
+
+    <div class="finding med">
+      <div class="f-head"><span class="fid">C-07</span><span class="sev med">Medio</span><span class="ftitle">El portafolio consulta las tablas de GRADEO directamente desde el navegador</span></div>
+      <p>El bundle incluye la URL y la anon key del proyecto GRADEO y consulta <code>professors</code> y <code>reviews</code> desde el cliente. Con RLS activa en las 21 tablas no hay fuga de datos, pero acopla los dos proyectos: un cambio de esquema en GRADEO rompe el portafolio en silencio, y cada visita golpea tu base de producción.</p>
+      <p class="fix"><b>Corrección</b>Un route handler cacheado en el portafolio como única frontera. Resuelve además P-04.</p>
+    </div>
+
+    <div class="callout">
+      <div class="eyebrow">Nota aparte, no es del portafolio</div>
+      <h3>El linter de Supabase reporta 27 avisos en GRADEO</h3>
+      <p>Al revisar el esquema aparecieron: <code>pg_trgm</code> instalada en el schema <code>public</code>, 14 políticas RLS con <code>WITH CHECK (true)</code> en INSERT (varias intencionales para el flujo anónimo, pero <code>reviews</code> tiene tres políticas de inserción solapadas que conviene consolidar), funciones <code>SECURITY DEFINER</code> ejecutables por <code>anon</code>, y la protección contra contraseñas filtradas desactivada en Auth.</p>
+      <p>No afecta a la puntuación de esta auditoría —es otro repositorio— pero si vas a presentar GRADEO como muestra de arquitectura, conviene resolverlo antes de que alguien lo revise. Y una vez resuelto, «encontré y corregí 27 hallazgos del linter de mi base de datos» es material de entrevista.</p>
+    </div>
+  </section>
+
+  <section id="plan">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Plan de implementación</h2></div>
+    <div class="col">
+      <p>Seis fases ordenadas por retorno sobre esfuerzo, no por dificultad. Las dos primeras suman unas 9 horas y son las que cambian si el sitio te consigue una entrevista; el resto sube la calidad de forma acumulativa. Cada fase es entregable por separado y deja el sitio en un estado desplegable.</p>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Fase</th><th>Objetivo</th><th class="num">Esfuerzo</th><th>Resuelve</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">F0</td><td>Credibilidad</td><td class="num">2–3 h</td><td>C-01…C-05, D-01</td></tr>
+          <tr><td class="mono">F1</td><td>Conversión</td><td class="num">4–6 h</td><td>U-01…U-07</td></tr>
+          <tr><td class="mono">F2</td><td>Rendimiento</td><td class="num">5–7 h</td><td>P-01…P-06, C-07</td></tr>
+          <tr><td class="mono">F3</td><td>Accesibilidad</td><td class="num">3–4 h</td><td>A-01…A-07</td></tr>
+          <tr><td class="mono">F4</td><td>Contenido: GRADEO V2 y proyectos</td><td class="num">6–8 h</td><td>U-04, U-08, U-09, C-04</td></tr>
+          <tr><td class="mono">F5</td><td>Distribución</td><td class="num">2–3 h</td><td>S-01…S-03, D-02</td></tr>
+          <tr><td><b>Total</b></td><td></td><td class="num"><b>22–31 h</b></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><span class="phase-id">F0</span><span class="phase-name">Credibilidad</span><span class="phase-cost">2–3 h · primero</span></div>
+      <p class="phase-why">Lo más barato y lo que más riesgo elimina. Mientras el sitio muestre código inventado, todo lo demás que mejores se apoya en algo frágil.</p>
+      <ul>
+        <li>Sustituir el snippet ponderado por la lógica real de <code>update_professor_metrics()</code>: media de 4 ejes, sólo reseñas aprobadas, 10 decimales para ordenar y 1 para pintar.</li>
+        <li>HUD con FPS reales vía <code>requestAnimationFrame</code> y memoria vía <code>performance.memory</code>; si no hay dato, mostrar <code>n/d</code> en lugar de inventarlo.</li>
+        <li>Unificar el título profesional en las tres cadenas de <code>i18n.ts</code>.</li>
+        <li><code>.env.example</code>, validación de entorno con error legible, <code>name</code> real en <code>package.json</code>, README con la versión correcta de Next y la sección de configuración.</li>
+        <li>ESLint a cero.</li>
+      </ul>
+      <p class="accept"><b>Criterio de aceptación</b> · <code>npx eslint .</code> sin salida; ningún dato simulado presentado como medición; <code>git clone &amp;&amp; npm i &amp;&amp; npm run dev</code> funciona siguiendo sólo el README.</p>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><span class="phase-id">F1</span><span class="phase-name">Conversión</span><span class="phase-cost">4–6 h</span></div>
+      <p class="phase-why">Aquí es donde el sitio pasa de ser una demo a ser una herramienta. Ninguna mejora de rendimiento importa si quien se convence no encuentra cómo escribirte.</p>
+      <ul>
+        <li>GitHub en hero y footer, con <code>aria-label</code>, por delante de Instagram.</li>
+        <li>Sección de contacto: email visible, <code>mailto:</code>, botón de copiar y una línea de disponibilidad concreta.</li>
+        <li>Botones «Ver en vivo» y «Código» en GRADEO, arriba y al cierre del case study.</li>
+        <li>CV en PDF (ES y EN) con botón de descarga.</li>
+        <li>Nav sticky con anclas y enlace de salto al contenido.</li>
+        <li><code>persist</code> en ambos stores, más cookie de idioma para el <code>lang</code> del servidor.</li>
+      </ul>
+      <p class="accept"><b>Criterio de aceptación</b> · desde cualquier punto del sitio, contactarte o ver el código está a dos clics o menos; recargar conserva idioma y modo.</p>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><span class="phase-id">F2</span><span class="phase-name">Rendimiento</span><span class="phase-cost">5–7 h</span></div>
+      <p class="phase-why">Un portafolio que se presenta como «alto rendimiento» y envía 547 KB de JavaScript se contradice solo. Es además la fase con la métrica más fácil de enseñar: un antes y un después.</p>
+      <ul>
+        <li><code>HeroCanvas</code> con <code>next/dynamic</code> (<code>ssr: false</code>), montaje condicionado a visibilidad y a <code>prefers-reduced-motion</code>, <code>dpr</code> limitado, loop pausado fuera del viewport y degradado CSS de fallback.</li>
+        <li>Quitar <code>Environment preset</code> o alojar el HDRI en <code>/public</code>.</li>
+        <li>Umbralizar el <code>setState</code> del scroll: de ~60 renders/s a 4 en todo el recorrido.</li>
+        <li>Estadísticas por route handler con <code>revalidate: 300</code>; retirar el cliente de Supabase del bundle.</li>
+        <li>Mapa como imagen estática con iframe bajo demanda.</li>
+        <li>Cabeceras de seguridad y caché en <code>next.config.ts</code>.</li>
+      </ul>
+      <p class="accept"><b>Criterio de aceptación</b> · JS de cliente inicial por debajo de 200 KB comprimidos (desde 547); cero peticiones a terceros en la carga inicial; sin salto de layout en las tarjetas de métricas.</p>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><span class="phase-id">F3</span><span class="phase-name">Accesibilidad</span><span class="phase-cost">3–4 h</span></div>
+      <p class="phase-why">El mayor salto de puntuación por hora invertida: casi todo son atributos y una decisión de color.</p>
+      <ul>
+        <li><code>&lt;html lang&gt;</code> dinámico desde la cookie de F1.</li>
+        <li><code>aria-label</code> en los cuatro enlaces sociales; <code>title</code> en el iframe; <code>aria-pressed</code> en los switches.</li>
+        <li><code>useReducedMotion</code> y variantes <code>motion-safe:</code> en las nueve animaciones infinitas.</li>
+        <li>Texto informativo de <code>zinc-500</code>/<code>600</code> a <code>zinc-400</code>.</li>
+        <li><code>aria-live="polite"</code> en el scrollytelling y los cuatro pasos como lista accesible.</li>
+        <li>Estado de foco visible propio sobre fondo oscuro.</li>
+      </ul>
+      <p class="accept"><b>Criterio de aceptación</b> · cero violaciones de axe-core; Lighthouse de accesibilidad ≥ 95; el sitio recorrible completo sólo con teclado.</p>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><span class="phase-id">F4</span><span class="phase-name">Contenido: GRADEO V2 y proyectos</span><span class="phase-cost">6–8 h</span></div>
+      <p class="phase-why">La fase de mayor techo. No añade tecnología: hace visible el trabajo que ya hiciste y que hoy no se ve.</p>
+      <ul>
+        <li>Reescribir el case study alrededor del conflicto real: aceptar reseñas anónimas y aun así frenar el abuso — hash de IP en lugar de IP, cola de moderación, roles con PIN y bloqueo por intentos.</li>
+        <li>Elevar la búsqueda con <code>pg_trgm</code> a hallazgo destacado, con tu propio razonamiento sobre el planner y el índice.</li>
+        <li>Segundo acto de GRADEO: la suite de estudio (notas por bloques, horarios, notas del semestre, pomodoro), los enlaces compartibles con expiración y la IA con cuota por usuario y mes.</li>
+        <li>Mencionar el motor de crecimiento: lista de espera con referidos y captación de anunciantes.</li>
+        <li>Nueva sección «Proyectos» con FARMAPLUS: SUNAT, lotes y vencimientos, arqueo de caja, auditoría. Tarjeta con problema, stack, rol, métrica y enlaces.</li>
+        <li>Reemplazar la celda muerta del bento y corregir los dos iconos que contradicen su paso.</li>
+      </ul>
+      <p class="accept"><b>Criterio de aceptación</b> · cada afirmación técnica del sitio es verificable contra el repositorio o el esquema; FARMAPLUS presente con enlaces; añadir un proyecto nuevo no exige rediseñar nada.</p>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head"><span class="phase-id">F5</span><span class="phase-name">Distribución</span><span class="phase-cost">2–3 h</span></div>
+      <p class="phase-why">Cierra el circuito: que el enlace se vea bien donde se comparte y que puedas saber si funciona.</p>
+      <ul>
+        <li><code>metadataBase</code> e imagen OG con <code>next/og</code>, una por idioma.</li>
+        <li><code>generateMetadata</code> por idioma y alternativas hreflang.</li>
+        <li><code>sitemap.ts</code>, <code>robots.ts</code>, analítica.</li>
+        <li><code>error.tsx</code>, <code>loading.tsx</code> y <code>not-found.tsx</code> con la identidad del sitio.</li>
+        <li>Retirar los <code>dangerouslySetInnerHTML</code> a favor de composición tipada.</li>
+      </ul>
+      <p class="accept"><b>Criterio de aceptación</b> · la tarjeta previsualiza correctamente en LinkedIn y WhatsApp en ambos idiomas; los metadatos coinciden con el idioma que verá el visitante.</p>
+    </div>
+  </section>
+
+  <section id="anexo">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Cómo se midió</h2></div>
+    <div class="col">
+      <p>Todo lo cuantitativo de este informe es reproducible sobre el commit <code>bfa9f3b</code>:</p>
+      <ul>
+        <li><strong>Bundle</strong> — <code>next build</code> con Turbopack; tamaños por <code>gzip -c</code> sobre <code>.next/static/chunks</code>. La identificación de three.js se confirmó buscando símbolos de la librería en el chunk de 1 225,8 KB.</li>
+        <li><strong>HDRI remoto</strong> — rastreado desde <code>Environment preset="city"</code> hasta <code>presetsObj.city = 'potsdamer_platz_1k.hdr'</code> y la constante <code>CUBEMAP_ROOT</code> en <code>node_modules/@react-three/drei/core/useEnvironment.js:8</code>.</li>
+        <li><strong>Contraste</strong> — luminancia relativa y ratios según WCAG 2.1 calculados sobre los valores de la paleta zinc de Tailwind, contra <code>bg-zinc-950</code> y <code>bg-zinc-900</code>.</li>
+        <li><strong>Lint</strong> — <code>npx eslint .</code> con la configuración del proyecto.</li>
+        <li><strong>ARIA, animaciones, persistencia</strong> — recuento directo sobre <code>src/</code>.</li>
+        <li><strong>GRADEO y FARMAPLUS</strong> — inspección de esquema en Postgres 17 vía Supabase (sólo lectura): tablas, columnas, claves, enums, definiciones de funciones y linter de la plataforma. No se modificó nada.</li>
+      </ul>
+      <p>Los conteos de datos (919 profesores, 85 reseñas, 86 registros de log, 16 notas) son del 29 de julio de 2026 y cambiarán. La afirmación de «más de 900 profesores» que ya está en el sitio es correcta.</p>
+    </div>
+  </section>
+
+
+  <section id="despues">
+    <div class="sec-head"><span class="sec-num">10</span><h2>Resultados medidos tras la implementación</h2></div>
+    <div class="col"><p>Mismo método que la sección&nbsp;9, sobre el árbol ya modificado.</p></div>
+
+    <h3>Rendimiento</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Medición</th><th class="num">Antes</th><th class="num">Después</th></tr></thead>
+      <tbody>
+        <tr><td>JS de primera visita</td><td class="num">547,0 KB gz</td><td class="num s-ok"><b>197,5 KB gz</b></td></tr>
+        <tr><td>three.js en la carga inicial</td><td class="num">333,5 KB gz</td><td class="num s-ok">0</td></tr>
+        <tr><td>Framer Motion en la carga inicial</td><td class="num">~100 KB gz</td><td class="num s-ok">0</td></tr>
+        <tr><td>Base UI en la carga inicial</td><td class="num">34 KB gz</td><td class="num s-ok">0</td></tr>
+        <tr><td>Supabase en el bundle del navegador</td><td class="num">presente</td><td class="num s-ok">ausente</td></tr>
+        <tr><td>Peticiones a terceros en la carga inicial</td><td class="num">2</td><td class="num s-ok">0</td></tr>
+      </tbody>
+    </table></div>
+    <div class="col"><p>El JS diferido suma 264&nbsp;KB&nbsp;gz y sólo se descarga cuando corresponde: la escena 3D únicamente en pantallas anchas sin movimiento reducido ni ahorro de datos, y el diálogo del case study al pulsarlo.</p></div>
+
+    <h3>Accesibilidad</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Medición</th><th class="num">Antes</th><th class="num">Después</th></tr></thead>
+      <tbody>
+        <tr><td>Violaciones axe-core (WCAG 2.1 A/AA), tres estados</td><td class="num">no medido</td><td class="num s-ok"><b>0</b></td></tr>
+        <tr><td>Atributos ARIA y <code>title</code></td><td class="num">0</td><td class="num s-ok">17</td></tr>
+        <tr><td><code>&lt;html lang&gt;</code> frente al idioma real</td><td class="num">en / UI en español</td><td class="num s-ok">es-PE, desde cookie</td></tr>
+        <tr><td>Archivos con soporte de movimiento reducido</td><td class="num">0</td><td class="num s-ok">9</td></tr>
+        <tr><td>Usos de texto por debajo de AA</td><td class="num">17</td><td class="num s-ok">0</td></tr>
+        <tr><td>Primer elemento enfocable</td><td class="num">enlace social</td><td class="num s-ok">saltar al contenido</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Credibilidad y código</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Medición</th><th class="num">Antes</th><th class="num">Después</th></tr></thead>
+      <tbody>
+        <tr><td>Problemas de ESLint</td><td class="num">2 err · 9 avisos</td><td class="num s-ok"><b>0</b></td></tr>
+        <tr><td><code>Math.random()</code> presentado como medición</td><td class="num">3</td><td class="num s-ok">0</td></tr>
+        <tr><td>Código ficticio (<code>isVerified</code>)</td><td class="num">1</td><td class="num s-ok">0</td></tr>
+        <tr><td>Títulos profesionales distintos</td><td class="num">3</td><td class="num s-ok">1</td></tr>
+        <tr><td>Cifras incrustadas a mano en la copia</td><td class="num">6</td><td class="num s-ok">0</td></tr>
+        <tr><td><code>dangerouslySetInnerHTML</code></td><td class="num">3</td><td class="num s-ok">0</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Conversión y distribución</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Medición</th><th class="num">Antes</th><th class="num">Después</th></tr></thead>
+      <tbody>
+        <tr><td>Enlaces a GitHub</td><td class="num">0</td><td class="num s-ok">4</td></tr>
+        <tr><td>Vías de contacto</td><td class="num">0</td><td class="num s-ok">correo, mailto, copiar</td></tr>
+        <tr><td>CV descargable</td><td class="num">no</td><td class="num s-ok">2 PDF (ES/EN)</td></tr>
+        <tr><td>Proyectos presentados</td><td class="num">1</td><td class="num s-ok">2</td></tr>
+        <tr><td>Navegación</td><td class="num">ninguna</td><td class="num s-ok">barra con 4 anclas</td></tr>
+        <tr><td>Idioma y modo tras recargar</td><td class="num">se perdían</td><td class="num s-ok">persisten</td></tr>
+        <tr><td>Imagen Open Graph · sitemap · robots</td><td class="num">no</td><td class="num s-ok">sí</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="callout">
+      <div class="eyebrow">Hallado al implementar, no estaba en el diagnóstico</div>
+      <h3>Dos fallos preexistentes que sólo se ven en el navegador</h3>
+      <p><b>1. El sitio nunca se renderizó con Geist.</b> <code>globals.css</code> declaraba <code>--font-sans: var(--font-sans)</code>, una referencia circular, y las variables de fuente estaban en <code>&lt;body&gt;</code> mientras <code>font-sans</code> se aplicaba a <code>&lt;html&gt;</code>, donde todavía no existen. Todo el sitio venía cayendo en Times New Roman.</p>
+      <p><b>2. <code>live: true</code> sin comprobar el error.</b> <code>supabase-js</code> no lanza ante un fallo de red: devuelve <code>{ count: null, error }</code>. La primera versión del código nuevo habría anunciado «en vivo desde producción» mostrando guiones.</p>
+    </div>
+
+    <div class="col">
+      <h3>Lo que queda pendiente y depende de ti</h3>
+      <p>Todo centralizado en <code>src/lib/site.ts</code>, marcado con <code>REVISAR</code>. Nada de esto rompe el sitio: todo degrada a un estado correcto.</p>
+      <ul>
+        <li><strong>Dominio definitivo</strong> — hasta definirlo, las URL absolutas de Open Graph y el sitemap apuntan a un dominio de ejemplo.</li>
+        <li><strong>Nombres reales de los repositorios</strong> de GRADEO y FARMAPLUS.</li>
+        <li><strong>URL de producción</strong> de ambos. Mientras sean <code>null</code>, el botón «Ver en vivo» no se renderiza en lugar de enlazar a algo roto.</li>
+        <li><strong>Correo público</strong> — está puesto el de tu cuenta; decide si es el que quieres ante reclutadores.</li>
+        <li><strong>Los PDF del CV</strong> se generaron con los datos que ya estaban en el repositorio. Revísalos antes de usarlos.</li>
+      </ul>
+      <h3>Sobre la verificación de datos en vivo</h3>
+      <p>El entorno de implementación bloquea las salidas a <code>*.supabase.co</code> (el proxy responde 403), así que la ruta HTTP a las métricas no se pudo ejercitar. Sí se validó la semántica de las consultas contra la base: 919 profesores, 82 reseñas aprobadas de 85 totales —lo que confirma que la cola de moderación está en uso— y 24 profesores con valoración. El comportamiento sin conexión se comprobó y es el previsto: «más de 900» en la copia y «—» en las tarjetas, sin errores en la consola del visitante.</p>
+    </div>
+  </section>
+
+  <footer>
+    Auditoría de ceviche-mixto/portafolio · commit bfa9f3b · 29 de julio de 2026 · 31 hallazgos en 6 dimensiones · implementada el 29 de julio de 2026
+  </footer>
+
+</div>

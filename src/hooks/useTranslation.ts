@@ -1,8 +1,10 @@
-import { useLanguageStore } from '@/store/useLanguageStore'
-import { translations, TranslationDict } from '@/lib/i18n'
+"use client"
 
-export function useTranslation(): { t: TranslationDict; lang: 'en' | 'es' } {
-  const language = useLanguageStore((state) => state.language)
-  const t = translations[language]
-  return { t, lang: language }
+import { useLanguage } from '@/components/i18n/LanguageProvider'
+import type { Language, TranslationDict } from '@/lib/i18n'
+
+/** Azúcar sobre `useLanguage` para los componentes que sólo leen traducciones. */
+export function useTranslation(): { t: TranslationDict; lang: Language } {
+  const { t, lang } = useLanguage()
+  return { t, lang }
 }

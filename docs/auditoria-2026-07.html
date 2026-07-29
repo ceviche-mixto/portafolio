@@ -234,6 +234,13 @@
     </div>
   </header>
 
+  <div class="callout" style="margin-top:28px">
+    <div class="eyebrow">Estado</div>
+    <h3>Implementada — las seis fases están aplicadas</h3>
+    <p>Este informe conserva el diagnóstico original sin editar, para poder comparar. Los resultados medidos después de la implementación están al final, en la sección&nbsp;10.</p>
+    <p><b>Titulares:</b> JS de primera visita de 547,0 a <b>197,5&nbsp;KB&nbsp;gz</b> (−64&nbsp;%); <b>0</b> violaciones de axe en WCAG&nbsp;2.1&nbsp;A/AA; ESLint de 11 problemas a <b>0</b>; el código ficticio y las métricas simuladas sustituidos por el trigger real y mediciones reales; FARMAPLUS incorporado.</p>
+  </div>
+
   <section id="veredicto">
     <div class="sec-head"><span class="sec-num">01</span><h2>Veredicto</h2></div>
     <div class="col">
@@ -776,8 +783,89 @@ avisos (imports y variables sin usar)
     </div>
   </section>
 
+
+  <section id="despues">
+    <div class="sec-head"><span class="sec-num">10</span><h2>Resultados medidos tras la implementación</h2></div>
+    <div class="col"><p>Mismo método que la sección&nbsp;9, sobre el árbol ya modificado.</p></div>
+
+    <h3>Rendimiento</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Medición</th><th class="num">Antes</th><th class="num">Después</th></tr></thead>
+      <tbody>
+        <tr><td>JS de primera visita</td><td class="num">547,0 KB gz</td><td class="num s-ok"><b>197,5 KB gz</b></td></tr>
+        <tr><td>three.js en la carga inicial</td><td class="num">333,5 KB gz</td><td class="num s-ok">0</td></tr>
+        <tr><td>Framer Motion en la carga inicial</td><td class="num">~100 KB gz</td><td class="num s-ok">0</td></tr>
+        <tr><td>Base UI en la carga inicial</td><td class="num">34 KB gz</td><td class="num s-ok">0</td></tr>
+        <tr><td>Supabase en el bundle del navegador</td><td class="num">presente</td><td class="num s-ok">ausente</td></tr>
+        <tr><td>Peticiones a terceros en la carga inicial</td><td class="num">2</td><td class="num s-ok">0</td></tr>
+      </tbody>
+    </table></div>
+    <div class="col"><p>El JS diferido suma 264&nbsp;KB&nbsp;gz y sólo se descarga cuando corresponde: la escena 3D únicamente en pantallas anchas sin movimiento reducido ni ahorro de datos, y el diálogo del case study al pulsarlo.</p></div>
+
+    <h3>Accesibilidad</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Medición</th><th class="num">Antes</th><th class="num">Después</th></tr></thead>
+      <tbody>
+        <tr><td>Violaciones axe-core (WCAG 2.1 A/AA), tres estados</td><td class="num">no medido</td><td class="num s-ok"><b>0</b></td></tr>
+        <tr><td>Atributos ARIA y <code>title</code></td><td class="num">0</td><td class="num s-ok">17</td></tr>
+        <tr><td><code>&lt;html lang&gt;</code> frente al idioma real</td><td class="num">en / UI en español</td><td class="num s-ok">es-PE, desde cookie</td></tr>
+        <tr><td>Archivos con soporte de movimiento reducido</td><td class="num">0</td><td class="num s-ok">9</td></tr>
+        <tr><td>Usos de texto por debajo de AA</td><td class="num">17</td><td class="num s-ok">0</td></tr>
+        <tr><td>Primer elemento enfocable</td><td class="num">enlace social</td><td class="num s-ok">saltar al contenido</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Credibilidad y código</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Medición</th><th class="num">Antes</th><th class="num">Después</th></tr></thead>
+      <tbody>
+        <tr><td>Problemas de ESLint</td><td class="num">2 err · 9 avisos</td><td class="num s-ok"><b>0</b></td></tr>
+        <tr><td><code>Math.random()</code> presentado como medición</td><td class="num">3</td><td class="num s-ok">0</td></tr>
+        <tr><td>Código ficticio (<code>isVerified</code>)</td><td class="num">1</td><td class="num s-ok">0</td></tr>
+        <tr><td>Títulos profesionales distintos</td><td class="num">3</td><td class="num s-ok">1</td></tr>
+        <tr><td>Cifras incrustadas a mano en la copia</td><td class="num">6</td><td class="num s-ok">0</td></tr>
+        <tr><td><code>dangerouslySetInnerHTML</code></td><td class="num">3</td><td class="num s-ok">0</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Conversión y distribución</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Medición</th><th class="num">Antes</th><th class="num">Después</th></tr></thead>
+      <tbody>
+        <tr><td>Enlaces a GitHub</td><td class="num">0</td><td class="num s-ok">4</td></tr>
+        <tr><td>Vías de contacto</td><td class="num">0</td><td class="num s-ok">correo, mailto, copiar</td></tr>
+        <tr><td>CV descargable</td><td class="num">no</td><td class="num s-ok">2 PDF (ES/EN)</td></tr>
+        <tr><td>Proyectos presentados</td><td class="num">1</td><td class="num s-ok">2</td></tr>
+        <tr><td>Navegación</td><td class="num">ninguna</td><td class="num s-ok">barra con 4 anclas</td></tr>
+        <tr><td>Idioma y modo tras recargar</td><td class="num">se perdían</td><td class="num s-ok">persisten</td></tr>
+        <tr><td>Imagen Open Graph · sitemap · robots</td><td class="num">no</td><td class="num s-ok">sí</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="callout">
+      <div class="eyebrow">Hallado al implementar, no estaba en el diagnóstico</div>
+      <h3>Dos fallos preexistentes que sólo se ven en el navegador</h3>
+      <p><b>1. El sitio nunca se renderizó con Geist.</b> <code>globals.css</code> declaraba <code>--font-sans: var(--font-sans)</code>, una referencia circular, y las variables de fuente estaban en <code>&lt;body&gt;</code> mientras <code>font-sans</code> se aplicaba a <code>&lt;html&gt;</code>, donde todavía no existen. Todo el sitio venía cayendo en Times New Roman.</p>
+      <p><b>2. <code>live: true</code> sin comprobar el error.</b> <code>supabase-js</code> no lanza ante un fallo de red: devuelve <code>{ count: null, error }</code>. La primera versión del código nuevo habría anunciado «en vivo desde producción» mostrando guiones.</p>
+    </div>
+
+    <div class="col">
+      <h3>Lo que queda pendiente y depende de ti</h3>
+      <p>Todo centralizado en <code>src/lib/site.ts</code>, marcado con <code>REVISAR</code>. Nada de esto rompe el sitio: todo degrada a un estado correcto.</p>
+      <ul>
+        <li><strong>Dominio definitivo</strong> — hasta definirlo, las URL absolutas de Open Graph y el sitemap apuntan a un dominio de ejemplo.</li>
+        <li><strong>Nombres reales de los repositorios</strong> de GRADEO y FARMAPLUS.</li>
+        <li><strong>URL de producción</strong> de ambos. Mientras sean <code>null</code>, el botón «Ver en vivo» no se renderiza en lugar de enlazar a algo roto.</li>
+        <li><strong>Correo público</strong> — está puesto el de tu cuenta; decide si es el que quieres ante reclutadores.</li>
+        <li><strong>Los PDF del CV</strong> se generaron con los datos que ya estaban en el repositorio. Revísalos antes de usarlos.</li>
+      </ul>
+      <h3>Sobre la verificación de datos en vivo</h3>
+      <p>El entorno de implementación bloquea las salidas a <code>*.supabase.co</code> (el proxy responde 403), así que la ruta HTTP a las métricas no se pudo ejercitar. Sí se validó la semántica de las consultas contra la base: 919 profesores, 82 reseñas aprobadas de 85 totales —lo que confirma que la cola de moderación está en uso— y 24 profesores con valoración. El comportamiento sin conexión se comprobó y es el previsto: «más de 900» en la copia y «—» en las tarjetas, sin errores en la consola del visitante.</p>
+    </div>
+  </section>
+
   <footer>
-    Auditoría de ceviche-mixto/portafolio · commit bfa9f3b · 29 de julio de 2026 · 31 hallazgos en 6 dimensiones
+    Auditoría de ceviche-mixto/portafolio · commit bfa9f3b · 29 de julio de 2026 · 31 hallazgos en 6 dimensiones · implementada el 29 de julio de 2026
   </footer>
 
 </div>

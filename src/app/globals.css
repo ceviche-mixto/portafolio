@@ -7,7 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  /* Esto decía `--font-sans: var(--font-sans)`, una referencia circular que no
+     resuelve a nada: el sitio entero venía cayendo en la serif por defecto en
+     lugar de usar Geist. El layout expone la fuente como --font-geist-sans. */
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -118,12 +121,80 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
   html {
     @apply font-sans;
+  }
+
+  /* El anillo por defecto era zinc translúcido sobre fondo casi negro: existía
+     pero no se distinguía. Emerald sobre zinc-950 da 7,8:1 (ver A-08). */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-emerald-400;
+  }
+}
+
+@layer utilities {
+  /* La fila de anclas de la barra se desplaza en horizontal en móvil; la barra de
+     scroll nativa ahí sólo estorba. */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/**
+ * Desvanecido del hero al salir de pantalla.
+ *
+ * Antes esto era `useScroll` + `useTransform` de Framer Motion, lo que obligaba a
+ * cargar la librería (~100 KB comprimidos) para el primer render. Con una
+ * animación ligada al scroll el navegador lo resuelve solo, sin JavaScript.
+ *
+ * `@supports` es la degradación: donde no exista `animation-timeline` el hero
+ * simplemente se queda visible, que es un resultado perfectamente correcto.
+ */
+@keyframes hero-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-80px);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-parallax {
+      animation: hero-exit linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 70%;
+    }
+  }
+}
+
+/**
+ * Movimiento reducido.
+ *
+ * Las animaciones de Framer Motion se desactivan en JS con `useReducedMotion`, y
+ * las clases de Tailwind usan la variante `motion-safe:`. Esto es la red de
+ * seguridad para todo lo demás — incluidas transiciones de terceros y el
+ * `scroll-smooth` del html, que con trastornos vestibulares es justo lo peor
+ * (ver A-03, WCAG 2.3.3).
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

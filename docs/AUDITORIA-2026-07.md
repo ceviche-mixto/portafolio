@@ -1,6 +1,11 @@
 # Auditoría de Portafolio — Julio 2026
 
-**Repositorio:** `ceviche-mixto/portafolio` · **Commit:** `bfa9f3b` · **Fecha:** 29 de julio de 2026
+> **Estado: implementada.** Las seis fases del plan están aplicadas. Los resultados
+> medidos después de la implementación están en la sección 10, al final. Este
+> documento conserva el diagnóstico original sin editarlo, para que el antes y el
+> después se puedan comparar.
+
+**Repositorio:** `ceviche-mixto/portafolio` · **Commit auditado:** `bfa9f3b` · **Fecha:** 29 de julio de 2026
 **Stack:** Next.js 16.1.6 · React 19.2.3 · Tailwind CSS 4 · Framer Motion 12 · Zustand 5 · Supabase JS 2
 **Alcance:** 1 733 líneas en 20 archivos fuente
 **Método:** build de producción, ESLint, cálculo de contraste WCAG 2.1, inspección de esquema Postgres
@@ -566,3 +571,107 @@ Todo lo cuantitativo es reproducible sobre el commit `bfa9f3b`:
 
 Los conteos de datos (919 profesores, 85 reseñas, 86 registros de log, 16 notas) son del 29 de julio de
 2026 y cambiarán. La afirmación de «más de 900 profesores» que ya está en el sitio es correcta.
+
+---
+
+## 10. Resultados medidos tras la implementación
+
+Mismo método que la sección 9, sobre el árbol ya modificado.
+
+### Rendimiento
+
+| Medición | Antes | Después |
+|---|---:|---:|
+| JS de primera visita | 547,0 KB gz | **197,5 KB gz** (−64 %) |
+| three.js en la carga inicial | 333,5 KB gz | **0** (chunk aparte, sólo si se monta la escena) |
+| Framer Motion en la carga inicial | ~100 KB gz | **0** (sólo con la secuencia de scroll o el modo desarrollador) |
+| Base UI en la carga inicial | 34 KB gz | **0** (se pide al abrir el case study) |
+| Supabase en el bundle del navegador | presente | **ausente** (sólo servidor) |
+| Peticiones a terceros en la carga inicial | 2 | **0** |
+| CSS de primera visita | — | 12,6 KB gz |
+
+El JS diferido suma 264 KB gz, y sólo se descarga cuando corresponde: la escena 3D
+únicamente en pantallas anchas sin movimiento reducido ni ahorro de datos, y el
+diálogo del case study al pulsarlo.
+
+### Accesibilidad
+
+| Medición | Antes | Después |
+|---|---:|---:|
+| Violaciones axe-core (WCAG 2.1 A/AA) | no medido | **0** |
+| — en modo reclutador | | 0 |
+| — en modo desarrollador | | 0 |
+| — con el case study abierto | | 0 |
+| Atributos ARIA y `title` en `src/` | 0 | **17** |
+| `<html lang>` frente al idioma real | `en` con UI en español | **`es-PE`, desde cookie** |
+| Archivos con soporte de movimiento reducido | 0 | **9** |
+| Usos de texto por debajo de AA | 17 | **0** |
+| Primer elemento enfocable | primer enlace social | **«Saltar al contenido»** |
+
+### Credibilidad y código
+
+| Medición | Antes | Después |
+|---|---:|---:|
+| Problemas de ESLint | 2 errores, 9 avisos | **0** |
+| Errores de TypeScript | 0 | 0 |
+| `Math.random()` presentado como medición | 3 | **0** (FPS y heap reales) |
+| Código ficticio (`isVerified`) | 1 | **0** (se muestra el trigger real) |
+| Títulos profesionales distintos | 3 | **1** |
+| Cifras incrustadas a mano en la copia | 6 | **0** (marcadores rellenados con el recuento real) |
+| `dangerouslySetInnerHTML` | 3 | **0** |
+| Componentes sin usar | 3 | **0** |
+
+### Conversión y distribución
+
+| Medición | Antes | Después |
+|---|---:|---:|
+| Enlaces a GitHub | 0 | 4 |
+| Vías de contacto | 0 | correo visible, `mailto:` y copiar |
+| CV descargable | no | 2 PDF (ES / EN) |
+| Enlaces a los proyectos | 0 | GRADEO y FARMAPLUS |
+| Proyectos presentados | 1 | 2 |
+| Navegación | ninguna | barra fija con 4 anclas |
+| Idioma y modo tras recargar | se perdían | persisten |
+| Imagen Open Graph | ninguna | generada por idioma con `next/og` |
+| `sitemap.xml` / `robots.txt` | no | sí |
+
+### Dos fallos preexistentes encontrados al implementar
+
+Ninguno estaba en el diagnóstico original; aparecieron al revisar el resultado en
+el navegador.
+
+1. **El sitio nunca se renderizó con Geist.** `globals.css` declaraba
+   `--font-sans: var(--font-sans)`, una referencia circular, y las variables de
+   fuente estaban en `<body>` mientras `font-sans` se aplicaba a `<html>`, donde
+   todavía no existen. El resultado era Times New Roman en todo el sitio. Se
+   corrigieron las dos cosas.
+2. **`live: true` sin comprobar el error.** `supabase-js` no lanza ante un fallo de
+   red: devuelve `{ count: null, error }`. La primera versión del código nuevo
+   habría anunciado «en vivo desde producción» mostrando guiones. Ahora se
+   comprueba `error` y el estado se deriva de que haya datos.
+
+### Lo que queda pendiente y depende de ti
+
+Todo está centralizado en `src/lib/site.ts`, marcado con `REVISAR`:
+
+- **Dominio definitivo** (`SITE_URL`). Hasta que se defina, las URL absolutas de
+  Open Graph y el sitemap apuntan a un dominio de ejemplo.
+- **Nombres reales de los repositorios** de GRADEO y FARMAPLUS.
+- **URL de producción** de ambos. Mientras sean `null`, el botón «Ver en vivo» no
+  se renderiza en lugar de enlazar a algo roto.
+- **Correo público.** Está puesto el de tu cuenta; decide si es el que quieres en
+  un portafolio dirigido a reclutadores.
+- **Los PDF del CV** se generaron a partir de los datos que ya estaban en el
+  repositorio. Revísalos antes de usarlos en una candidatura.
+
+Nada de eso rompe el sitio: todo degrada a un estado correcto.
+
+### Nota sobre la verificación de datos en vivo
+
+El entorno donde se implementó esto bloquea las salidas a `*.supabase.co` (el proxy
+responde 403), así que la ruta HTTP a las métricas en vivo no se pudo ejercitar
+aquí. Sí se validó la semántica de las consultas contra la base directamente:
+919 profesores, 82 reseñas aprobadas de 85 totales —lo que confirma que la cola de
+moderación está en uso— y 24 profesores con valoración. El comportamiento sin
+conexión se comprobó y es el previsto: «más de 900» en la copia y «—» en las
+tarjetas, sin errores en la consola del visitante.

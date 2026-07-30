@@ -62,7 +62,7 @@ export function ProjectsSection() {
           {projects.map(({ key, copy, links, Icon, accent, ring, stack }, i) => (
             <Reveal key={key} delay={i * 100}>
               <article
-                className={`flex h-full flex-col rounded-[2rem] border border-zinc-700/50 bg-zinc-900 p-8 shadow-2xl transition-colors ${ring}`}
+                className={`card-sheen flex h-full flex-col rounded-[2rem] border border-zinc-700/50 bg-zinc-900 p-8 shadow-2xl transition-colors duration-300 ${ring}`}
               >
                 <header className="mb-6 flex items-start gap-4">
                   <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-3">

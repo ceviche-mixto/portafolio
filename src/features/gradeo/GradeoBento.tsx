@@ -8,7 +8,8 @@ import { useGradeoCopy } from "@/hooks/useGradeoCopy"
 import type { GradeoStats } from "@/lib/gradeo-stats"
 
 const CARD =
-  "h-full rounded-3xl border border-zinc-800 bg-zinc-900 p-6 relative overflow-hidden"
+  "card-sheen relative h-full overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900 p-6 " +
+  "transition-colors duration-300 hover:border-zinc-700"
 
 /** Formatea con separador de miles del idioma activo, o un guion si no hay dato. */
 function useNumber() {
@@ -49,7 +50,7 @@ function LiveStatsWidget({ stats }: { stats: GradeoStats }) {
           tarjeta alta dejaba un hueco muerto entre el título y los números. */}
       <div className="relative z-10 flex flex-1 flex-col justify-center gap-5">
         <div>
-          <span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-4xl font-black text-transparent">
+          <span className="metric-in block bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-4xl font-black text-transparent">
             {fmt(stats.reviews)}
           </span>
           <p className="flex items-center gap-1.5 text-sm font-medium text-zinc-300">
@@ -58,7 +59,7 @@ function LiveStatsWidget({ stats }: { stats: GradeoStats }) {
           </p>
         </div>
         <div>
-          <span className="text-2xl font-black text-white">{fmt(stats.professors)}</span>
+          <span className="metric-in block text-2xl font-black text-white">{fmt(stats.professors)}</span>
           <p className="flex items-center gap-1.5 text-sm font-medium text-zinc-300">
             <Users className="h-4 w-4 text-blue-400" aria-hidden="true" />
             {t.bento.listedProfessors}
@@ -78,20 +79,53 @@ function LiveStatsWidget({ stats }: { stats: GradeoStats }) {
   )
 }
 
+/** Radar sobre el mapa: los anillos concéntricos que marcan el campus. */
+function CampusRadar() {
+  return (
+    <div
+      className="pointer-events-none absolute inset-0 flex items-center justify-center"
+      aria-hidden="true"
+    >
+      <span
+        className="absolute h-16 w-16 rounded-full border-2 border-red-500/60 motion-safe:animate-ping"
+        style={{ animationDuration: "2s" }}
+      />
+      <span className="absolute h-32 w-32 rounded-full border border-red-500/30" />
+      <span className="absolute h-48 w-48 rounded-full border border-red-500/10" />
+      <MapPin className="relative h-6 w-6 text-red-500 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)]" />
+    </div>
+  )
+}
+
 /**
  * Ubicación del campus.
  *
- * El iframe ya no se carga de entrada: se pinta un mapa estático en CSS y el
- * mapa real sólo se pide cuando alguien lo pulsa, quitando un tercero del
- * arranque (ver P-05). El iframe además lleva `title`, que faltaba (A-05).
+ * El iframe se pide bajo demanda para no meter un tercero en el arranque
+ * (ver P-05), y lleva `title` para lectores de pantalla (A-05).
+ *
+ * Tres cosas corregidas respecto a la primera versión:
+ *
+ * 1. `min-h` en móvil. El único contenido en flujo es la cabecera, y el mapa va
+ *    en `absolute`, así que sin altura mínima la tarjeta se colapsaba a la altura
+ *    del título: la barra de atribución de OpenStreetMap acababa montada sobre
+ *    «Chiclayo, Perú». En escritorio la fila del grid ya daba altura, así que el
+ *    fallo sólo se veía en móvil.
+ * 2. El radar vuelve a dibujarse sobre el mapa real. Al reestructurar la carga
+ *    bajo demanda quedó sólo en el estado previo, lo que se llevó por delante el
+ *    radar sobre el mapa que tenía la versión original.
+ * 3. El botón de cargar ya no es `inset-0`. Ocupaba toda el área del mapa, así
+ *    que en la tarjeta colapsada casi cualquier toque cargaba el iframe sin
+ *    querer.
  */
 function LocationWidget() {
   const { t } = useTranslation()
   const [showMap, setShowMap] = React.useState(false)
 
   return (
-    <div className={`${CARD} group flex flex-col`}>
-      <div className="relative z-20">
+    <div className={`${CARD} group flex min-h-[15rem] flex-col md:min-h-0`}>
+      {/* La cabecera se apoya en un degradado opaco para que el mapa nunca
+          compita con el texto, pase lo que pase con la altura. */}
+      <div className="relative z-20 -m-6 mb-0 bg-gradient-to-b from-zinc-900 via-zinc-900/95 to-transparent p-6 pb-8">
         <h3 className="mb-1 flex items-center gap-1.5 text-lg font-bold text-white">
           <MapPin className="h-5 w-5 text-red-500" aria-hidden="true" />
           {t.bento.campus}
@@ -99,42 +133,38 @@ function LocationWidget() {
         <p className="text-sm text-zinc-300">{t.bento.city}</p>
       </div>
 
-      <div className="absolute inset-0 top-16 overflow-hidden rounded-b-3xl select-none">
+      <div className="absolute inset-0 top-14 overflow-hidden rounded-b-3xl select-none">
         {showMap ? (
-          <iframe
-            title={t.bento.mapTitle}
-            width="100%"
-            height="100%"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            style={{
-              border: 0,
-              filter: "invert(90%) hue-rotate(180deg) grayscale(80%) contrast(120%)",
-            }}
-            src="https://www.openstreetmap.org/export/embed.html?bbox=-79.8643%2C-6.7616%2C-79.8623%2C-6.7596&layer=mapnik&marker=-6.7606043%2C-79.8632655"
-          />
+          <>
+            <iframe
+              title={t.bento.mapTitle}
+              width="100%"
+              height="100%"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="h-full w-full"
+              style={{
+                border: 0,
+                filter: "invert(90%) hue-rotate(180deg) grayscale(80%) contrast(120%)",
+              }}
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-79.8643%2C-6.7616%2C-79.8623%2C-6.7596&layer=mapnik&marker=-6.7606043%2C-79.8632655"
+            />
+            <CampusRadar />
+          </>
         ) : (
           <>
             {/* Retícula tipo mapa, en CSS: cero peticiones. */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:24px_24px]" />
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <div
-                className="absolute h-16 w-16 rounded-full border-2 border-red-500/60 motion-safe:animate-ping"
-                style={{ animationDuration: "2s" }}
-              />
-              <div className="absolute h-32 w-32 rounded-full border border-red-500/30" />
-              <div className="absolute h-48 w-48 rounded-full border border-red-500/10" />
-              <MapPin className="relative h-6 w-6 text-red-500" aria-hidden="true" />
-            </div>
-            <button
-              type="button"
-              onClick={() => setShowMap(true)}
-              className="absolute inset-0 flex items-end justify-center pb-4 text-[11px] font-medium text-zinc-300 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-400"
-            >
-              <span className="rounded-full border border-zinc-700 bg-black/70 px-3 py-1.5 backdrop-blur-md">
+            <CampusRadar />
+            <div className="absolute inset-x-0 bottom-0 flex justify-center pb-4">
+              <button
+                type="button"
+                onClick={() => setShowMap(true)}
+                className="rounded-full border border-zinc-700 bg-black/70 px-3 py-1.5 text-[11px] font-medium text-zinc-200 backdrop-blur-md transition-colors hover:border-zinc-500 hover:text-white"
+              >
                 {t.bento.loadMap}
-              </span>
-            </button>
+              </button>
+            </div>
           </>
         )}
       </div>
@@ -260,16 +290,16 @@ _total := (_p + _m + _c + _f) / 4.0;`}</code>
 export function GradeoBento({ stats }: { stats: GradeoStats }) {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:auto-rows-[210px]">
-      <div className="md:row-span-2">
+      <div className="rise-in md:row-span-2">
         <LiveStatsWidget stats={stats} />
       </div>
-      <div>
+      <div className="rise-in">
         <LocationWidget />
       </div>
-      <div className="md:row-span-2">
+      <div className="rise-in md:row-span-2">
         <TopRatedWidget stats={stats} />
       </div>
-      <div>
+      <div className="rise-in">
         <InsightWidget stats={stats} />
       </div>
     </div>

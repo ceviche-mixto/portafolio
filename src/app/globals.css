@@ -149,6 +149,166 @@
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Animaciones
+   ═══════════════════════════════════════════════════════════════════════════
+   Todo lo de aquí es CSS: cero JavaScript en el arranque, y el compositor las
+   resuelve en su propio hilo porque sólo tocan `opacity` y `transform`.
+
+   Las que dependen de `animation-timeline` van envueltas en `@supports`. Donde
+   no exista, el elemento se queda en su estado final —visible y en su sitio—
+   que es un resultado correcto, no un fallo.
+
+   El bloque `prefers-reduced-motion` del final de este archivo desactiva todas.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Barra de progreso de lectura, en la cabecera ────────────────────────────
+   Ligada al scroll del documento, así que no hay listener de scroll ni estado
+   de React: el navegador la interpola solo. */
+@keyframes scroll-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.scroll-progress {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-progress {
+      animation: scroll-progress linear;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
+/* ── Entrada del titular, palabra por palabra ────────────────────────────────
+   El retardo sale de una variable `--i` que pone el propio marcado, así que no
+   hace falta JS para escalonarlo. */
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .word-in > span {
+    display: inline-block;
+    animation: word-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 55ms);
+  }
+}
+
+/* ── Aparición de tarjetas ligada a su propia visibilidad ────────────────────
+   Equivalente a un IntersectionObserver, pero sin JS y con interpolación
+   continua en lugar de un salto al cruzar el umbral. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rise-in {
+      animation: rise-in linear both;
+      animation-timeline: view();
+      /* Termina antes de llegar al centro: la tarjeta está ya asentada cuando
+         entra en la zona de lectura, no animándose todavía. */
+      animation-range: entry 5% cover 28%;
+    }
+  }
+}
+
+/* ── Cifras del bento ────────────────────────────────────────────────────────
+   Las métricas se renderizan en el servidor, así que el número real ya está en
+   el HTML: esto sólo lo presenta, nunca retrasa el dato. */
+@keyframes metric-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .metric-in {
+      animation: metric-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 60%;
+    }
+  }
+}
+
+/* ── Brillo que recorre el borde de una tarjeta al pasar por encima ──────────
+   `background-position` sobre un degradado en el borde: una sola propiedad
+   animada y ningún reflow. */
+@property --sheen {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+.card-sheen {
+  position: relative;
+}
+
+.card-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  background-position: var(--sheen) 0;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card-sheen:hover::after {
+    opacity: 1;
+    transition:
+      opacity 0.3s ease,
+      --sheen 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    --sheen: 100%;
+  }
+}
+
 /**
  * Desvanecido del hero al salir de pantalla.
  *

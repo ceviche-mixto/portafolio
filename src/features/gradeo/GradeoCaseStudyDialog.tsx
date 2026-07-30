@@ -50,7 +50,9 @@ export default function GradeoCaseStudyDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] w-[95vw] overflow-y-auto rounded-[2rem] border-zinc-800 bg-zinc-950 p-6 text-zinc-100 md:max-w-2xl md:p-8">
-        <DialogHeader className="pr-12">
+        {/* pr-16: el botón de cerrar ocupa 56 px desde el borde (12 de margen + 44
+            de ancho); con pr-12 un título largo podía meterse por debajo. */}
+        <DialogHeader className="pr-16">
           <DialogTitle className="mb-2 text-xl font-black md:text-2xl">
             {t.caseStudy.title}
           </DialogTitle>

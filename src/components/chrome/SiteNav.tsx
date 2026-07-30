@@ -84,6 +84,14 @@ export function SiteNav() {
           <ModeSwitcher />
         </div>
       </div>
+
+      {/* Progreso de lectura. Ligado al scroll del documento desde CSS, así que
+          no hay listener ni estado de React: el navegador lo interpola en el
+          compositor. Donde no exista `animation-timeline`, no se muestra. */}
+      <div
+        className="scroll-progress h-0.5 w-full origin-left bg-gradient-to-r from-emerald-500 to-cyan-400"
+        aria-hidden="true"
+      />
     </header>
   )
 }

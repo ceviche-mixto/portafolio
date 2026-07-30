@@ -7,6 +7,59 @@ import { SocialLinks } from "@/components/chrome/SocialLinks"
 import { Reveal } from "@/components/motion/Reveal"
 import { useTranslation } from "@/hooks/useTranslation"
 
+function countWords(text: string): number {
+  return text.trim().split(/\s+/).length
+}
+
+/**
+ * Parte un texto en palabras envueltas en `<span>`, cada una con su índice en
+ * `--i` para que CSS calcule el retardo.
+ *
+ * El degradado va en cada palabra, no en el `h1`. Tiene que ser así: la
+ * animación pone cada palabra en su propia capa de composición, y entonces el
+ * fondo del padre recortado con `background-clip: text` ya no las alcanza —
+ * quedaban con `color: transparent` y ningún fondo detrás, es decir invisibles.
+ *
+ * Los espacios se emiten fuera de los `span` para que el texto siga
+ * seleccionable y se copie como una frase normal.
+ */
+function StaggeredWords({
+  text,
+  startIndex = 0,
+  className,
+}: {
+  text: string
+  startIndex?: number
+  className: string
+}) {
+  const words = text.trim().split(/\s+/)
+  return (
+    <>
+      {words.map((word, i) => (
+        <React.Fragment key={`${word}-${i}`}>
+          <span
+            className={className}
+            style={{ "--i": startIndex + i } as React.CSSProperties}
+          >
+            {word}
+          </span>
+          {i < words.length - 1 ? " " : null}
+        </React.Fragment>
+      ))}
+    </>
+  )
+}
+
+/**
+ * Dos tramos del degradado, uno por línea, para conservar la caída de brillo
+ * que daba el degradado diagonal único del `h1`: la primera línea entra en
+ * blanco y la segunda se apaga hacia zinc.
+ */
+const LINE_1_GRADIENT =
+  "bg-gradient-to-b from-white to-zinc-200 bg-clip-text text-transparent"
+const LINE_2_GRADIENT =
+  "bg-gradient-to-b from-zinc-200 to-zinc-500 bg-clip-text text-transparent"
+
 export function HeroSection() {
   const { t } = useTranslation()
 
@@ -19,11 +72,19 @@ export function HeroSection() {
       <div className="hero-parallax flex flex-col items-center">
         <Reveal>
           {/* El título se compone con JSX en lugar de inyectar HTML desde el
-              diccionario de traducciones (ver D-02). */}
-          <h1 className="mb-6 bg-gradient-to-br from-white to-zinc-500 bg-clip-text text-4xl font-black tracking-tighter text-transparent sm:text-5xl md:text-7xl">
-            {t.hero.nameLine}
+              diccionario de traducciones (ver D-02).
+
+              Las palabras entran escalonadas: cada `<span>` lleva su índice en
+              `--i` y el retardo se calcula en CSS, así que el efecto no cuesta
+              ni un byte de JavaScript. */}
+          <h1 className="word-in mb-6 text-4xl leading-[1.08] font-black tracking-tighter sm:text-5xl md:text-7xl">
+            <StaggeredWords text={t.hero.nameLine} className={LINE_1_GRADIENT} />
             <br />
-            {t.hero.titleLine}
+            <StaggeredWords
+              text={t.hero.titleLine}
+              startIndex={countWords(t.hero.nameLine)}
+              className={LINE_2_GRADIENT}
+            />
           </h1>
 
           <p className="mx-auto mb-6 max-w-2xl text-balance text-base font-light text-zinc-300 md:text-xl">

@@ -1,11 +1,8 @@
 # Giancarlo Larios — Portafolio
 
-Portafolio bilingüe (español / inglés) de **Giancarlo Larios**, estudiante de
-Ingeniería de Sistemas y Computación en la USAT, Chiclayo.
+Portafolio bilingüe (español / inglés) de **Giancarlo Larios**, desarrollador de software.
 
-Presenta dos sistemas en producción: **GRADEO**, una plataforma de reseñas
-anónimas de profesores con cola de moderación, y **FARMAPLUS**, un ERP de
-farmacia con facturación electrónica SUNAT.
+**GRADEO** es una plataforma de reseñas anónimas de profesores con cola de moderación y está en producción. **FARMAPLUS** es un ERP de farmacia con facturación electrónica SUNAT en fase beta; todavía no está desplegado.
 
 ---
 

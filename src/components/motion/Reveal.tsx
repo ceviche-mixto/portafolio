@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion"
 
 type Direction = "up" | "left" | "right"
 
@@ -37,16 +38,20 @@ export function Reveal({
   once?: boolean
 }) {
   const ref = React.useRef<HTMLDivElement>(null)
-  const [shown, setShown] = React.useState(false)
+  const reduced = usePrefersReducedMotion()
+  // El HTML inicial es legible incluso sin JavaScript o con hidratación lenta.
+  const [shown, setShown] = React.useState(true)
 
   React.useEffect(() => {
     const el = ref.current
     if (!el) return
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setShown(true)
+    if (reduced) {
       return
     }
+
+    // Sólo ocultar contenido que todavía está fuera de pantalla.
+    if (el.getBoundingClientRect().top >= window.innerHeight) setShown(false)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -62,15 +67,16 @@ export function Reveal({
 
     observer.observe(el)
     return () => observer.disconnect()
-  }, [once])
+  }, [once, reduced])
 
   return (
     <div
       ref={ref}
+      data-reveal=""
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
       className={cn(
-        "motion-safe:transition-all motion-safe:duration-700 motion-safe:ease-out",
-        shown
+        "focus-within:opacity-100 focus-within:translate-x-0 focus-within:translate-y-0 motion-safe:transition-[opacity,transform] motion-safe:duration-700 motion-safe:ease-out motion-reduce:opacity-100 motion-reduce:transform-none motion-reduce:transition-none",
+        shown || reduced
           ? "opacity-100 translate-x-0 translate-y-0"
           : cn("opacity-0", HIDDEN[from]),
         className

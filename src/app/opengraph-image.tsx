@@ -21,9 +21,8 @@ export default async function OpenGraphImage() {
   const title = lang === "es" ? IDENTITY.titleEs : IDENTITY.titleEn
   const pitch =
     lang === "es"
-      ? "Reseñas anónimas moderadas · ERP de farmacia con facturación SUNAT"
-      : "Moderated anonymous reviews · Pharmacy ERP with SUNAT invoicing"
-  const place = lang === "es" ? IDENTITY.location.es : IDENTITY.location.en
+      ? "GRADEO en producción · FARMAPLUS en beta"
+      : "GRADEO in production · FARMAPLUS in beta"
 
   return new ImageResponse(
     (
@@ -62,7 +61,7 @@ export default async function OpenGraphImage() {
               fontWeight: 700,
             }}
           >
-            {place}
+            {lang === "es" ? "Portafolio de software" : "Software portfolio"}
           </div>
           <div
             style={{

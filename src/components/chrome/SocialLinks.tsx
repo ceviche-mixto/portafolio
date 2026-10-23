@@ -16,9 +16,9 @@ import { cn } from "@/lib/utils"
  * lector de pantalla los anuncia como «enlace» y nada más (ver A-02).
  */
 const LINKS = [
-  { key: "github", href: SOCIALS.github, label: "GitHub", Icon: Github, hover: "hover:text-white hover:border-zinc-400" },
-  { key: "linkedin", href: SOCIALS.linkedin, label: "LinkedIn", Icon: Linkedin, hover: "hover:text-blue-400 hover:border-blue-500/50" },
-  { key: "instagram", href: SOCIALS.instagram, label: "Instagram", Icon: Instagram, hover: "hover:text-pink-400 hover:border-pink-500/50" },
+  { key: "github", href: SOCIALS.github, label: "GitHub", Icon: Github, hover: "hover:text-foreground hover:border-strong" },
+  { key: "linkedin", href: SOCIALS.linkedin, label: "LinkedIn", Icon: Linkedin, hover: "hover:text-info hover:border-info/50" },
+  { key: "instagram", href: SOCIALS.instagram, label: "Instagram", Icon: Instagram, hover: "hover:text-personal hover:border-personal/50" },
 ] as const
 
 export function SocialLinks({
@@ -44,7 +44,7 @@ export function SocialLinks({
             rel="noopener noreferrer"
             aria-label={`${label} (${newTabHint})`}
             className={cn(
-              "flex rounded-full border border-zinc-800 bg-zinc-900/60 text-zinc-400 shadow-xl backdrop-blur-md transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950",
+              "flex rounded-full border border-soft bg-card/60 text-muted-foreground shadow-xl backdrop-blur-md transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               pad,
               hover
             )}

@@ -17,7 +17,14 @@ import { IDENTITY } from './site'
  */
 const es = {
 
+  motion: {
+    pause: 'Reducir animaciones',
+    resume: 'Activar animaciones',
+    system: 'Movimiento reducido por tu sistema',
+  },
+
   nav: {
+    close: 'Cerrar',
     skipToContent: 'Saltar al contenido',
     menu: 'Secciones',
     newTab: 'abre en una pestaña nueva',
@@ -26,8 +33,8 @@ const es = {
     nameLine: `${IDENTITY.name}.`,
     titleLine: `${IDENTITY.titleEs}.`,
     subtitle:
-      'Construyo sistemas donde lo difícil es el modelo de datos: reseñas anónimas, un ERP de farmacia con facturación electrónica, y la moderación que mantiene fiables a los dos.',
-    availability: 'Disponible para prácticas y puestos junior — Chiclayo o remoto',
+      'Desarrollo aplicaciones web con interfaces claras, datos bien organizados y funcionalidades útiles. GRADEO está en producción; FARMAPLUS continúa en beta.',
+    availability: 'Disponible para oportunidades de desarrollo y trabajo remoto',
     viewWork: 'Ver el trabajo',
     contactMe: 'Hablemos',
   },
@@ -39,12 +46,14 @@ const es = {
   },
   lang: { switchTo: 'Switch to English', current: 'Idioma: español' },
   gradeo: {
+    loadingCaseStudy: 'Abriendo caso técnico…',
+    failedCaseStudy: 'No se pudo abrir. Vuelve a pulsar para reintentar.',
     professorsFallback: 'más de 900',
     eyebrow: 'PROYECTO DESTACADO',
     title: 'GRADEO',
     subtitle: 'Reseñas anónimas de profesores que siguen siendo fiables.',
     oneLiner:
-      'Una plataforma estudiantil con {professors} profesores: reseñas anónimas con cola de moderación, y las herramientas de estudio que los alumnos abren a diario.',
+      'Una plataforma estudiantil con {professors} profesores: reseñas anónimas con cola de moderación y herramientas para organizar el estudio.',
     caseStudyBtn: 'Leer el case study técnico',
     viewLive: 'Ver en vivo',
     viewCode: 'Código',
@@ -53,10 +62,16 @@ const es = {
     stepsLabel: 'Arquitectura de una reseña, en cuatro pasos',
   },
   bento: {
-    liveMetrics: 'Métricas en vivo',
+    liveMetrics: 'Datos de GRADEO',
+    loadingLabel: 'Consultando datos de producción…',
+    screenshotTitle: 'El producto, por dentro',
+    screenshotAlt: 'Captura real de GRADEO: búsqueda de profesores y filtros avanzados.',
+    screenshotNote: 'Captura real · octubre de 2026',
     totalReviews: 'Reseñas aprobadas',
     listedProfessors: 'Profesores indexados',
-    liveLabel: 'En vivo desde producción',
+    liveLabel: 'Datos de producción · actualización cada 5 min',
+    unavailableLabel: 'Métricas no disponibles en este momento',
+    emptyRanking: 'Todavía no hay profesores con reseñas aprobadas.',
     campus: 'Campus USAT',
     city: 'Chiclayo, Perú',
     mapTitle: 'Mapa del campus USAT en Chiclayo, Perú',
@@ -80,7 +95,7 @@ const es = {
       'Sin cuenta. La reseña lleva cuatro valoraciones de 1 a 5 y un texto de al menos diez caracteres, exigido por restricciones de columna en lugar de confiar en el cliente.',
     step2Title: '2. Rate limiting sin identidad',
     step2Desc:
-      'Guardamos el hash de la IP, nunca la IP. Alcanza para frenar una avalancha e imposibilita volver a una persona.',
+      'El límite de envíos utiliza un hash de la IP para detectar intentos repetidos y reducir spam, sin guardar la dirección en texto claro.',
     step3Title: '3. Cola de moderación',
     step3Desc:
       'Las reseñas entran como pendientes. Un panel con roles y un PIN que se bloquea tras varios intentos decide si se aprueban.',
@@ -110,20 +125,22 @@ const es = {
   projects: {
     sectionTitle: 'Proyectos',
     sectionSubtitle:
-      'Dos sistemas en producción. Uno es un producto de consumo que diseñé de principio a fin; el otro, un negocio con reglas que no puedo negociar.',
+      'GRADEO es una aplicación publicada. FARMAPLUS es una beta aún no desplegada. Estos proyectos muestran mi trabajo con interfaces, datos y reglas de negocio.',
     problemLabel: 'Problema',
     roleLabel: 'Rol',
     stackLabel: 'Stack',
     highlightsLabel: 'Lo interesante',
-    codeOnRequest: 'Código disponible a petición',
+    codeOnRequest: 'Solicitar código',
     farmaplus: {
       name: 'FARMAPLUS',
-      tagline: 'ERP de farmacia con facturación electrónica peruana.',
+      status: 'Beta',
+      statusDetail: 'Aún no desplegado; funcionalidades en desarrollo y validación.',
+      tagline: 'ERP de farmacia con inventario, ventas y facturación.',
       problem:
         'Una farmacia no puede vender desde un punto de venta genérico: tiene que emitir documentos válidos para SUNAT, saber de qué lote salió cada caja y cuándo vence, y cuadrar la caja al cierre.',
       role: 'Desarrollador único — modelo de datos, reglas de negocio e interfaz.',
       highlights: [
-        'Facturación electrónica SUNAT con series de documento propias',
+        'Módulo de facturación electrónica SUNAT en beta, con series de documento propias',
         'Trazabilidad por lote y vencimiento, con ajustes de stock auditados',
         'Arqueo de caja: movimientos contra los pagos registrados',
         'Datos farmacológicos: sustancias activas ligadas de muchos a muchos a productos',
@@ -133,13 +150,15 @@ const es = {
     },
     gradeo: {
       name: 'GRADEO',
+      status: 'En producción',
+      statusDetail: 'Aplicación pública con reseñas moderadas y herramientas de estudio.',
       tagline: 'Reseñas anónimas de profesores, moderadas.',
       problem:
         'Los alumnos elegían cursos de oídas, y toda alternativa anónima o exigía cuenta o se llenaba de spam.',
       role: 'Desarrollador único — producto, esquema, moderación y crecimiento.',
       highlights: [
         'Cola de moderación con aprobación por rol y PIN como segundo factor',
-        'Rate limiting por hash de IP, para que frenar nunca identifique a nadie',
+        'Límite de envíos por hash de IP para reducir spam sin guardar la dirección en texto claro',
         'Búsqueda por trigramas escrita para estar lista para el índice antes de necesitarlo',
         'Puntaje en cuatro ejes agregado por un trigger de Postgres',
         'Suite de estudio: notas, horarios, notas del semestre y pomodoro con enlaces que expiran',
@@ -152,9 +171,11 @@ const es = {
     sectionSubtitle:
       'La base detrás de esos dos sistemas, y las herramientas con las que trabajo.',
     downloadCv: 'Descargar CV (PDF)',
+    viewCv: 'Ver CV',
+    documentNote: 'PDF en español · 1 página. La vista se abre en otra pestaña.',
     profile: {
       title: 'Perfil profesional',
-      content: `${IDENTITY.titleEs} en la USAT, con sólida formación técnica e interés en aportar en soporte técnico, gestión de datos y desarrollo de software. Reconocido por aprendizaje rápido, resolución de problemas y eficiencia operativa.`,
+      content: 'Desarrollador de software y estudiante de Ingeniería de Sistemas de Información. Trabajo en aplicaciones web, autenticación, operaciones de datos e interfaces responsivas. Uso asistentes de IA para desarrollar, depurar y documentar, manteniendo la responsabilidad sobre el resultado.',
     },
     experience: {
       title: 'Experiencia',
@@ -169,10 +190,15 @@ const es = {
         ],
       },
     },
-    skills: { title: 'Competencias', stack: 'Stack técnico', env: 'Entorno' },
+    skills: { title: 'Competencias', stack: 'Desarrollo', env: 'Herramientas y datos', basicDocker: 'Docker (básico)', excel: 'Microsoft Excel' },
   },
   devConsole: {
+    visitMetrics: 'Carga de esta visita',
+    pending: 'pendiente',
+    vitalsNote: 'Medición local del navegador. Algunas cifras se cierran al salir de la pestaña. No se envían datos.',
+    illustration: 'Consola de presentación. No ejecuta comandos.',
     monitor: 'SIS.MONITOR.PERF',
+    monitorPaused: 'Monitor detenido por movimiento reducido. Valores de la última muestra.',
     measured: 'medido',
     memory: 'HEAP JS',
     unavailable: 'n/d',
@@ -186,13 +212,26 @@ const es = {
     openTerminal: 'Abrir terminal',
     closeTerminal: 'Cerrar terminal',
   },
+  automation: {
+    label: 'Demo interactiva · simulación local', title: 'Una consulta. Tres pasos menos.',
+    description: 'Prueba cómo una consulta puede convertirse en un registro y un aviso para el responsable. Es un ejemplo de flujo, no una integración desplegada ni un cliente real.',
+    inputLabel: 'Consulta de ejemplo (opcional)', example: 'Hola, ¿qué horarios tienen disponibles esta semana?',
+    privacy: 'Todo ocurre en esta página. No se guarda ni se envía información. Usa datos de ejemplo, no datos personales.',
+    requiresJs: 'La prueba interactiva requiere JavaScript. Puedes leer los tres pasos sin activarlo.',
+    receive: 'Recibir la consulta', receiveDesc: 'Tomar el mensaje del formulario de ejemplo.',
+    register: 'Organizar el registro', registerDesc: 'Crear una entrada local con el mensaje, sin copiarlo a mano.',
+    notify: 'Preparar el aviso', notifyDesc: 'Mostrar una notificación simulada. No se envía por WhatsApp ni correo.',
+    run: 'Probar el flujo', running: 'Procesando ejemplo…', reset: 'Reiniciar',
+    waiting: 'Listo para probar.', done: 'Ejemplo completado. Registro y aviso simulados.',
+  },
   contact: {
     sectionTitle: 'Hablemos',
     sectionSubtitle:
-      'Busco prácticas o un puesto junior, en Chiclayo o remoto. La vía más rápida es el correo.',
+      'Disponible para oportunidades de desarrollo de software y proyectos de automatización. Escríbeme para conversar sobre tu equipo o proyecto.',
     emailLabel: 'Correo',
     copy: 'Copiar',
     copied: 'Copiado',
+    copyFailed: 'No se pudo copiar. Selecciona el correo o abre el enlace para escribir.',
     orFind: 'O encuéntrame en',
     rights: 'Todos los derechos reservados.',
     builtWith: 'Hecho con Next.js, Tailwind y Postgres.',
@@ -203,7 +242,14 @@ export type TranslationDict = typeof es
 
 const en: TranslationDict = {
 
+  motion: {
+    pause: 'Reduce animations',
+    resume: 'Enable animations',
+    system: 'Reduced motion requested by your system',
+  },
+
   nav: {
+    close: 'Close',
     skipToContent: 'Skip to content',
     menu: 'Sections',
     newTab: 'opens in a new tab',
@@ -212,8 +258,8 @@ const en: TranslationDict = {
     nameLine: `${IDENTITY.name}.`,
     titleLine: `${IDENTITY.titleEn}.`,
     subtitle:
-      'I build systems where the hard part is the data model: anonymous review platforms, pharmacy ERP with tax compliance, and the moderation that keeps both trustworthy.',
-    availability: 'Open to internships and junior roles — Chiclayo or remote',
+      'I develop web applications with clear interfaces, organized data and useful features. GRADEO is in production; FARMAPLUS is in beta.',
+    availability: 'Open to software development opportunities and remote work',
     viewWork: 'See the work',
     contactMe: 'Get in touch',
   },
@@ -225,12 +271,14 @@ const en: TranslationDict = {
   },
   lang: { switchTo: 'Cambiar a español', current: 'Language: English' },
   gradeo: {
+    loadingCaseStudy: 'Opening technical case study…',
+    failedCaseStudy: 'Could not open it. Press again to retry.',
     professorsFallback: '900+',
     eyebrow: 'FEATURED PROJECT',
     title: 'GRADEO',
     subtitle: 'Anonymous professor reviews that stay trustworthy.',
     oneLiner:
-      'A student platform for {professors} professors: anonymous reviews with a moderation queue, plus the study tools students actually open every day.',
+      'A student platform for {professors} professors: anonymous reviews with a moderation queue and tools to organize studying.',
     caseStudyBtn: 'Read the technical case study',
     viewLive: 'View live',
     viewCode: 'Code',
@@ -239,10 +287,16 @@ const en: TranslationDict = {
     stepsLabel: 'Architecture of a review, in four steps',
   },
   bento: {
-    liveMetrics: 'Live metrics',
+    liveMetrics: 'GRADEO data',
+    loadingLabel: 'Fetching production data…',
+    screenshotTitle: 'Inside the product',
+    screenshotAlt: 'Actual GRADEO screenshot: professor search and advanced filters.',
+    screenshotNote: 'Actual screenshot · October 2026',
     totalReviews: 'Approved reviews',
     listedProfessors: 'Professors indexed',
-    liveLabel: 'Live from production',
+    liveLabel: 'Production data · refreshed every 5 min',
+    unavailableLabel: 'Metrics are currently unavailable',
+    emptyRanking: 'No professors have approved reviews yet.',
     campus: 'Campus USAT',
     city: 'Chiclayo, Peru',
     mapTitle: 'Map of the USAT campus in Chiclayo, Peru',
@@ -266,7 +320,7 @@ const en: TranslationDict = {
       'No account required. The review carries four ratings from 1 to 5 and a body of at least ten characters, enforced by column checks rather than trusting the client.',
     step2Title: '2. Rate limiting without identity',
     step2Desc:
-      'We store a hash of the IP, never the IP. That is enough to throttle a flood and impossible to walk back to a person.',
+      'Submission limits use an IP hash to detect repeated attempts and reduce spam without storing the address in plain text.',
     step3Title: '3. Moderation queue',
     step3Desc:
       'Reviews land as pending. Admins approve or reject from a panel gated by role and a PIN that locks itself after repeated failures.',
@@ -296,20 +350,22 @@ const en: TranslationDict = {
   projects: {
     sectionTitle: 'Projects',
     sectionSubtitle:
-      'Two systems in production. One is a consumer product I designed end to end; the other is a business with rules I do not get to negotiate.',
+      'GRADEO is a published application. FARMAPLUS is a beta that has not been deployed yet. These projects show my work with interfaces, data and business rules.',
     problemLabel: 'Problem',
     roleLabel: 'Role',
     stackLabel: 'Stack',
     highlightsLabel: 'What is interesting',
-    codeOnRequest: 'Code available on request',
+    codeOnRequest: 'Request code',
     farmaplus: {
       name: 'FARMAPLUS',
-      tagline: 'Pharmacy ERP with Peruvian electronic invoicing.',
+      status: 'Beta',
+      statusDetail: 'Not deployed yet; features are being developed and validated.',
+      tagline: 'Pharmacy ERP for inventory, sales and invoicing.',
       problem:
         'A pharmacy cannot sell from a generic point of sale: it has to issue SUNAT-valid documents, know which batch a box came from and when it expires, and reconcile the till at closing.',
       role: 'Sole developer — data model, business rules and interface.',
       highlights: [
-        'SUNAT electronic invoicing with its own document series',
+        'Beta SUNAT electronic invoicing module with its own document series',
         'Batch and expiry traceability, with audited stock adjustments',
         'Till reconciliation: cash movements against recorded payments',
         'Pharmacological data: active substances linked many-to-many to products',
@@ -319,13 +375,15 @@ const en: TranslationDict = {
     },
     gradeo: {
       name: 'GRADEO',
+      status: 'In production',
+      statusDetail: 'Public application with moderated reviews and study tools.',
       tagline: 'Anonymous professor reviews, moderated.',
       problem:
         'Students chose courses on hearsay, and every anonymous alternative either demanded an account or filled up with spam.',
       role: 'Sole developer — product, schema, moderation and growth.',
       highlights: [
         'Moderation queue with role-based approval and a PIN second factor',
-        'Rate limiting by IP hash, so throttling never identifies anyone',
+        'Submission limits using IP hashes to reduce spam without storing the address in plain text',
         'Trigram search written to be index-ready before it needs the index',
         'Four-axis scoring aggregated by a Postgres trigger',
         'Study suite: notes, timetables, grades and pomodoro with expiring share links',
@@ -338,9 +396,11 @@ const en: TranslationDict = {
     sectionSubtitle:
       'The background behind those two systems, and the tools I reach for.',
     downloadCv: 'Download CV (PDF)',
+    viewCv: 'View CV',
+    documentNote: 'English PDF · 1 page. The preview opens in a new tab.',
     profile: {
       title: 'Professional profile',
-      content: `${IDENTITY.titleEn} at USAT with a solid technical foundation, looking to contribute in technical support, data management and software development. Recognized for fast learning, problem-solving and operational efficiency.`,
+      content: 'Software developer and Information Systems Engineering student. I work on web applications, authentication, data operations and responsive interfaces. I use AI assistants to develop, debug and document software, while remaining responsible for the result.',
     },
     experience: {
       title: 'Experience',
@@ -355,10 +415,15 @@ const en: TranslationDict = {
         ],
       },
     },
-    skills: { title: 'Core competencies', stack: 'Tech stack', env: 'Environment' },
+    skills: { title: 'Core competencies', stack: 'Development', env: 'Tools and data', basicDocker: 'Docker (basic)', excel: 'Microsoft Excel' },
   },
   devConsole: {
+    visitMetrics: 'This visit’s loading metrics',
+    pending: 'pending',
+    vitalsNote: 'Local browser measurements. Some values finalize when leaving the tab. No data is sent.',
+    illustration: 'Presentation console. No commands are executed.',
     monitor: 'SYS.PERF.MONITOR',
+    monitorPaused: 'Monitor stopped for reduced motion. Values from the last sample.',
     measured: 'measured',
     memory: 'JS HEAP',
     unavailable: 'n/a',
@@ -372,13 +437,26 @@ const en: TranslationDict = {
     openTerminal: 'Open terminal',
     closeTerminal: 'Close terminal',
   },
+  automation: {
+    label: 'Interactive demo · local simulation', title: 'One enquiry. Three fewer steps.',
+    description: 'Try turning an enquiry into a record and an alert for the person in charge. This is a flow example, not a deployed integration or a real client.',
+    inputLabel: 'Example enquiry (optional)', example: 'Hi, what times are available this week?',
+    privacy: 'Everything happens on this page. Nothing is stored or sent. Use example information, not personal data.',
+    requiresJs: 'The interactive example needs JavaScript. You can read all three steps without it.',
+    receive: 'Receive the enquiry', receiveDesc: 'Read the message from the example form.',
+    register: 'Organize the record', registerDesc: 'Create a local entry with the message, without copying it manually.',
+    notify: 'Prepare the alert', notifyDesc: 'Show a simulated notification. No WhatsApp message or email is sent.',
+    run: 'Try the flow', running: 'Processing example…', reset: 'Reset',
+    waiting: 'Ready to try.', done: 'Example complete. Simulated record and alert.',
+  },
   contact: {
     sectionTitle: 'Let’s talk',
     sectionSubtitle:
-      'Looking for internships or junior roles, in Chiclayo or remote. The fastest way to reach me is email.',
+      'Open to software development opportunities and automation projects. Email me to discuss your team or project.',
     emailLabel: 'Email',
     copy: 'Copy',
     copied: 'Copied',
+    copyFailed: 'Could not copy. Select the email address or open the link to write.',
     orFind: 'Or find me on',
     rights: 'All rights reserved.',
     builtWith: 'Built with Next.js, Tailwind and Postgres.',

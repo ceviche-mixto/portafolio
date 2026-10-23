@@ -22,9 +22,9 @@ export function LanguageSwitcher() {
       lang={target}
       aria-label={t.lang.switchTo}
       title={t.lang.switchTo}
-      className="flex items-center gap-1.5 rounded-full border border-zinc-700/60 bg-zinc-900/80 px-3 py-1.5 text-xs font-bold text-zinc-200 transition-colors hover:border-zinc-600 hover:text-white active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 md:text-sm"
+      className="flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full border border-border/60 bg-card/80 px-3 py-1.5 text-xs font-bold text-subtle transition-colors hover:border-strong hover:text-foreground active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background md:text-sm"
     >
-      <Languages className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+      <Languages className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
       <span aria-hidden="true">{target.toUpperCase()}</span>
     </button>
   )

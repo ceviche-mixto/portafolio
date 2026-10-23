@@ -22,6 +22,6 @@ export const useModeStore = create<ModeState>()(
       toggleMode: () => set((state) => ({ isDeveloperMode: !state.isDeveloperMode })),
       setDeveloperMode: (value) => set({ isDeveloperMode: value }),
     }),
-    { name: 'portfolio-mode' }
+    { name: 'portfolio-mode', skipHydration: true }
   )
 )

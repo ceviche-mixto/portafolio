@@ -5,10 +5,10 @@ import {
   motion,
   AnimatePresence,
   useScroll,
-  useReducedMotion,
 } from "framer-motion"
 import { Fingerprint, ShieldCheck, BarChart3, MousePointer2 } from "lucide-react"
 import { useTranslation } from "@/hooks/useTranslation"
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion"
 import { useScrollLayer, GRADEO_LAYER_THRESHOLDS } from "@/hooks/useScrollLayer"
 
 /**
@@ -26,7 +26,7 @@ import { useScrollLayer, GRADEO_LAYER_THRESHOLDS } from "@/hooks/useScrollLayer"
 export function GradeoScrolly() {
   const { t } = useTranslation()
   const containerRef = React.useRef<HTMLDivElement>(null)
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = usePrefersReducedMotion()
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -46,31 +46,16 @@ export function GradeoScrolly() {
 
   return (
     <>
-      {/* Alternativa accesible: los cuatro pasos completos, siempre presentes en
-          el DOM, sin depender del scroll ni de la animación. */}
-      <section aria-label={t.gradeo.stepsLabel} className="sr-only">
-        <ol>
-          {steps.map((step) => (
-            <li key={step.title}>
-              <h3>{step.title}</h3>
-              <p>{step.desc}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
       <div
         ref={containerRef}
-        className="relative mx-auto mt-16 h-[200vh] max-w-7xl px-6"
+        className="relative h-full w-full"
         aria-hidden="true"
       >
         <div className="grid h-full grid-cols-1 gap-12 md:grid-cols-2">
-          <div className="relative hidden h-full border-l border-zinc-800/50 pl-8 md:block">
+          <div className="relative hidden h-full border-l border-soft/50 pl-8 md:block">
             <div className="sticky top-32 flex flex-col pt-8">
-              {/* `aria-live` en el contenedor anuncia el cambio de paso; el árbol
-                  visual está oculto para lectores, así que esto sólo aplica si
-                  algún agente decide seguirlo de todos modos. */}
-              <div aria-live="polite">
+              {/* La lista estática equivalente permanece accesible en GradeoLifecycle. */}
+              <div>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={layer}
@@ -79,15 +64,15 @@ export function GradeoScrolly() {
                     exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <h3 className="mb-6 text-3xl font-bold text-white">{heading}</h3>
-                    <p className="text-balance text-lg text-zinc-300">{body}</p>
+                    <h3 className="mb-6 text-3xl font-bold text-foreground">{heading}</h3>
+                    <p className="text-balance text-lg text-body">{body}</p>
                   </motion.div>
                 </AnimatePresence>
               </div>
 
               {layer < 4 && (
-                <p className="mt-12 flex items-center gap-3 text-zinc-400">
-                  <MousePointer2 className="h-5 w-5 text-emerald-500" />
+                <p className="mt-12 flex items-center gap-3 text-muted-foreground">
+                  <MousePointer2 className="h-5 w-5 text-highlight" />
                   <span className="text-sm font-medium tracking-widest uppercase">
                     {t.gradeo.scrollIndicator}
                   </span>
@@ -131,7 +116,7 @@ function ScrollyStage({
   ]
 
   return (
-    <div className="sticky top-24 flex h-[70vh] w-full items-center justify-center overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 p-4 shadow-2xl md:top-32 md:h-[60vh]">
+    <div className="sticky top-24 flex h-[70vh] w-full items-center justify-center overflow-hidden rounded-2xl border border-soft bg-background p-4 shadow-2xl md:top-32 md:h-[60vh]">
       <AnimatePresence mode="wait">
         <motion.div
           key={layer}
@@ -145,7 +130,7 @@ function ScrollyStage({
           {layer === 3 && <StageQueue />}
           {layer === 4 && <StageAggregate />}
 
-          <p className="mt-6 font-mono text-sm font-medium text-zinc-300">
+          <p className="mt-6 font-mono text-sm font-medium text-body">
             {captions[layer]}
           </p>
         </motion.div>
@@ -158,11 +143,11 @@ function ScrollyStage({
 
 function StageIntro({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
   return (
-    <div className="flex h-36 w-24 items-start justify-center overflow-hidden rounded-full border-2 border-zinc-700 bg-zinc-900 p-4 shadow-2xl">
+    <div className="flex h-36 w-24 items-start justify-center overflow-hidden rounded-full border-2 border-border bg-card p-4 shadow-2xl">
       <motion.div
         animate={prefersReducedMotion ? undefined : { y: [0, 24, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-        className="h-12 w-8 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+        transition={{ repeat: 2, duration: 1.5, ease: "easeInOut" }}
+        className="h-12 w-8 rounded-full bg-highlight shadow-[0_0_15px_rgba(16,185,129,0.5)]"
       />
     </div>
   )
@@ -171,24 +156,24 @@ function StageIntro({ prefersReducedMotion }: { prefersReducedMotion: boolean })
 /** Paso 1: el formulario con cuatro ejes de 1 a 5. */
 function StageForm() {
   return (
-    <div className="flex w-60 flex-col gap-2.5 rounded-2xl border border-zinc-700 bg-zinc-900 p-4 shadow-2xl">
+    <div className="flex w-60 flex-col gap-2.5 rounded-2xl border border-border bg-card p-4 shadow-2xl">
       {[4, 5, 3, 5].map((filled, row) => (
         <div key={row} className="flex items-center gap-2">
-          <div className="h-2 w-12 rounded bg-zinc-700" />
+          <div className="h-2 w-12 rounded bg-border" />
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
               <div
                 key={n}
                 className={
                   "h-2.5 w-2.5 rounded-sm " +
-                  (n <= filled ? "bg-yellow-500" : "bg-zinc-700")
+                  (n <= filled ? "bg-warning" : "bg-border")
                 }
               />
             ))}
           </div>
         </div>
       ))}
-      <div className="mt-1 h-10 rounded bg-zinc-800" />
+      <div className="mt-1 h-10 rounded bg-surface-raised" />
     </div>
   )
 }
@@ -197,13 +182,13 @@ function StageForm() {
 function StageHash() {
   return (
     <div className="flex flex-col items-center gap-3">
-      <Fingerprint className="h-16 w-16 text-emerald-400" />
+      <Fingerprint className="h-16 w-16 text-highlight" />
       <div className="flex items-center gap-2 font-mono text-[11px]">
-        <span className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 text-zinc-400 line-through">
+        <span className="rounded border border-border bg-card px-2 py-1 text-muted-foreground line-through">
           190.43.xx.xx
         </span>
-        <span className="text-emerald-400">→</span>
-        <span className="rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-emerald-300">
+        <span className="text-highlight">→</span>
+        <span className="rounded border border-highlight/30 bg-highlight/10 px-2 py-1 text-highlight">
           a3f9c1…
         </span>
       </div>
@@ -215,19 +200,19 @@ function StageHash() {
 function StageQueue() {
   return (
     <div className="flex flex-col items-center gap-4">
-      <ShieldCheck className="h-14 w-14 text-emerald-500" />
+      <ShieldCheck className="h-14 w-14 text-highlight" />
       <ul className="flex w-56 flex-col gap-2">
         {[
-          { label: "approved", tone: "border-emerald-500/40 text-emerald-300" },
-          { label: "pending", tone: "border-yellow-500/40 text-yellow-300" },
-          { label: "pending", tone: "border-yellow-500/40 text-yellow-300" },
-          { label: "rejected", tone: "border-red-500/40 text-red-300" },
+          { label: "approved", tone: "border-highlight/40 text-highlight" },
+          { label: "pending", tone: "border-warning/40 text-warning" },
+          { label: "pending", tone: "border-warning/40 text-warning" },
+          { label: "rejected", tone: "border-danger/40 text-danger" },
         ].map((row, i) => (
           <li
             key={i}
-            className={`flex items-center justify-between rounded border bg-zinc-900/80 px-2.5 py-1.5 font-mono text-[10px] ${row.tone}`}
+            className={`flex items-center justify-between rounded border bg-card/80 px-2.5 py-1.5 font-mono text-[10px] ${row.tone}`}
           >
-            <span className="h-1.5 w-16 rounded bg-zinc-700" />
+            <span className="h-1.5 w-16 rounded bg-border" />
             {row.label}
           </li>
         ))}
@@ -246,18 +231,19 @@ function StageAggregate() {
   ]
   return (
     <div className="flex flex-col items-center gap-4">
-      <BarChart3 className="h-12 w-12 text-emerald-400" />
+      <BarChart3 className="h-12 w-12 text-highlight" />
       <div className="flex w-56 flex-col gap-2">
         {axes.map((axis, i) => (
           <div key={axis.label} className="flex items-center gap-2">
-            <span className="w-20 text-left font-mono text-[9px] text-zinc-400">
+            <span className="w-20 text-left font-mono text-[9px] text-muted-foreground">
               {axis.label}
             </span>
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-raised">
               <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-cyan-400"
-                initial={{ width: 0 }}
-                animate={{ width: `${axis.value}%` }}
+                className="h-full rounded-full bg-gradient-to-r from-highlight to-accent-secondary"
+                style={{ transformOrigin: "left" }}
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: axis.value / 100 }}
                 transition={{ duration: 0.6, delay: i * 0.1 }}
               />
             </div>

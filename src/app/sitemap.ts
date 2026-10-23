@@ -8,9 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1,
-      // El sitio es una sola URL que cambia de idioma por cookie, así que ambas
-      // alternativas apuntan a la raíz; lo que importa es declarar que existen.
-      alternates: { languages: { "es-PE": SITE_URL, en: SITE_URL } },
+      // El idioma cambia por cookie; no hay URLs localizadas para hreflang.
     },
   ]
 }

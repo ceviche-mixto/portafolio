@@ -1,11 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { ArrowDown, Mail } from "lucide-react"
+import { ArrowDown, Mail, FileText } from "lucide-react"
 import { HeroBackground } from "@/components/3d/HeroBackground"
 import { SocialLinks } from "@/components/chrome/SocialLinks"
 import { Reveal } from "@/components/motion/Reveal"
 import { useTranslation } from "@/hooks/useTranslation"
+import { CV_FILES } from "@/lib/site"
 
 function countWords(text: string): number {
   return text.trim().split(/\s+/).length
@@ -56,15 +57,15 @@ function StaggeredWords({
  * blanco y la segunda se apaga hacia zinc.
  */
 const LINE_1_GRADIENT =
-  "bg-gradient-to-b from-white to-zinc-200 bg-clip-text text-transparent"
+  "bg-gradient-to-b from-foreground to-subtle bg-clip-text text-transparent"
 const LINE_2_GRADIENT =
-  "bg-gradient-to-b from-zinc-200 to-zinc-500 bg-clip-text text-transparent"
+  "bg-gradient-to-b from-subtle to-muted-foreground bg-clip-text text-transparent"
 
 export function HeroSection() {
-  const { t } = useTranslation()
+  const { t, lang } = useTranslation()
 
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center px-6 pt-24 pb-16 text-center">
+    <section className="relative flex min-h-svh flex-col items-center justify-center px-6 pt-36 pb-20 text-center sm:pt-24">
       <HeroBackground />
 
       {/* El desvanecido al salir de pantalla lo hace CSS con animation-timeline,
@@ -77,7 +78,7 @@ export function HeroSection() {
               Las palabras entran escalonadas: cada `<span>` lleva su índice en
               `--i` y el retardo se calcula en CSS, así que el efecto no cuesta
               ni un byte de JavaScript. */}
-          <h1 className="word-in mb-6 text-4xl leading-[1.08] font-black tracking-tighter sm:text-5xl md:text-7xl">
+          <h1 className="word-in mb-6 text-4xl leading-[1.08] font-black tracking-[-0.035em] sm:text-5xl md:text-7xl">
             <StaggeredWords text={t.hero.nameLine} className={LINE_1_GRADIENT} />
             <br />
             <StaggeredWords
@@ -87,16 +88,16 @@ export function HeroSection() {
             />
           </h1>
 
-          <p className="mx-auto mb-6 max-w-2xl text-balance text-base font-light text-zinc-300 md:text-xl">
+          <p className="mx-auto mb-6 max-w-2xl text-balance text-base font-light text-body md:text-xl">
             {t.hero.subtitle}
           </p>
 
           {/* Decir qué buscas es la diferencia entre un escaparate y una
               candidatura (ver U-10). */}
-          <p className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-4 py-1.5 text-xs font-medium text-emerald-300 md:text-sm">
+          <p className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-highlight/25 bg-highlight/10 px-4 py-1.5 text-xs font-medium text-highlight md:text-sm">
             <span className="relative flex h-2 w-2" aria-hidden="true">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 motion-safe:animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="absolute inline-flex h-full w-full rounded-full bg-highlight opacity-75 motion-safe:animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-highlight" />
             </span>
             {t.hero.availability}
           </p>
@@ -105,25 +106,35 @@ export function HeroSection() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               <a
                 href="#gradeo"
-                className="rounded-full bg-zinc-100 px-6 py-3 text-sm font-bold text-zinc-900 shadow-xl transition-colors hover:bg-white"
+                className="flex min-h-11 items-center rounded-full bg-action px-6 py-3 text-sm font-bold text-action-foreground shadow-xl transition-colors hover:bg-foreground"
               >
                 {t.hero.viewWork}
               </a>
               <a
                 href="#contacto"
-                className="flex items-center gap-2 rounded-full border border-zinc-700 px-6 py-3 text-sm font-bold text-zinc-200 transition-colors hover:border-zinc-500 hover:text-white"
+                className="flex min-h-11 items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-bold text-subtle transition-colors hover:border-strong hover:text-foreground"
               >
                 <Mail className="h-4 w-4" aria-hidden="true" />
                 {t.hero.contactMe}
               </a>
             </div>
 
+            <a
+              href={CV_FILES[lang]}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${t.cv.viewCv} (${t.nav.newTab})`}
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-body underline decoration-border-strong underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight"
+            >
+              <FileText className="h-4 w-4" aria-hidden="true" />
+              {t.cv.viewCv}
+            </a>
             <SocialLinks newTabHint={t.nav.newTab} />
           </div>
         </Reveal>
       </div>
 
-      <div className="absolute bottom-8 text-zinc-400 motion-safe:animate-bounce">
+      <div className="absolute bottom-8 text-muted-foreground">
         <ArrowDown className="h-6 w-6" aria-hidden="true" />
       </div>
     </section>

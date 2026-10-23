@@ -27,10 +27,16 @@ function useShouldRender3D(): boolean {
       (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
         ?.saveData === true
 
-    const update = () => setCapable(wide.matches && !saveData)
-    update()
+    let ready = false
+    const update = () => setCapable(ready && wide.matches && !saveData && !document.hidden)
+    const idle = window.setTimeout(() => { ready = true; update() }, 1200)
     wide.addEventListener("change", update)
-    return () => wide.removeEventListener("change", update)
+    document.addEventListener("visibilitychange", update)
+    return () => {
+      clearTimeout(idle)
+      wide.removeEventListener("change", update)
+      document.removeEventListener("visibilitychange", update)
+    }
   }, [])
 
   return capable && !prefersReducedMotion
@@ -77,9 +83,16 @@ export function HeroBackground() {
           esfera en un velo claro sobre el titular. */}
       {shouldRender3D && visible && (
         <div className="absolute inset-0 opacity-70">
-          <HeroCanvas />
+          <CanvasBoundary><HeroCanvas /></CanvasBoundary>
         </div>
       )}
     </div>
   )
+}
+
+/** Optional WebGL failure must never replace the portfolio with an error page. */
+class CanvasBoundary extends React.Component<{ children: React.ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() { return { failed: true } }
+  render() { return this.state.failed ? null : this.props.children }
 }

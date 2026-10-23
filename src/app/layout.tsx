@@ -47,12 +47,12 @@ export async function generateMetadata(): Promise<Metadata> {
       "Supabase",
       "GRADEO",
       "FARMAPLUS",
-      "Chiclayo",
-      "Perú",
+      "desarrollador de software",
+      "desarrollo web",
+      "automatización",
     ],
     alternates: {
       canonical: "/",
-      languages: { "es-PE": "/", en: "/" },
     },
     openGraph: {
       type: "profile",
@@ -82,7 +82,7 @@ export default async function RootLayout({
       lang={htmlLang(lang)}
       className={`dark scroll-smooth ${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="antialiased bg-zinc-950 text-zinc-50 selection:bg-white/20">
+      <body className="antialiased bg-background text-foreground selection:bg-foreground/20">
         <LanguageProvider initialLanguage={lang}>
           <SiteChrome />
           {children}

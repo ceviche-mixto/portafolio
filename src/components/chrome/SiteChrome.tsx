@@ -4,6 +4,10 @@ import * as React from "react"
 import dynamic from "next/dynamic"
 import { SiteNav } from "./SiteNav"
 import { SkipLink } from "./SkipLink"
+import { useModeStore } from "@/store/useModeStore"
+import { WebVitals } from "./WebVitals"
+import { useMotionStore } from "@/store/useMotionStore"
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion"
 
 /**
  * El overlay usa Framer Motion y sólo se ve en modo desarrollador, así que se
@@ -22,11 +26,21 @@ const DeveloperOverlay = dynamic(
  * anclas y controles, que es lo que resuelve U-06.
  */
 export function SiteChrome() {
+  const isDeveloperMode = useModeStore((state) => state.isDeveloperMode)
+  const reduced = usePrefersReducedMotion()
+  React.useEffect(() => {
+    void useModeStore.persist.rehydrate()
+    void useMotionStore.persist.rehydrate()
+  }, [])
+  React.useEffect(() => {
+    document.documentElement.dataset.motion = reduced ? "reduced" : "full"
+  }, [reduced])
   return (
     <>
       <SkipLink />
+      <WebVitals />
       <SiteNav />
-      <DeveloperOverlay />
+      {isDeveloperMode && <DeveloperOverlay />}
     </>
   )
 }

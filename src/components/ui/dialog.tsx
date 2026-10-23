@@ -34,7 +34,7 @@ function DialogOverlay({
         // z-[150]: por encima de la cabecera fija (z-100) y del overlay de
         // desarrollador (z-90). Con el z-50 anterior la cabecera quedaba encima
         // del modal y tapaba su título y su botón de cerrar en móvil.
-        "fixed inset-0 isolate z-[150] bg-black/50 duration-100 supports-backdrop-filter:backdrop-blur-sm data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 isolate z-[150] bg-surface-deep/50 duration-100 supports-backdrop-filter:backdrop-blur-sm data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className
       )}
       {...props}
@@ -46,9 +46,11 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  closeLabel = "Close",
   ...props
 }: DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean
+  closeLabel?: string
 }) {
   return (
     <DialogPortal>
@@ -70,8 +72,8 @@ function DialogContent({
              contenido del diálogo se desplace. */
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            aria-label="Cerrar"
-            className="absolute top-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900/90 text-zinc-300 shadow-lg backdrop-blur-md transition-colors hover:bg-zinc-800 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+            aria-label={closeLabel}
+            className="absolute top-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card/90 text-body shadow-lg backdrop-blur-md transition-colors hover:bg-surface-raised hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-highlight"
           >
             <XIcon className="h-5 w-5" aria-hidden="true" />
           </DialogPrimitive.Close>

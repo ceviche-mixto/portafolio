@@ -14,20 +14,14 @@
  * ninguno: publica URLs absolutas que no existen.
  *
  *   1. NEXT_PUBLIC_SITE_URL — tu dominio propio, cuando lo tengas.
- *   2. Las variables de sistema de Vercel — el dominio de producción real del
- *      proyecto, expuesto automáticamente en cada despliegue.
- *   3. localhost, para desarrollo.
+ *   2. El dominio público confirmado del portafolio. Los previews también deben
+ *      apuntar al sitio publicado, no convertirse en páginas canónicas nuevas.
  */
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL
   if (explicit) return explicit.replace(/\/$/, '')
 
-  const vercelHost =
-    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ??
-    process.env.VERCEL_PROJECT_PRODUCTION_URL
-  if (vercelHost) return `https://${vercelHost.replace(/\/$/, '')}`
-
-  return 'http://localhost:3000'
+  return 'https://portafolio-giancarlo-larios.vercel.app'
 }
 
 export const SITE_URL = resolveSiteUrl()
@@ -38,13 +32,12 @@ export const IDENTITY = {
   fullName: 'Giancarlo Larios Infantes',
   /**
    * Un único título, repetido literal en hero, CV, consola y metadatos.
-   * Se elige "estudiante" porque es verificable hoy; cámbialo cuando titules.
+   * Describe el trabajo realizado; la formación académica se explica en Perfil.
    */
-  titleEs: 'Estudiante de Ingeniería de Sistemas y Computación',
-  titleEn: 'Information Systems Engineering Student',
+  titleEs: 'Desarrollador de software',
+  titleEn: 'Software developer',
   university: 'Universidad Católica Santo Toribio de Mogrovejo (USAT)',
-  location: { es: 'Chiclayo, Perú', en: 'Chiclayo, Peru' },
-  email: 'cevichito.mixto3011@gmail.com', // REVISAR: ¿es el correo que quieres público?
+  email: 'giancarlolarios123@gmail.com',
 } as const
 
 /** Perfiles. El orden es el orden de aparición: GitHub primero (ver U-01). */
@@ -73,7 +66,7 @@ export const PROJECTS = {
   gradeo: {
     // https://github.com/ceviche-mixto/gradeo — privado ahora mismo.
     repo: null as string | null,
-    demo: null as string | null,
+    demo: 'https://gradeo.vercel.app' as string | null,
     /**
      * Sin enlace público, en lugar de callar se ofrece la vía real: el código
      * está y se puede compartir en una entrevista. Ponlo en `false` cuando el

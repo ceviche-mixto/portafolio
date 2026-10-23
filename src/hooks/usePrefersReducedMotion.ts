@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useMotionStore } from "@/store/useMotionStore"
 
 /**
  * `prefers-reduced-motion` sin dependencias.
@@ -9,7 +10,7 @@ import * as React from "react"
  * librería (~100 KB comprimidos) al bundle inicial. Los componentes del primer
  * render sólo necesitan el booleano, y eso es una media query.
  */
-export function usePrefersReducedMotion(): boolean {
+export function useSystemReducedMotion(): boolean {
   const [reduced, setReduced] = React.useState(false)
 
   React.useEffect(() => {
@@ -21,4 +22,11 @@ export function usePrefersReducedMotion(): boolean {
   }, [])
 
   return reduced
+}
+
+/** The visitor can stop motion without changing operating-system preferences. */
+export function usePrefersReducedMotion(): boolean {
+  const systemReduced = useSystemReducedMotion()
+  const paused = useMotionStore((state) => state.paused)
+  return systemReduced || paused
 }

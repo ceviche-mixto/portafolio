@@ -3,9 +3,7 @@ import type { NextConfig } from "next"
 /**
  * Cabeceras de seguridad aplicadas a todas las rutas.
  *
- * No hay CSP aquí a propósito: Next inyecta estilos y scripts en línea, así que
- * una CSP correcta necesita nonces por petición y es mejor añadirla desde
- * middleware que dejarla mal puesta y en modo permisivo.
+ * La política CSP de los documentos usa nonces por petición en src/proxy.ts.
  */
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -28,12 +26,14 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
-      {
-        // Los PDF del CV cambian rara vez y se piden desde un botón: merece la
-        // pena que el navegador los conserve.
-        source: "/cv/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=86400, must-revalidate" }],
-      },
+      ...(["es", "en"] as const).map((language) => ({
+        source: `/cv/giancarlo-larios-cv-${language}.pdf`,
+        headers: [
+          // Las URLs son estables: revalidar evita conservar un CV anticuado.
+          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+          { key: "Content-Disposition", value: `inline; filename="Giancarlo-Larios-CV-${language.toUpperCase()}.pdf"` },
+        ],
+      })),
     ]
   },
 }

@@ -9,16 +9,17 @@ import {
   Briefcase as BriefcaseIcon,
   Sparkles,
   Download,
+  Eye,
 } from "lucide-react"
 import { Reveal } from "@/components/motion/Reveal"
 import { useTranslation } from "@/hooks/useTranslation"
 import { CV_FILES, IDENTITY } from "@/lib/site"
 
 const CARD =
-  "relative h-full overflow-hidden rounded-[2rem] border border-zinc-700/50 bg-zinc-900 p-8 shadow-2xl transition-colors hover:border-zinc-600"
+  "portfolio-panel relative h-full overflow-hidden p-6 sm:p-8"
 
-const STACK = ["TypeScript", "JavaScript", "Java", "SQL", "Next.js", "React", "Tailwind CSS"]
-const ENV = ["PostgreSQL", "Supabase", "Git", "VS Code", "Vercel", "Linux", "Excel (Adv)"]
+const STACK = ["TypeScript", "JavaScript", "Python", "Java", "SQL", "React", "Next.js", "Node.js", "Tailwind CSS"]
+const ENV = ["PostgreSQL", "MySQL", "Supabase", "Git", "GitHub", "Postman", "VS Code", "Vercel"]
 
 /**
  * Las tarjetas entran desde direcciones distintas al aparecer en pantalla.
@@ -33,85 +34,96 @@ export function CVSection() {
   return (
     <section
       id="perfil"
-      className="relative z-10 scroll-mt-20 overflow-hidden bg-zinc-950 pt-24 pb-40"
+      className="relative z-10 overflow-hidden bg-background pt-24 pb-40"
     >
-      <div className="pointer-events-none absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/5 blur-[120px]" />
+      <div className="pointer-events-none absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-highlight/5 blur-[120px]" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <Reveal className="mb-14">
           <div className="mb-4 flex items-center gap-4">
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-3 shadow-2xl">
-              <FileText className="h-6 w-6 text-emerald-400" aria-hidden="true" />
+            <div className="rounded-xl bg-card p-3">
+              <FileText className="h-6 w-6 text-highlight" aria-hidden="true" />
             </div>
-            <h2 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
+            <h2 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
               {t.cv.sectionTitle}
             </h2>
           </div>
-          <p className="max-w-2xl text-lg text-zinc-300">{t.cv.sectionSubtitle}</p>
+          <p className="max-w-2xl text-lg text-body">{t.cv.sectionSubtitle}</p>
 
-          {/* Un CV en pantalla no sirve para adjuntarlo a un proceso interno
-              (ver U-05). */}
-          <a
-            href={CV_FILES[lang]}
-            download
-            className="mt-6 inline-flex items-center gap-2 rounded-full border border-zinc-700 px-5 py-2.5 text-sm font-bold text-zinc-200 transition-colors hover:border-emerald-500/50 hover:text-white"
-          >
-            <Download className="h-4 w-4" aria-hidden="true" />
-            {t.cv.downloadCv}
-          </a>
+          {/* El PDF del idioma seleccionado: lectura nativa o descarga. */}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <a
+              href={CV_FILES[lang]}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${t.cv.viewCv} (${t.nav.newTab})`}
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-action px-5 py-2.5 text-sm font-bold text-action-foreground transition-colors hover:bg-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              <Eye className="h-4 w-4" aria-hidden="true" />
+              {t.cv.viewCv}
+            </a>
+            <a
+              href={CV_FILES[lang]}
+              download={`Giancarlo-Larios-CV-${lang.toUpperCase()}.pdf`}
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-bold text-subtle transition-colors hover:border-highlight/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              {t.cv.downloadCv}
+            </a>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">{t.cv.documentNote}</p>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:auto-rows-[240px]">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:auto-rows-[minmax(260px,auto)] lg:grid-cols-3">
           <Reveal from="left" className="md:col-span-2">
             <article className={`${CARD} group`}>
-              <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-emerald-500 to-cyan-500 opacity-50" />
+              <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-highlight to-accent-secondary opacity-50" />
               <div className="pointer-events-none absolute -top-10 -right-10 opacity-5 transition-opacity duration-700 group-hover:opacity-10">
-                <Sparkles className="h-64 w-64 text-emerald-400" aria-hidden="true" />
+                <Sparkles className="h-64 w-64 text-highlight" aria-hidden="true" />
               </div>
               <div className="relative z-10 flex h-full flex-col justify-center">
-                <h3 className="mb-4 flex items-center gap-3 text-xl font-bold text-white">
-                  <span className="rounded-lg bg-emerald-500/10 p-2">
+                <h3 className="mb-4 flex items-center gap-3 text-xl font-bold text-foreground">
+                  <span className="rounded-lg bg-highlight/10 p-2">
                     <GraduationCap
-                      className="h-5 w-5 text-emerald-400"
+                      className="h-5 w-5 text-highlight"
                       aria-hidden="true"
                     />
                   </span>
                   {t.cv.profile.title}
                 </h3>
-                <p className="pr-4 text-balance text-sm leading-relaxed font-light text-zinc-300 md:text-base">
+                <p className="pr-4 text-balance text-sm leading-relaxed font-light text-body md:text-base">
                   {t.cv.profile.content}
                 </p>
-                <p className="mt-3 text-xs text-zinc-400">{IDENTITY.university}</p>
+                <p className="mt-3 text-xs text-muted-foreground">{IDENTITY.university}</p>
               </div>
             </article>
           </Reveal>
 
-          <Reveal from="right" delay={80} className="md:row-span-2">
+          <Reveal from="right" delay={80} className="md:col-span-2 lg:col-span-1 lg:row-span-2">
             <article className={`${CARD} flex flex-col`}>
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] opacity-20" />
 
-              <h3 className="relative z-10 mb-8 flex items-center gap-3 text-xl font-bold text-white">
-                <span className="rounded-lg bg-blue-500/10 p-2">
-                  <BriefcaseIcon className="h-5 w-5 text-blue-400" aria-hidden="true" />
+              <h3 className="relative z-10 mb-8 flex items-center gap-3 text-xl font-bold text-foreground">
+                <span className="rounded-lg bg-info/10 p-2">
+                  <BriefcaseIcon className="h-5 w-5 text-info" aria-hidden="true" />
                 </span>
                 {t.cv.experience.title}
               </h3>
 
-              <div className="relative z-10 flex-1 border-l-2 border-zinc-800 pl-6">
+              <div className="relative z-10 flex-1 border-l border-soft pl-6">
                 <span
-                  className="absolute -left-[9px] top-1 h-4 w-4 rounded-full border-2 border-blue-500 bg-zinc-900"
+                  className="absolute -left-[9px] top-1 h-4 w-4 rounded-full border-2 border-info bg-card"
                   aria-hidden="true"
                 />
-                <h4 className="mb-2 text-lg leading-none font-bold text-zinc-100">
+                <h4 className="mb-2 text-lg leading-none font-bold text-foreground">
                   {t.cv.experience.xpande.role}
                 </h4>
-                <p className="mb-6 text-sm font-medium text-blue-300">
+                <p className="mb-6 text-sm font-medium text-info">
                   {t.cv.experience.xpande.company} · {t.cv.experience.xpande.date}
                 </p>
-                <ul className="space-y-4 text-sm text-zinc-300">
+                <ul className="space-y-4 text-sm text-body">
                   {t.cv.experience.xpande.bullets.map((bullet) => (
                     <li key={bullet} className="flex items-start gap-3 leading-snug">
-                      <span className="mt-1 text-xs text-blue-400" aria-hidden="true">
+                      <span className="mt-1 text-xs text-info" aria-hidden="true">
                         ▹
                       </span>
                       <span>{bullet}</span>
@@ -124,9 +136,9 @@ export function CVSection() {
 
           <Reveal delay={160}>
             <article className={`${CARD} flex flex-col justify-center`}>
-              <h3 className="mb-6 flex items-center gap-3 text-lg font-bold text-white">
-                <span className="rounded-lg bg-purple-500/10 p-2">
-                  <Cpu className="h-5 w-5 text-purple-400" aria-hidden="true" />
+              <h3 className="mb-6 flex items-center gap-3 text-lg font-bold text-foreground">
+                <span className="rounded-lg bg-discovery/10 p-2">
+                  <Cpu className="h-5 w-5 text-discovery" aria-hidden="true" />
                 </span>
                 {t.cv.skills.stack}
               </h3>
@@ -134,7 +146,7 @@ export function CVSection() {
                 {STACK.map((tech) => (
                   <li
                     key={tech}
-                    className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs font-medium text-zinc-300 shadow-sm transition-colors hover:border-purple-500/50 hover:text-white"
+                    className="rounded-lg border border-soft bg-background px-3 py-1.5 text-xs font-medium text-body shadow-sm transition-colors hover:border-discovery/50 hover:text-foreground"
                   >
                     {tech}
                   </li>
@@ -145,17 +157,17 @@ export function CVSection() {
 
           <Reveal delay={240}>
             <article className={`${CARD} flex flex-col justify-center`}>
-              <h3 className="mb-6 flex items-center gap-3 text-lg font-bold text-white">
-                <span className="rounded-lg bg-orange-500/10 p-2">
-                  <Wrench className="h-5 w-5 text-orange-400" aria-hidden="true" />
+              <h3 className="mb-6 flex items-center gap-3 text-lg font-bold text-foreground">
+                <span className="rounded-lg bg-utility/10 p-2">
+                  <Wrench className="h-5 w-5 text-utility" aria-hidden="true" />
                 </span>
                 {t.cv.skills.env}
               </h3>
               <ul className="flex flex-wrap gap-2">
-                {ENV.map((tool) => (
+                {[...ENV, t.cv.skills.basicDocker, t.cv.skills.excel].map((tool) => (
                   <li
                     key={tool}
-                    className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-1.5 font-mono text-xs text-zinc-300 shadow-sm transition-colors hover:border-orange-500/50 hover:text-white"
+                    className="rounded-lg border border-soft bg-background px-3 py-1.5 font-mono text-xs text-body shadow-sm transition-colors hover:border-utility/50 hover:text-foreground"
                   >
                     {tool}
                   </li>

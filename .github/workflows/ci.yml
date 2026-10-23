@@ -20,7 +20,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci
@@ -30,6 +30,12 @@ jobs:
 
       - name: TypeScript
         run: npm run typecheck
+
+      - name: Regression and accessibility tests
+        run: npm run test
+
+      - name: Production dependency audit
+        run: npm audit --omit=dev
 
       - name: Build
         # El build no necesita las claves reales: sin ellas las métricas en vivo

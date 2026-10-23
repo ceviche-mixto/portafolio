@@ -5,6 +5,8 @@ import { ProjectsSection } from "@/features/projects/ProjectsSection"
 import { ContactSection } from "@/features/contact/ContactSection"
 import { SiteFooter } from "@/features/contact/SiteFooter"
 import { getGradeoStats } from "@/lib/gradeo-stats"
+import { Suspense } from "react"
+import { GRADEO_STATS_EMPTY } from "@/lib/gradeo-stats"
 
 /**
  * La página vuelve a ser un Server Component.
@@ -18,17 +20,24 @@ import { getGradeoStats } from "@/lib/gradeo-stats"
 // así una visita no golpea la base de producción de GRADEO.
 export const revalidate = 300
 
-export default async function Home() {
+async function GradeoWithData() {
   const stats = await getGradeoStats()
+  return <GradeoSection stats={stats} />
+}
 
+export default function Home() {
   return (
-    <main id="contenido" className="relative overflow-clip">
+    <>
+    <main id="contenido" tabIndex={-1} className="relative overflow-clip">
       <HeroSection />
       <CVSection />
-      <GradeoSection stats={stats} />
+      <Suspense fallback={<GradeoSection stats={{ ...GRADEO_STATS_EMPTY, pending: true }} />}>
+        <GradeoWithData />
+      </Suspense>
       <ProjectsSection />
       <ContactSection />
-      <SiteFooter />
     </main>
+    <SiteFooter />
+    </>
   )
 }

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { ExternalLink, Github, Lock } from "lucide-react"
+import { IDENTITY } from "@/lib/site"
 
 /**
  * Enlaces de un proyecto: «Ver en vivo» y «Código».
@@ -45,7 +46,7 @@ export function ProjectLinks({
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${liveLabel} — ${projectName} (${newTabHint})`}
-          className="flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-bold text-emerald-950 transition-colors hover:bg-emerald-400"
+          className="flex min-h-11 items-center gap-2 rounded-full bg-highlight px-5 py-2.5 text-sm font-bold text-emerald-950 transition-colors hover:bg-highlight"
         >
           <ExternalLink className="h-4 w-4" aria-hidden="true" />
           {liveLabel}
@@ -58,7 +59,7 @@ export function ProjectLinks({
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`${codeLabel} — ${projectName} (${newTabHint})`}
-          className="flex items-center gap-2 rounded-full border border-zinc-700 px-5 py-2.5 text-sm font-bold text-zinc-200 transition-colors hover:border-zinc-500 hover:text-white"
+          className="flex min-h-11 items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-bold text-subtle transition-colors hover:border-strong hover:text-foreground"
         >
           <Github className="h-4 w-4" aria-hidden="true" />
           {codeLabel}
@@ -66,10 +67,14 @@ export function ProjectLinks({
       )}
 
       {showRequestNote && (
-        <p className="flex items-center gap-2 rounded-full border border-dashed border-zinc-700 px-4 py-2 text-xs font-medium text-zinc-300">
-          <Lock className="h-3.5 w-3.5 text-zinc-400" aria-hidden="true" />
+        <a
+          href={`mailto:${IDENTITY.email}?subject=${encodeURIComponent(`${projectName}: ${onRequestLabel}`)}`}
+          aria-label={`${onRequestLabel} — ${projectName}`}
+          className="flex min-h-11 items-center gap-2 rounded-full border border-dashed border-border px-4 py-2 text-sm font-medium text-body transition-colors hover:border-highlight hover:text-foreground"
+        >
+          <Lock className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
           {onRequestLabel}
-        </p>
+        </a>
       )}
     </div>
   )

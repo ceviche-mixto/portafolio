@@ -3,13 +3,14 @@
 import * as React from "react"
 import { useModeStore } from "@/store/useModeStore"
 import { useTranslation } from "@/hooks/useTranslation"
-import { MapPin, Star, Users, DatabaseZap, Code2, TrendingUp, Sparkles } from "lucide-react"
+import { Star, Users, DatabaseZap, Code2, TrendingUp, Sparkles } from "lucide-react"
+import Image from "next/image"
+import { PROJECTS } from "@/lib/site"
 import { useGradeoCopy } from "@/hooks/useGradeoCopy"
 import type { GradeoStats } from "@/lib/gradeo-stats"
 
 const CARD =
-  "card-sheen relative h-full overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900 p-6 " +
-  "transition-colors duration-300 hover:border-zinc-700"
+  "portfolio-panel card-sheen relative h-full overflow-hidden p-6"
 
 /** Formatea con separador de miles del idioma activo, o un guion si no hay dato. */
 function useNumber() {
@@ -36,13 +37,13 @@ function LiveStatsWidget({ stats }: { stats: GradeoStats }) {
   return (
     <div className={`${CARD} group flex flex-col`}>
       {isDeveloperMode ? (
-        <div className="absolute top-4 right-4 flex items-center gap-2 rounded bg-green-500/10 px-2 py-1 font-mono text-xs text-green-400">
-          <span className="h-2 w-2 rounded-full bg-green-500 motion-safe:animate-pulse" />
+        <div className="mb-3 flex w-fit items-center gap-2 rounded bg-success/10 px-2 py-1 font-mono text-xs text-success">
+          <span className="h-2 w-2 rounded-full bg-success motion-safe:animate-pulse" />
           select count(*)
         </div>
       ) : null}
 
-      <h3 className="mb-6 text-xl font-bold tracking-tight text-white">
+      <h3 className="mb-6 text-xl font-bold tracking-tight text-foreground">
         {t.bento.liveMetrics}
       </h3>
 
@@ -50,125 +51,48 @@ function LiveStatsWidget({ stats }: { stats: GradeoStats }) {
           tarjeta alta dejaba un hueco muerto entre el título y los números. */}
       <div className="relative z-10 flex flex-1 flex-col justify-center gap-5">
         <div>
-          <span className="metric-in block bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-4xl font-black text-transparent">
+          <span className="metric-in block bg-gradient-to-r from-highlight to-accent-secondary bg-clip-text text-4xl font-black text-transparent">
             {fmt(stats.reviews)}
           </span>
-          <p className="flex items-center gap-1.5 text-sm font-medium text-zinc-300">
-            <Star className="h-4 w-4 text-yellow-500" aria-hidden="true" />
+          <p className="flex items-center gap-1.5 text-sm font-medium text-body">
+            <Star className="h-4 w-4 text-warning" aria-hidden="true" />
             {t.bento.totalReviews}
           </p>
         </div>
         <div>
-          <span className="metric-in block text-2xl font-black text-white">{fmt(stats.professors)}</span>
-          <p className="flex items-center gap-1.5 text-sm font-medium text-zinc-300">
-            <Users className="h-4 w-4 text-blue-400" aria-hidden="true" />
+          <span className="metric-in block text-2xl font-black text-foreground">{fmt(stats.professors)}</span>
+          <p className="flex items-center gap-1.5 text-sm font-medium text-body">
+            <Users className="h-4 w-4 text-info" aria-hidden="true" />
             {t.bento.listedProfessors}
           </p>
         </div>
-        {stats.live ? (
-          <p className="font-mono text-[10px] tracking-widest text-zinc-400 uppercase">
-            {t.bento.liveLabel}
-          </p>
-        ) : null}
+        <p className="text-xs text-muted-foreground">
+          {stats.pending ? t.bento.loadingLabel : stats.live ? t.bento.liveLabel : t.bento.unavailableLabel}
+        </p>
       </div>
 
       <div className="pointer-events-none absolute -right-10 -bottom-10 opacity-10 transition-opacity group-hover:opacity-20">
-        <DatabaseZap className="h-48 w-48 text-emerald-400" aria-hidden="true" />
+        <DatabaseZap className="h-48 w-48 text-highlight" aria-hidden="true" />
       </div>
     </div>
   )
 }
 
-/** Radar sobre el mapa: los anillos concéntricos que marcan el campus. */
-function CampusRadar() {
-  return (
-    <div
-      className="pointer-events-none absolute inset-0 flex items-center justify-center"
-      aria-hidden="true"
-    >
-      <span
-        className="absolute h-16 w-16 rounded-full border-2 border-red-500/60 motion-safe:animate-ping"
-        style={{ animationDuration: "2s" }}
-      />
-      <span className="absolute h-32 w-32 rounded-full border border-red-500/30" />
-      <span className="absolute h-48 w-48 rounded-full border border-red-500/10" />
-      <MapPin className="relative h-6 w-6 text-red-500 drop-shadow-[0_0_6px_rgba(0,0,0,0.9)]" />
-    </div>
-  )
-}
-
-/**
- * Ubicación del campus.
- *
- * El iframe se pide bajo demanda para no meter un tercero en el arranque
- * (ver P-05), y lleva `title` para lectores de pantalla (A-05).
- *
- * Tres cosas corregidas respecto a la primera versión:
- *
- * 1. `min-h` en móvil. El único contenido en flujo es la cabecera, y el mapa va
- *    en `absolute`, así que sin altura mínima la tarjeta se colapsaba a la altura
- *    del título: la barra de atribución de OpenStreetMap acababa montada sobre
- *    «Chiclayo, Perú». En escritorio la fila del grid ya daba altura, así que el
- *    fallo sólo se veía en móvil.
- * 2. El radar vuelve a dibujarse sobre el mapa real. Al reestructurar la carga
- *    bajo demanda quedó sólo en el estado previo, lo que se llevó por delante el
- *    radar sobre el mapa que tenía la versión original.
- * 3. El botón de cargar ya no es `inset-0`. Ocupaba toda el área del mapa, así
- *    que en la tarjeta colapsada casi cualquier toque cargaba el iframe sin
- *    querer.
- */
-function LocationWidget() {
+/** A genuine product screenshot replaces a map unrelated to the hiring task. */
+function ProductWidget() {
   const { t } = useTranslation()
-  const [showMap, setShowMap] = React.useState(false)
-
   return (
-    <div className={`${CARD} group flex min-h-[15rem] flex-col md:min-h-0`}>
-      {/* La cabecera se apoya en un degradado opaco para que el mapa nunca
-          compita con el texto, pase lo que pase con la altura. */}
-      <div className="relative z-20 -m-6 mb-0 bg-gradient-to-b from-zinc-900 via-zinc-900/95 to-transparent p-6 pb-8">
-        <h3 className="mb-1 flex items-center gap-1.5 text-lg font-bold text-white">
-          <MapPin className="h-5 w-5 text-red-500" aria-hidden="true" />
-          {t.bento.campus}
-        </h3>
-        <p className="text-sm text-zinc-300">{t.bento.city}</p>
-      </div>
-
-      <div className="absolute inset-0 top-14 overflow-hidden rounded-b-3xl select-none">
-        {showMap ? (
-          <>
-            <iframe
-              title={t.bento.mapTitle}
-              width="100%"
-              height="100%"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="h-full w-full"
-              style={{
-                border: 0,
-                filter: "invert(90%) hue-rotate(180deg) grayscale(80%) contrast(120%)",
-              }}
-              src="https://www.openstreetmap.org/export/embed.html?bbox=-79.8643%2C-6.7616%2C-79.8623%2C-6.7596&layer=mapnik&marker=-6.7606043%2C-79.8632655"
-            />
-            <CampusRadar />
-          </>
-        ) : (
-          <>
-            {/* Retícula tipo mapa, en CSS: cero peticiones. */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:24px_24px]" />
-            <CampusRadar />
-            <div className="absolute inset-x-0 bottom-0 flex justify-center pb-4">
-              <button
-                type="button"
-                onClick={() => setShowMap(true)}
-                className="rounded-full border border-zinc-700 bg-black/70 px-3 py-1.5 text-[11px] font-medium text-zinc-200 backdrop-blur-md transition-colors hover:border-zinc-500 hover:text-white"
-              >
-                {t.bento.loadMap}
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+    <figure className={`${CARD} flex flex-col gap-4`}>
+      <h3 className="text-lg font-bold text-foreground">{t.bento.screenshotTitle}</h3>
+      <a href={PROJECTS.gradeo.demo ?? undefined} target="_blank" rel="noopener noreferrer"
+        aria-label={`${t.gradeo.viewLive} — GRADEO (${t.nav.newTab})`}
+        className="block overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4">
+        <Image src="/images/gradeo-producto.jpg" width={650} height={480}
+          sizes="(min-width: 1280px) 800px, (min-width: 768px) 66vw, 100vw" alt={t.bento.screenshotAlt}
+          className="h-auto w-full" />
+      </a>
+      <figcaption className="text-xs text-muted-foreground">{t.bento.screenshotNote}</figcaption>
+    </figure>
   )
 }
 
@@ -179,14 +103,14 @@ function TopRatedWidget({ stats }: { stats: GradeoStats }) {
 
   return (
     <div className={`${CARD} flex flex-col`}>
-      <h3 className="mb-4 text-lg font-bold text-white">{t.bento.topRated}</h3>
+      <h3 className="mb-4 text-lg font-bold text-foreground">{t.bento.topRated}</h3>
 
       {isDeveloperMode ? (
         <pre
           tabIndex={0}
           role="region"
           aria-label={t.bento.topRated}
-          className="flex-1 overflow-x-auto rounded-xl border border-zinc-800/50 bg-black/50 p-3 font-mono text-[10px] leading-relaxed text-zinc-300 sm:text-xs"
+          className="flex-1 overflow-x-auto rounded-xl border border-soft/50 bg-surface-deep/50 p-3 font-mono text-[10px] leading-relaxed text-body sm:text-xs"
         >
           <code>{`select first_name, last_name, total_score
 from   public.professors
@@ -199,19 +123,21 @@ limit  5;`}</code>
         <ol className="flex flex-col gap-3">
           {stats.topProfessors.map((prof, i) => (
             <li key={prof.name} className="flex items-center justify-between gap-3">
-              <span className="truncate text-sm font-medium text-zinc-200">
-                <span className="text-zinc-400 tabular-nums">{i + 1}.</span> {prof.name}
+              <span className="min-w-0 text-sm font-medium text-subtle [overflow-wrap:anywhere]">
+                <span className="text-muted-foreground tabular-nums">{i + 1}.</span> {prof.name}
               </span>
-              <span className="flex flex-none items-center gap-1 text-sm font-bold text-yellow-400 tabular-nums">
+              <span className="flex flex-none items-center gap-1 text-sm font-bold text-warning tabular-nums">
                 {prof.score}
-                <Star className="h-3 w-3 fill-yellow-400 text-yellow-500" aria-hidden="true" />
+                <Star className="h-3 w-3 fill-warning text-warning" aria-hidden="true" />
                 <span className="sr-only">{t.bento.scale}</span>
               </span>
             </li>
           ))}
         </ol>
       ) : (
-        <p className="text-sm text-zinc-400">—</p>
+        <p className="text-sm text-muted-foreground">
+          {stats.pending ? t.bento.loadingLabel : stats.live ? t.bento.emptyRanking : t.bento.unavailableLabel}
+        </p>
       )}
     </div>
   )
@@ -237,31 +163,31 @@ function InsightWidget({ stats }: { stats: GradeoStats }) {
   if (!isDeveloperMode) {
     return (
       <div className={`${CARD} group flex flex-col justify-center`}>
-        <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-white">
-          <TrendingUp className="h-5 w-5 text-emerald-400" aria-hidden="true" />
+        <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-foreground">
+          <TrendingUp className="h-5 w-5 text-highlight" aria-hidden="true" />
           {t.bento.impactTitle}
         </h3>
-        <p className="text-sm leading-relaxed text-zinc-300">
+        <p className="text-sm leading-relaxed text-body">
           {copy(t.bento.impactText)}
         </p>
-        <p className="mt-4 font-mono text-[10px] tracking-wide text-zinc-400 uppercase">
+        <p className="mt-4 font-mono text-[10px] tracking-wide text-muted-foreground uppercase">
           {t.bento.devHint}
         </p>
         <div className="pointer-events-none absolute -right-8 -bottom-8 opacity-[0.07] transition-opacity group-hover:opacity-15">
-          <Sparkles className="h-40 w-40 text-emerald-400" aria-hidden="true" />
+          <Sparkles className="h-40 w-40 text-highlight" aria-hidden="true" />
         </div>
       </div>
     )
   }
 
   return (
-    <div className={`${CARD} flex flex-col gap-3 ring-1 ring-green-500/20`}>
+    <div className={`${CARD} flex flex-col gap-3 ring-1 ring-success/20`}>
       <div>
-        <h3 className="flex items-center gap-2 font-mono text-sm font-bold text-green-400">
+        <h3 className="flex items-center gap-2 font-mono text-sm font-bold text-success">
           <Code2 className="h-4 w-4" aria-hidden="true" />
           {t.bento.insightTitle}
         </h3>
-        <p className="mt-1 font-mono text-[10px] text-zinc-400">
+        <p className="mt-1 font-mono text-[10px] text-muted-foreground">
           {t.bento.insightSubtitle}
         </p>
       </div>
@@ -270,7 +196,7 @@ function InsightWidget({ stats }: { stats: GradeoStats }) {
         tabIndex={0}
         role="region"
         aria-label={t.bento.insightTitle}
-        className="overflow-x-auto rounded-lg border border-zinc-800 bg-black/80 p-3 font-mono text-[10px] leading-relaxed text-zinc-300"
+        className="overflow-x-auto rounded-lg border border-soft bg-surface-deep/80 p-3 font-mono text-[10px] leading-relaxed text-body"
       >
         <code>{`select avg(rating_personality), avg(rating_methodology),
        avg(rating_clarity), avg(rating_fairness), count(*)
@@ -282,24 +208,24 @@ where  professor_id = _prof_id
 _total := (_p + _m + _c + _f) / 4.0;`}</code>
       </pre>
 
-      <p className="text-[11px] leading-relaxed text-zinc-400">{t.bento.insightNote}</p>
+      <p className="text-[11px] leading-relaxed text-muted-foreground">{t.bento.insightNote}</p>
     </div>
   )
 }
 
 export function GradeoBento({ stats }: { stats: GradeoStats }) {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:auto-rows-[210px]">
-      <div className="rise-in md:row-span-2">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:auto-rows-[minmax(210px,auto)]">
+      <div className="rise-in">
         <LiveStatsWidget stats={stats} />
       </div>
-      <div className="rise-in">
-        <LocationWidget />
+      <div className="rise-in md:col-span-2 md:row-span-2">
+        <ProductWidget />
       </div>
-      <div className="rise-in md:row-span-2">
+      <div className="rise-in">
         <TopRatedWidget stats={stats} />
       </div>
-      <div className="rise-in">
+      <div className="rise-in md:col-span-3">
         <InsightWidget stats={stats} />
       </div>
     </div>

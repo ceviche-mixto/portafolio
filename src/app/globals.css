@@ -1,11 +1,33 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+
+/* Variantes que usa Base UI. No requieren instalar el generador shadcn. */
+@custom-variant data-open (&:where([data-state="open"], [data-open]:not([data-open="false"])));
+@custom-variant data-closed (&:where([data-state="closed"], [data-closed]:not([data-closed="false"])));
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
+  --color-body: var(--body-text);
+  --color-subtle: var(--subtle-text);
+  --color-surface-deep: var(--surface-deep);
+  --color-surface-raised: var(--surface-raised);
+  --color-border-strong: var(--border-strong);
+  --color-strong: var(--border-strong);
+  --color-soft: var(--soft-border);
+  --color-action: var(--action);
+  --color-action-foreground: var(--action-foreground);
+  --color-highlight: var(--highlight);
+  --color-success: var(--success);
+  --color-info: var(--info);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-success-surface: var(--success-surface);
+  --color-utility: var(--utility);
+  --color-personal: var(--personal);
+  --color-warning: var(--warning);
+  --color-discovery: var(--discovery);
+  --color-danger: var(--danger);
   --color-foreground: var(--foreground);
   /* Esto decía `--font-sans: var(--font-sans)`, una referencia circular que no
      resuelve a nada: el sitio entero venía cayendo en la serif por defecto en
@@ -45,7 +67,7 @@
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-2xl: calc(var(--radius) * 1.6);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 }
@@ -86,10 +108,28 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
+  --background: #09090b;
+  --foreground: #fafafa;
+  --body-text: #d4d4d8;
+  --subtle-text: #e4e4e7;
+  --surface-deep: #000000;
+  --surface-raised: #27272a;
+  --border-strong: #71717a;
+  --soft-border: #27272a;
+  --action: #f4f4f5;
+  --action-foreground: #18181b;
+  --highlight: #34d399;
+  --success: #4ade80;
+  --info: #93c5fd;
+  --accent-secondary: #67e8f9;
+  --success-surface: #052e16;
+  --utility: #fb923c;
+  --personal: #f472b6;
+  --warning: #facc15;
+  --discovery: #c084fc;
+  --danger: #f87171;
+  --card: #18181b;
+  --card-foreground: #fafafa;
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.87 0.00 0);
@@ -97,11 +137,11 @@
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
+  --muted-foreground: #a1a1aa;
   --accent: oklch(0.371 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: #3f3f46;
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.809 0.105 251.813);
@@ -133,7 +173,7 @@
   /* El anillo por defecto era zinc translúcido sobre fondo casi negro: existía
      pero no se distinguía. Emerald sobre zinc-950 da 7,8:1 (ver A-08). */
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-emerald-400;
+    @apply outline-2 outline-offset-2 outline-highlight;
   }
 }
 
@@ -349,12 +389,79 @@
   html {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  .word-in > span,
+  .rise-in,
+  .metric-in,
+  .hero-parallax,
+  .scroll-progress {
+    animation: none;
+    transform: none;
+    opacity: 1;
   }
+  .scroll-progress {
+    display: none;
+  }
+}
+
+@layer components {
+  .portfolio-panel {
+    @apply rounded-2xl border border-soft bg-card transition-colors duration-300 hover:border-border;
+  }
+}
+
+/* Header height follows content, including 200% text zoom. */
+:root { --header-height: 114px; }
+@media (min-width: 640px) { :root { --header-height: 70px; } }
+main, main > section[id] { scroll-margin-top: calc(var(--header-height) + 24px); }
+
+/* SSR content remains useful until the optional desktop animation arrives. */
+.lifecycle-animation { display: none; }
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .lifecycle { min-height: 200vh; }
+  .lifecycle[data-enhanced] .lifecycle-animation { display: block; }
+  .lifecycle[data-enhanced]:has(.lifecycle-animation > div) .lifecycle-content {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media (forced-colors: active) {
+  :focus-visible { outline-color: Highlight; }
+  .text-transparent { color: CanvasText !important; background: none !important; }
+  button, a { forced-color-adjust: auto; }
+}
+
+.rise-in:focus-within, .hero-parallax:focus-within {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Deliberate quiet mode: keep content, state and focus, remove nonessential motion. */
+html[data-motion="reduced"] { scroll-behavior: auto; }
+html[data-motion="reduced"] .word-in > span,
+html[data-motion="reduced"] .rise-in,
+html[data-motion="reduced"] .metric-in,
+html[data-motion="reduced"] .hero-parallax,
+html[data-motion="reduced"] [data-reveal] {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+html[data-motion="reduced"] .motion-safe\:animate-ping,
+html[data-motion="reduced"] .motion-safe\:animate-pulse { animation: none; }
+html[data-motion="reduced"] .scroll-progress,
+html[data-motion="reduced"] .lifecycle-animation { display: none; }
+html[data-motion="reduced"] .lifecycle { min-height: 0; }
+html[data-motion="reduced"] [data-slot="dialog-content"],
+html[data-motion="reduced"] [data-slot="dialog-overlay"] { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="dialog-content"], [data-slot="dialog-overlay"] { animation: none; }
 }

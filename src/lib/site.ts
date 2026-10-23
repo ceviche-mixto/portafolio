@@ -32,7 +32,7 @@ export const IDENTITY = {
   fullName: 'Giancarlo Larios Infantes',
   /**
    * Un único título, repetido literal en hero, CV, consola y metadatos.
-   * Describe el trabajo realizado; la formación académica se explica en Perfil.
+   * Describe el trabajo realizado; la formación académica se explica en el PDF.
    */
   titleEs: 'Desarrollador de software',
   titleEn: 'Software developer',

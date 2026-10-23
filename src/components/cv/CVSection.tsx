@@ -5,7 +5,7 @@ import {
   FileText,
   Cpu,
   Wrench,
-  GraduationCap,
+  Code2,
   Briefcase as BriefcaseIcon,
   Sparkles,
   Download,
@@ -13,7 +13,7 @@ import {
 } from "lucide-react"
 import { Reveal } from "@/components/motion/Reveal"
 import { useTranslation } from "@/hooks/useTranslation"
-import { CV_FILES, IDENTITY } from "@/lib/site"
+import { CV_FILES } from "@/lib/site"
 
 const CARD =
   "portfolio-panel relative h-full overflow-hidden p-6 sm:p-8"
@@ -84,7 +84,7 @@ export function CVSection() {
               <div className="relative z-10 flex h-full flex-col justify-center">
                 <h3 className="mb-4 flex items-center gap-3 text-xl font-bold text-foreground">
                   <span className="rounded-lg bg-highlight/10 p-2">
-                    <GraduationCap
+                    <Code2
                       className="h-5 w-5 text-highlight"
                       aria-hidden="true"
                     />
@@ -94,7 +94,6 @@ export function CVSection() {
                 <p className="pr-4 text-balance text-sm leading-relaxed font-light text-body md:text-base">
                   {t.cv.profile.content}
                 </p>
-                <p className="mt-3 text-xs text-muted-foreground">{IDENTITY.university}</p>
               </div>
             </article>
           </Reveal>

@@ -6,7 +6,6 @@ import { CVSection } from "@/components/cv/CVSection"
 import { ContactSection } from "@/features/contact/ContactSection"
 import { ModeSwitcher } from "@/components/mode-switcher/ModeSwitcher"
 import { useModeStore } from "@/store/useModeStore"
-import { AutomationDemo } from "@/features/projects/AutomationDemo"
 import { HeroSection } from "@/features/hero/HeroSection"
 import { GradeoSection } from "@/features/gradeo/GradeoSection"
 import { ProjectsSection } from "@/features/projects/ProjectsSection"
@@ -66,32 +65,11 @@ describe("public page accessibility", () => {
     expect(results.violations.map((issue) => ({ id: issue.id, elements: issue.nodes.map((node) => node.target) }))).toEqual([])
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1)
     expect(screen.getByRole("contentinfo")).toBeTruthy()
-  })
-})
-
-describe("honest automation demonstration", () => {
-  it("runs three steps locally and resets", async () => {
-    vi.useFakeTimers()
-    wrap(<AutomationDemo />)
-    fireEvent.click(screen.getByRole("button", { name: "Probar el flujo" }))
-    expect(screen.getByRole("button", { name: "Procesando ejemplo…" }).hasAttribute("disabled")).toBe(true)
-    const { act } = await import("react")
-    await act(async () => { await vi.advanceTimersByTimeAsync(500) })
-    await act(async () => { await vi.advanceTimersByTimeAsync(500) })
-    expect(screen.getByRole("status").textContent).toContain("simulados")
-    expect(screen.getByText(/DEMO-001/).textContent).toContain("Hola")
-    fireEvent.click(screen.getByRole("button", { name: "Reiniciar" }))
-    expect(screen.getByRole("status").textContent).toBe("Listo para probar.")
-    expect(screen.queryByText(/DEMO-001/)).toBeNull()
-    vi.useRealTimers()
-  })
-  it("renders user input as text, not executable HTML", () => {
-    const { container } = wrap(<AutomationDemo />)
-    fireEvent.change(screen.getByRole("textbox"), { target: { value: '<img src=x onerror="alert(1)">' } })
-    fireEvent.click(screen.getByRole("button", { name: "Probar el flujo" }))
-    expect(container.querySelector("img")).toBeNull()
-    expect(screen.getByText('<img src=x onerror="alert(1)">', { selector: "p" })).toBeTruthy()
-    expect(screen.getByText(/No se guarda ni se envía/)).toBeTruthy()
+    expect(container.querySelector("#automation-title")).toBeNull()
+    const profile = container.querySelector("#perfil")?.textContent ?? ""
+    expect(profile).not.toMatch(/estudiante|\bstudent\b|\bjunior\b|aprendiendo|learning to/i)
+    expect(profile).toContain(lang === "es" ? "Desarrollador de software." : "Software developer.")
+    expect(profile).not.toContain("Universidad Católica")
   })
 })
 

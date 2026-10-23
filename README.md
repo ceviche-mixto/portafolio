@@ -98,9 +98,15 @@ sin nonce ni `unsafe-eval`; los estilos inline siguen permitidos para React y
 la animación. Esto requiere renderizado dinámico: no convertir a exportación
 estática sin rediseñar y verificar la política.
 
-**La mini-demo no es una integración real.** Solo transforma un mensaje de
-ejemplo en memoria. No escribe en una base, no envía WhatsApp/correo y no tiene
-analítica. React escapa el contenido. Sin JavaScript, los pasos siguen legibles.
+**El portafolio prioriza los proyectos reales.** La simulación genérica de
+automatización fue retirada porque no aportaba una integración verificable y
+distraía de GRADEO y FARMAPLUS. Se puede recuperar desde el historial Git.
+
+**Solicitar código no concede acceso ni envía mensajes.** Abre un desplegable
+nativo con el correo visible, copia con confirmación y recuperación de errores,
+y un enlace opcional para redactar un correo con proyecto y asunto preparados.
+La alternativa de copiar funciona aunque no haya una aplicación de correo
+configurada. Los repositorios privados no se publican automáticamente.
 
 **Las métricas del monitor son locales.** FPS y Web Vitals describen esta visita,
 no el rendimiento de todos los usuarios. No se transmiten ni persisten; algunos

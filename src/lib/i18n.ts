@@ -131,10 +131,19 @@ const es = {
     stackLabel: 'Stack',
     highlightsLabel: 'Lo interesante',
     codeOnRequest: 'Solicitar código',
+    codeRequest: {
+      description: 'El código de {project} no es público. Escríbeme para coordinar una revisión técnica.',
+      copyEmail: 'Copiar correo', copied: 'Correo copiado',
+      copyFailed: 'No se pudo copiar. Selecciona y copia la dirección que aparece arriba.',
+      compose: 'Redactar correo',
+      mailHint: 'Abre tu aplicación de correo. Si no tienes una configurada, copia la dirección y escribe desde tu correo habitual.',
+      subject: 'Solicitud de revisión de código',
+      message: 'Hola Giancarlo, me interesa revisar el código de {project}. ¿Podemos coordinar una revisión técnica?',
+    },
     farmaplus: {
       name: 'FARMAPLUS',
       status: 'Beta',
-      statusDetail: 'Aún no desplegado; funcionalidades en desarrollo y validación.',
+      statusDetail: 'Versión beta aún no desplegada.',
       tagline: 'ERP de farmacia con inventario, ventas y facturación.',
       problem:
         'Una farmacia no puede vender desde un punto de venta genérico: tiene que emitir documentos válidos para SUNAT, saber de qué lote salió cada caja y cuándo vence, y cuadrar la caja al cierre.',
@@ -175,7 +184,7 @@ const es = {
     documentNote: 'PDF en español · 1 página. La vista se abre en otra pestaña.',
     profile: {
       title: 'Perfil profesional',
-      content: 'Desarrollador de software y estudiante de Ingeniería de Sistemas de Información. Trabajo en aplicaciones web, autenticación, operaciones de datos e interfaces responsivas. Uso asistentes de IA para desarrollar, depurar y documentar, manteniendo la responsabilidad sobre el resultado.',
+      content: 'Desarrollador de software. Construyo aplicaciones web con autenticación, autorización, gestión de datos e interfaces responsivas. Desarrollo GRADEO, una plataforma en producción, y FARMAPLUS, un ERP de farmacia en beta.',
     },
     experience: {
       title: 'Experiencia',
@@ -211,18 +220,6 @@ const es = {
       'Construyo sistemas donde lo difícil es el modelo de datos. Ahora mismo: GRADEO y FARMAPLUS.',
     openTerminal: 'Abrir terminal',
     closeTerminal: 'Cerrar terminal',
-  },
-  automation: {
-    label: 'Demo interactiva · simulación local', title: 'Una consulta. Tres pasos menos.',
-    description: 'Prueba cómo una consulta puede convertirse en un registro y un aviso para el responsable. Es un ejemplo de flujo, no una integración desplegada ni un cliente real.',
-    inputLabel: 'Consulta de ejemplo (opcional)', example: 'Hola, ¿qué horarios tienen disponibles esta semana?',
-    privacy: 'Todo ocurre en esta página. No se guarda ni se envía información. Usa datos de ejemplo, no datos personales.',
-    requiresJs: 'La prueba interactiva requiere JavaScript. Puedes leer los tres pasos sin activarlo.',
-    receive: 'Recibir la consulta', receiveDesc: 'Tomar el mensaje del formulario de ejemplo.',
-    register: 'Organizar el registro', registerDesc: 'Crear una entrada local con el mensaje, sin copiarlo a mano.',
-    notify: 'Preparar el aviso', notifyDesc: 'Mostrar una notificación simulada. No se envía por WhatsApp ni correo.',
-    run: 'Probar el flujo', running: 'Procesando ejemplo…', reset: 'Reiniciar',
-    waiting: 'Listo para probar.', done: 'Ejemplo completado. Registro y aviso simulados.',
   },
   contact: {
     sectionTitle: 'Hablemos',
@@ -356,10 +353,19 @@ const en: TranslationDict = {
     stackLabel: 'Stack',
     highlightsLabel: 'What is interesting',
     codeOnRequest: 'Request code',
+    codeRequest: {
+      description: 'The code for {project} is not public. Email me to arrange a technical review.',
+      copyEmail: 'Copy email', copied: 'Email copied',
+      copyFailed: 'Could not copy. Select and copy the address shown above.',
+      compose: 'Compose email',
+      mailHint: 'Opens your email app. If none is configured, copy the address and write from your usual email service.',
+      subject: 'Code review request',
+      message: 'Hi Giancarlo, I would like to review the code for {project}. Can we arrange a technical review?',
+    },
     farmaplus: {
       name: 'FARMAPLUS',
       status: 'Beta',
-      statusDetail: 'Not deployed yet; features are being developed and validated.',
+      statusDetail: 'Beta version, not deployed yet.',
       tagline: 'Pharmacy ERP for inventory, sales and invoicing.',
       problem:
         'A pharmacy cannot sell from a generic point of sale: it has to issue SUNAT-valid documents, know which batch a box came from and when it expires, and reconcile the till at closing.',
@@ -400,7 +406,7 @@ const en: TranslationDict = {
     documentNote: 'English PDF · 1 page. The preview opens in a new tab.',
     profile: {
       title: 'Professional profile',
-      content: 'Software developer and Information Systems Engineering student. I work on web applications, authentication, data operations and responsive interfaces. I use AI assistants to develop, debug and document software, while remaining responsible for the result.',
+      content: 'Software developer. I build web applications with authentication, authorization, data management and responsive interfaces. I develop GRADEO, a platform in production, and FARMAPLUS, a pharmacy ERP in beta.',
     },
     experience: {
       title: 'Experience',
@@ -436,18 +442,6 @@ const en: TranslationDict = {
       'I build systems where the hard part is the data model. Currently: GRADEO and FARMAPLUS.',
     openTerminal: 'Open terminal',
     closeTerminal: 'Close terminal',
-  },
-  automation: {
-    label: 'Interactive demo · local simulation', title: 'One enquiry. Three fewer steps.',
-    description: 'Try turning an enquiry into a record and an alert for the person in charge. This is a flow example, not a deployed integration or a real client.',
-    inputLabel: 'Example enquiry (optional)', example: 'Hi, what times are available this week?',
-    privacy: 'Everything happens on this page. Nothing is stored or sent. Use example information, not personal data.',
-    requiresJs: 'The interactive example needs JavaScript. You can read all three steps without it.',
-    receive: 'Receive the enquiry', receiveDesc: 'Read the message from the example form.',
-    register: 'Organize the record', registerDesc: 'Create a local entry with the message, without copying it manually.',
-    notify: 'Prepare the alert', notifyDesc: 'Show a simulated notification. No WhatsApp message or email is sent.',
-    run: 'Try the flow', running: 'Processing example…', reset: 'Reset',
-    waiting: 'Ready to try.', done: 'Example complete. Simulated record and alert.',
   },
   contact: {
     sectionTitle: 'Let’s talk',

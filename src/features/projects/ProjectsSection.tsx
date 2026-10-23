@@ -6,7 +6,6 @@ import { Pill, GraduationCap, Check } from "lucide-react"
 import { useTranslation } from "@/hooks/useTranslation"
 import { ProjectLinks } from "@/components/project/ProjectLinks"
 import { PROJECTS } from "@/lib/site"
-import { AutomationDemo } from "./AutomationDemo"
 
 /**
  * Sección de proyectos.
@@ -143,7 +142,6 @@ export function ProjectsSection() {
             </Reveal>
           ))}
         </div>
-        <AutomationDemo />
       </div>
     </section>
   )

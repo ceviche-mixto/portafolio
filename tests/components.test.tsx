@@ -27,7 +27,7 @@ describe("CV integrity and actions", () => {
     const view = screen.getByRole("link", { name: lang === "es" ? /Ver CV/ : /View CV/ })
     const download = screen.getByRole("link", { name: lang === "es" ? /Descargar CV/ : /Download CV/ })
     expect(view.getAttribute("href")).toBe(download.getAttribute("href"))
-    expect(view.getAttribute("href")).toBe(`/cv/giancarlo-larios-cv-${lang}.pdf`)
+    expect(view.getAttribute("href")).toBe(`/cv/giancarlo-larios-cv-${lang}.pdf?v=20261023`)
     expect(view.getAttribute("target")).toBe("_blank")
     expect(view.getAttribute("rel")).toContain("noopener")
     expect(download.getAttribute("download")).toBe(`Giancarlo-Larios-CV-${lang.toUpperCase()}.pdf`)
@@ -39,8 +39,8 @@ describe("CV integrity and actions", () => {
       const previewName = lang === "es" ? /Ver CV/ : /View CV/
       const previews = screen.getAllByRole("link", { name: previewName })
       expect(previews).toHaveLength(2)
-      previews.forEach((link) => expect(link.getAttribute("href")).toBe(`/cv/giancarlo-larios-cv-${lang}.pdf`))
-      expect(screen.getByRole("link", { name: lang === "es" ? /Descargar CV/ : /Download CV/ }).getAttribute("href")).toBe(`/cv/giancarlo-larios-cv-${lang}.pdf`)
+      previews.forEach((link) => expect(link.getAttribute("href")).toBe(`/cv/giancarlo-larios-cv-${lang}.pdf?v=20261023`))
+      expect(screen.getByRole("link", { name: lang === "es" ? /Descargar CV/ : /Download CV/ }).getAttribute("href")).toBe(`/cv/giancarlo-larios-cv-${lang}.pdf?v=20261023`)
     }
     assertCvLinks("es")
     fireEvent.click(screen.getByRole("button", { name: "Switch to English" }))

@@ -81,10 +81,14 @@ export const PROJECTS = {
   },
 } as const
 
-/** CV en PDF por idioma. Los archivos van en /public/cv/. */
+/**
+ * CV en PDF por idioma. Los archivos van en /public/cv/.
+ * Actualizar la revisión al sustituir un PDF, también para visitas que aún
+ * conservan la política de caché de una publicación anterior.
+ */
 export const CV_FILES = {
-  es: '/cv/giancarlo-larios-cv-es.pdf',
-  en: '/cv/giancarlo-larios-cv-en.pdf',
+  es: '/cv/giancarlo-larios-cv-es.pdf?v=20261023',
+  en: '/cv/giancarlo-larios-cv-en.pdf?v=20261023',
 } as const
 
 /** Anclas de la navegación. El id debe existir como `id` en la sección. */

@@ -7,7 +7,8 @@
 - CV español aprobado conservado byte a byte; PDF inglés residual sustituido
   por una traducción del mismo contenido. Ambos tienen una página.
 - Hero y Perfil usan el PDF del idioma seleccionado. Vista nativa en pestaña
-  nueva y descarga explícita con nombre ES/EN. Los PDFs revalidan su caché.
+  nueva y descarga explícita con nombre ES/EN. Los PDFs revalidan su caché y los
+  enlaces incluyen una versión de publicación para no reutilizar la caché antigua.
 - Canonical conservado; retirados los hreflang duplicados. El idioma cambia
   por cookie, no mediante dos URLs localizadas independientes.
 
@@ -39,7 +40,8 @@ EN B905255E1A0FD5C9A8571E0D57966BA44FF8E868CD81854FC4E3A10066BD0638
    mismos hechos, fechas y nivel de idiomas; traducir no implica añadir experiencia.
 2. Reemplazar los archivos `public/cv/giancarlo-larios-cv-es.pdf` y
    `public/cv/giancarlo-larios-cv-en.pdf`. No modificar los nombres sin actualizar
-   `src/lib/site.ts`, `next.config.ts` y las pruebas.
+   `src/lib/site.ts`, `next.config.ts` y las pruebas. Al reemplazar documentos,
+   incrementar también la versión de los enlaces en `src/lib/site.ts`.
 3. Editar textos de interfaz en `src/lib/i18n.ts` e identidad/enlaces en
    `src/lib/site.ts`; las claves ES/EN deben coincidir.
 4. Ejecutar `npm run check`, `npm audit` y revisar ambos PDFs renderizados.
@@ -47,8 +49,8 @@ EN B905255E1A0FD5C9A8571E0D57966BA44FF8E868CD81854FC4E3A10066BD0638
    hashes de los documentos, enlaces finales, consola y diseño móvil. Un push
    correcto no demuestra por sí solo que Vercel haya terminado el despliegue.
 
-Una pestaña que ya tenía el PDF antiguo en caché puede necesitar recarga sin
-caché tras esta primera actualización. Las siguientes respuestas revalidan.
+Una pestaña del portafolio que estaba abierta antes del despliegue necesita
+recargarse para recibir los enlaces nuevos; no es necesario borrar la caché.
 
 ## Consejos de los vídeos y límites
 

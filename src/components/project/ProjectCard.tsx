@@ -44,7 +44,6 @@ export function ProjectCard({
           height={project.cover.height}
           alt={project.cover.alt[lang]}
           sizes={featured ? "(min-width: 1024px) 700px, 100vw" : "(min-width: 1024px) 600px, 100vw"}
-          unoptimized={project.cover.src.endsWith(".svg")}
           className="card-media aspect-[16/10] h-auto w-full object-cover object-top"
         />
         </ListShift>

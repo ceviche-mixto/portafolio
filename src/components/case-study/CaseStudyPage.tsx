@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation"
 import { SiteFooter } from "@/features/contact/SiteFooter"
 import { getProject } from "@/content/projects"
+import { JsonLd } from "@/components/seo/JsonLd"
 import type { Language } from "@/lib/language"
+import { caseStructuredData } from "@/lib/structured-data"
 import { CaseStudyArticle } from "./CaseStudyArticle"
 import { GradeoLiveMetrics } from "./GradeoLiveMetrics"
 
@@ -20,6 +22,7 @@ export function CaseStudyPage({ lang, slug }: { lang: Language; slug: string }) 
         />
       </main>
       <SiteFooter lang={lang} />
+      <JsonLd data={caseStructuredData(lang, project)} />
     </>
   )
 }

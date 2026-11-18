@@ -29,7 +29,12 @@ export const GRADEO_STATS_EMPTY: GradeoStats = {
  * escaparate, no un panel de control, y así una visita no golpea producción.
  */
 export const GRADEO_STATS_REVALIDATE = 300
-export const GRADEO_STATS_TIMEOUT = 3000
+/**
+ * La primera consulta en frío tarda ~5.5 s (medido el 18-11-2026; en caliente,
+ * < 1 s). La página se regenera en segundo plano con ISR, así que esperar más no
+ * retrasa a ningún visitante; sin respuesta se publica el recuento verificado.
+ */
+export const GRADEO_STATS_TIMEOUT = 8000
 
 /**
  * Consulta las métricas en el servidor.
@@ -94,7 +99,7 @@ async function readGradeoStats(): Promise<GradeoStats> {
 const readCachedGradeoStats = unstable_cache(async () => {
   const stats = await readGradeoStats()
   // Un fallo no debe congelar la reserva en la caché durante cinco minutos.
-  if (!stats.live) throw new Error('Optional GRADEO metrics unavailable')
+  if (!stats.live) throw new Error('GRADEO metrics unavailable: the verified snapshot is shown instead')
   return stats
 }, ['gradeo-public-stats-v2'], { revalidate: GRADEO_STATS_REVALIDATE })
 

@@ -1,6 +1,22 @@
 import type { Project } from "./types"
 
-/** Cifras consultadas en la base de producción el 18 de noviembre de 2026, 09:18 UTC. */
+/**
+ * Recuento verificado en la base de producción (PostgreSQL 17.6) el 18 de
+ * noviembre de 2026, 09:18 UTC. Es la evidencia del caso y el respaldo de la
+ * lectura viva cuando la base no responde.
+ */
+export const GRADEO_VERIFIED = {
+  asOf: "2026-11-18",
+  professors: 919,
+  approvedReviews: 84,
+  tables: 24,
+  rlsPolicies: 67,
+  triggers: 7,
+  trigramIndexes: 2,
+} as const
+
+const both = (value: number | string) => ({ es: String(value), en: String(value) })
+
 export const gradeo: Project = {
   slug: "gradeo",
   name: "GRADEO",
@@ -170,22 +186,22 @@ limit  20;`,
     },
   ],
   evidence: {
-    asOf: "2026-11-18",
+    asOf: GRADEO_VERIFIED.asOf,
     source: {
       es: "Consultado en la base de producción (PostgreSQL 17.6).",
       en: "Queried on the production database (PostgreSQL 17.6).",
     },
     items: [
-      { label: { es: "Docentes indexados", en: "Indexed professors" }, value: { es: "919", en: "919" } },
-      { label: { es: "Reseñas aprobadas", en: "Approved reviews" }, value: { es: "84", en: "84" } },
-      { label: { es: "Tablas en el esquema public", en: "Tables in the public schema" }, value: { es: "24", en: "24" } },
+      { label: { es: "Docentes indexados", en: "Indexed professors" }, value: both(GRADEO_VERIFIED.professors) },
+      { label: { es: "Reseñas aprobadas", en: "Approved reviews" }, value: both(GRADEO_VERIFIED.approvedReviews) },
+      { label: { es: "Tablas en el esquema public", en: "Tables in the public schema" }, value: both(GRADEO_VERIFIED.tables) },
       {
         label: { es: "Tablas con RLS activa", en: "Tables with RLS enabled" },
-        value: { es: "24 de 24", en: "24 of 24" },
-        note: { es: "67 políticas en total", en: "67 policies in total" },
+        value: { es: `${GRADEO_VERIFIED.tables} de ${GRADEO_VERIFIED.tables}`, en: `${GRADEO_VERIFIED.tables} of ${GRADEO_VERIFIED.tables}` },
+        note: { es: `${GRADEO_VERIFIED.rlsPolicies} políticas en total`, en: `${GRADEO_VERIFIED.rlsPolicies} policies in total` },
       },
-      { label: { es: "Triggers propios", en: "Custom triggers" }, value: { es: "7", en: "7" } },
-      { label: { es: "Índices GIN de trigramas", en: "Trigram GIN indexes" }, value: { es: "2", en: "2" } },
+      { label: { es: "Triggers propios", en: "Custom triggers" }, value: both(GRADEO_VERIFIED.triggers) },
+      { label: { es: "Índices GIN de trigramas", en: "Trigram GIN indexes" }, value: both(GRADEO_VERIFIED.trigramIndexes) },
     ],
   },
 }

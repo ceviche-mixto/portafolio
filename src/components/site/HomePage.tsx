@@ -4,7 +4,9 @@ import { EngineeringSection } from "@/features/engineering/EngineeringSection"
 import { TrajectorySection } from "@/features/trajectory/TrajectorySection"
 import { ContactSection } from "@/features/contact/ContactSection"
 import { SiteFooter } from "@/features/contact/SiteFooter"
+import { JsonLd } from "@/components/seo/JsonLd"
 import type { Language } from "@/lib/language"
+import { homeStructuredData } from "@/lib/structured-data"
 
 /**
  * Portada, idéntica en estructura para cada idioma: prueba real, trabajo
@@ -21,6 +23,7 @@ export function HomePage({ lang }: { lang: Language }) {
         <ContactSection lang={lang} />
       </main>
       <SiteFooter lang={lang} />
+      <JsonLd data={homeStructuredData(lang)} />
     </>
   )
 }

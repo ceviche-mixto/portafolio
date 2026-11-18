@@ -37,7 +37,7 @@ export const farmaplus: Project = {
     en: "Environment shown: technical demo. The SUNAT adapter runs in simulated mode by default: it produces UBL 2.1, XML and CDR with SUNAT’s validations without going online. No acceptance of real receipts is claimed.",
   },
   cover: {
-    src: "/images/projects/farmaplus-pos.svg",
+    src: "/images/projects/farmaplus-pos.png",
     width: 1600,
     height: 1000,
     alt: {
@@ -45,8 +45,8 @@ export const farmaplus: Project = {
       en: "FARMAPLUS point-of-sale schematic: cart with a FEFO batch, an expired batch excluded, a trace from batch to receipt B001, totals with IGV and a cash count with no difference.",
     },
     caption: {
-      es: "Esquema vectorial con datos ficticios; no es una captura del sistema.",
-      en: "Vector schematic with fictitious data; not a screenshot of the system.",
+      es: "Esquema de la interfaz con datos ficticios; no es una captura del sistema.",
+      en: "Interface schematic with fictitious data; not a screenshot of the system.",
     },
   },
   gallery: [],

@@ -15,7 +15,7 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); pathname.current = "/" })
 
 const AXE_RULES = {
   "color-contrast": { enabled: false },
-  // Regla experimental de axe: el nombre accesible debe contener el texto visible (WCAG 2.5.3).
+  // WCAG 2.5.3. En jsdom axe la deja «incompleta»; ver el bloque dedicado más abajo.
   "label-content-name-mismatch": { enabled: true },
 }
 
@@ -58,6 +58,44 @@ describe("language switch", () => {
     expect(link.getAttribute("hreflang")).toBe(target)
     expect(link.textContent?.startsWith(visible)).toBe(true)
     expect(link.getAttribute("aria-label")).toBeNull()
+  })
+})
+
+/**
+ * WCAG 2.5.3: el nombre accesible de un control contiene su texto visible.
+ * La regla de axe (`label-content-name-mismatch`) necesita layout real y en
+ * jsdom queda «incompleta», así que aquí se comprueba directamente y en Chrome
+ * se ejecuta axe sobre el build de producción.
+ */
+describe("WCAG 2.5.3 label in name", () => {
+  const visibleText = (el: Element) => {
+    const clone = el.cloneNode(true) as Element
+    clone.querySelectorAll('[aria-hidden="true"], .sr-only').forEach((node) => node.remove())
+    return (clone.textContent ?? "").replace(/\s+/g, " ").trim()
+  }
+  const mismatches = (root: HTMLElement) =>
+    [...root.querySelectorAll("a[href], button, summary")].flatMap((el) => {
+      const visible = visibleText(el)
+      const label = el.getAttribute("aria-label")
+      return visible && label && !label.toLowerCase().includes(visible.toLowerCase()) ? [`${visible} → ${label}`] : []
+    })
+
+  it("flags a control whose name drops its visible text", () => {
+    const { container } = render(<a href="/en" aria-label="Cambiar idioma">EN</a>)
+    expect(mismatches(container)).toEqual(["EN → Cambiar idioma"])
+  })
+
+  it.each(["es", "en"] as const)("holds for every control on the home page and the case studies in %s", (lang) => {
+    browserStubs()
+    const { container } = render(
+      <>
+        <SiteChrome lang={lang} />
+        <HomePage lang={lang} />
+        {PROJECTS.map((project) => <CaseStudyArticle key={project.slug} project={project} lang={lang} />)}
+      </>
+    )
+    expect(container.querySelectorAll("a[href], button, summary").length).toBeGreaterThan(40)
+    expect(mismatches(container)).toEqual([])
   })
 })
 

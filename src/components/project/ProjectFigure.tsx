@@ -5,8 +5,7 @@ import { cn } from "@/lib/utils"
 
 /**
  * Captura o esquema de un proyecto con su leyenda. La caja reserva la
- * proporción del medio, así que no hay salto al cargar. Los SVG se sirven tal
- * cual: el optimizador de imágenes no los procesa.
+ * proporción del medio, así que no hay salto al cargar.
  */
 export function ProjectFigure({
   media,
@@ -28,7 +27,6 @@ export function ProjectFigure({
           height={media.height}
           alt={media.alt[lang]}
           sizes={sizes}
-          unoptimized={media.src.endsWith(".svg")}
           className="h-auto w-full"
         />
       </div>

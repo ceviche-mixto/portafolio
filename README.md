@@ -93,7 +93,13 @@ disponible», que es distinto de cero.
 
 **Las capturas no muestran datos personales.** Las de GRADEO se tomaron en
 producción con los nombres de docentes y el texto de las reseñas sustituidos.
-FARMAPLUS se representa con un esquema vectorial con datos ficticios.
+FARMAPLUS se representa con un esquema de su interfaz con datos ficticios.
+
+**Datos estructurados y tarjetas.** Cada página publica JSON-LD (`Person` y una
+entidad por proyecto, en `src/lib/structured-data.ts`). La imagen Open Graph de
+la portada se genera en build con Geist (`src/assets/fonts`, licencia OFL) y la
+paleta editorial; cada caso usa su captura. El sitemap lista las 8 URLs con
+fechas de revisión del contenido, no del build.
 
 **CSP estática.** La política vive en `next.config.ts`, sin nonce por petición,
 que obligaría a renderizar cada página por petición. Next inserta scripts inline

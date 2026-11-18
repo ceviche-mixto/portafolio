@@ -72,7 +72,7 @@ export function homeMetadata(lang: Language): Metadata {
   })
 }
 
-/** Página de un caso, con su captura como tarjeta cuando es un mapa de bits. */
+/** Página de un caso, con su captura como tarjeta. */
 export function caseMetadata(lang: Language, project: Project): Metadata {
   const { cover } = project
   return pageMetadata({
@@ -81,8 +81,6 @@ export function caseMetadata(lang: Language, project: Project): Metadata {
     title: `${project.name}: ${project.headline[lang]} — ${IDENTITY.name}`,
     description: project.summary[lang],
     type: 'article',
-    images: cover.src.endsWith('.svg')
-      ? undefined
-      : [{ url: cover.src, width: cover.width, height: cover.height, alt: cover.alt[lang] }],
+    images: [{ url: cover.src, width: cover.width, height: cover.height, alt: cover.alt[lang] }],
   })
 }

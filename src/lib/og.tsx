@@ -1,54 +1,103 @@
+import { readFile } from "node:fs/promises"
+import { join } from "node:path"
 import { ImageResponse } from "next/og"
-import { IDENTITY } from "./site"
+import { PROJECTS } from "@/content/projects"
+import { translations } from "./i18n"
 import type { Language } from "./language"
 
+const FONTS = join(process.cwd(), "src/assets/fonts")
+const COLOR = {
+  paper: "#F5F0E8",
+  ink: "#15171C",
+  cobalt: "#253BD6",
+  muted: "#585963",
+  border: "#D8D0C2",
+  evidence: "#ECA888",
+}
+
 /**
- * Tarjeta para compartir la portada. Se genera con next/og en build, así que
- * sigue al idioma y al título sin mantener un PNG a mano.
+ * Tarjeta para compartir la portada, generada en build con la paleta editorial
+ * y Geist real (OFL, `src/assets/fonts`). Usa el mismo titular que el hero.
  */
-export function homeOgImage(lang: Language, size: { width: number; height: number }) {
-  const title = lang === "es" ? IDENTITY.titleEs : IDENTITY.titleEn
-  const pitch =
-    lang === "es"
-      ? "GRADEO y OneCtrl en producción · FARMAPLUS"
-      : "GRADEO and OneCtrl in production · FARMAPLUS"
+export async function homeOgImage(lang: Language, size: { width: number; height: number }) {
+  const [regular, semibold] = await Promise.all([
+    readFile(join(FONTS, "Geist-Regular.ttf")),
+    readFile(join(FONTS, "Geist-SemiBold.ttf")),
+  ])
+  const t = translations[lang]
 
   return new ImageResponse(
     (
       <div
         style={{
-          height: "100%",
           width: "100%",
+          height: "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#F5F0E8",
-          padding: "72px",
-          fontFamily: "sans-serif",
+          background: COLOR.paper,
+          color: COLOR.ink,
+          padding: "64px 72px",
+          fontFamily: "Geist",
         }}
       >
-        <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "8px", background: "#253BD6" }} />
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div style={{ display: "flex", fontSize: 22, letterSpacing: "0.18em", textTransform: "uppercase", color: "#253BD6", fontWeight: 700 }}>
-            {lang === "es" ? "Portafolio de software" : "Software portfolio"}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", fontSize: 26, color: COLOR.muted }}>{t.hero.eyebrow}</div>
+          <div
+            style={{
+              display: "flex",
+              marginTop: 24,
+              maxWidth: 980,
+              fontSize: 70,
+              fontWeight: 600,
+              lineHeight: 1.04,
+              letterSpacing: "-0.035em",
+            }}
+          >
+            {t.hero.title}
           </div>
-          <div style={{ display: "flex", fontSize: 82, fontWeight: 900, color: "#15171C", letterSpacing: "-0.03em", lineHeight: 1.02 }}>
-            {IDENTITY.name}
-          </div>
-          <div style={{ display: "flex", fontSize: 38, color: "#585963", letterSpacing: "-0.01em" }}>{title}</div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          <div style={{ display: "flex", fontSize: 26, color: "#15171C" }}>{pitch}</div>
-          <div style={{ display: "flex", gap: "12px" }}>
-            {["GRADEO", "OneCtrl", "FARMAPLUS", "PostgreSQL"].map((tag) => (
-              <div key={tag} style={{ display: "flex", fontSize: 22, color: "#15171C", border: "1px solid #D8D0C2", borderRadius: "999px", padding: "8px 22px", background: "#FFFFFF" }}>
-                {tag}
-              </div>
-            ))}
-          </div>
+
+        {/* Línea cobalto: el gesto visual del sitio. */}
+        <div style={{ display: "flex", height: 3, width: "100%", background: COLOR.cobalt }} />
+
+        <div style={{ display: "flex", gap: 12 }}>
+          {PROJECTS.map((project) => (
+            <div
+              key={project.slug}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "12px 20px",
+                borderRadius: 999,
+                border: `1px solid ${COLOR.border}`,
+                background: "#FFFFFF",
+                fontSize: 22,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  width: 12,
+                  height: 12,
+                  borderRadius: 999,
+                  background: project.status === "production" ? COLOR.cobalt : COLOR.evidence,
+                }}
+              />
+              <div style={{ display: "flex", fontWeight: 600 }}>{project.name}</div>
+              <div style={{ display: "flex", color: COLOR.muted }}>{t.status[project.status]}</div>
+            </div>
+          ))}
         </div>
       </div>
     ),
-    size
+    {
+      ...size,
+      fonts: [
+        { name: "Geist", data: regular, weight: 400, style: "normal" },
+        { name: "Geist", data: semibold, weight: 600, style: "normal" },
+      ],
+    }
   )
 }

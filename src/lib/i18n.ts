@@ -92,9 +92,11 @@ const es = {
     live: {
       title: 'Lectura en vivo',
       note: 'Datos de producción · la página se regenera cada 5 minutos',
-      unavailable: 'Datos no disponibles en este momento',
+      snapshotTitle: 'Recuento verificado',
+      snapshotNote: 'Consultado en producción el {date}. La lectura en vivo no respondió en la última regeneración.',
       professors: 'Docentes indexados',
       reviews: 'Reseñas aprobadas',
+      rlsTables: 'Tablas con RLS',
     },
   },
   cv: {
@@ -206,9 +208,11 @@ const en: TranslationDict = {
     live: {
       title: 'Live reading',
       note: 'Production data · the page regenerates every 5 minutes',
-      unavailable: 'Data unavailable right now',
+      snapshotTitle: 'Verified count',
+      snapshotNote: 'Queried in production on {date}. The live reading did not respond in the latest regeneration.',
       professors: 'Indexed professors',
       reviews: 'Approved reviews',
+      rlsTables: 'Tables with RLS',
     },
   },
   cv: {

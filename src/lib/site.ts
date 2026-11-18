@@ -10,8 +10,7 @@
  * Dominio canónico, para `metadataBase`, sitemap e imágenes Open Graph.
  *
  * Se resuelve en cadena para que sea correcto en cada entorno sin configurar
- * nada. Antes había aquí un dominio de ejemplo, que es peor que no tener
- * ninguno: publica URLs absolutas que no existen.
+ * nada; un dominio de ejemplo publicaría URLs absolutas que no existen.
  *
  *   1. NEXT_PUBLIC_SITE_URL — tu dominio propio, cuando lo tengas.
  *   2. El dominio público confirmado del portafolio. Los previews también deben
@@ -26,7 +25,7 @@ function resolveSiteUrl(): string {
 
 export const SITE_URL = resolveSiteUrl()
 
-/** Identidad. Un solo título profesional, usado en todo el sitio (ver C-03). */
+/** Identidad. Un solo título profesional, usado en todo el sitio. */
 export const IDENTITY = {
   name: 'Giancarlo Larios',
   fullName: 'Giancarlo Larios Infantes',
@@ -40,7 +39,7 @@ export const IDENTITY = {
   email: 'giancarlolarios123@gmail.com',
 } as const
 
-/** Perfiles. El orden es el orden de aparición: GitHub primero (ver U-01). */
+/** Perfiles. El orden es el orden de aparición: GitHub primero. */
 export const SOCIALS = {
   github: 'https://github.com/ceviche-mixto',
   linkedin: 'https://www.linkedin.com/in/giancarlo-larios-infantes/',
@@ -52,8 +51,8 @@ export const SOCIALS = {
  * Proyectos.
  *
  * `null` oculta el botón correspondiente en lugar de renderizar un enlace roto
- * (ver `ProjectLinks`). Un enlace que da 404 a un reclutador es peor que no
- * ofrecer enlace, así que aquí sólo va lo que existe y es público.
+ * (ver `ProjectLinks`). Un enlace que da 404 es peor que no ofrecer enlace, así
+ * que aquí sólo va lo que existe y es público.
  *
  * Estado comprobado el 29 de julio de 2026:
  * - `ceviche-mixto/gradeo` existe pero es **privado**: un visitante vería un 404,

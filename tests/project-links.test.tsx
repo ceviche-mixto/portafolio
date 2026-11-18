@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import axe from "axe-core"
 import { ProjectLinks } from "@/components/project/ProjectLinks"
-import { LanguageProvider } from "@/components/i18n/LanguageProvider"
 import { translations, type Language } from "@/lib/i18n"
 import { IDENTITY } from "@/lib/site"
 
@@ -10,11 +9,12 @@ afterEach(() => { cleanup(); vi.restoreAllMocks() })
 
 function example(lang: Language = "es", projectName = "GRADEO", repo: string | null = null) {
   const t = translations[lang]
-  return render(<LanguageProvider initialLanguage={lang}><ProjectLinks
+  return render(<ProjectLinks
     repo={repo} demo={null} projectName={projectName} codeOnRequest
     onRequestLabel={t.projects.codeOnRequest} liveLabel={t.gradeo.viewLive}
     codeLabel={t.gradeo.viewCode} newTabHint={t.nav.newTab}
-  /></LanguageProvider>)
+    requestCopy={t.projects.codeRequest}
+  />)
 }
 
 describe("private code contact disclosure", () => {

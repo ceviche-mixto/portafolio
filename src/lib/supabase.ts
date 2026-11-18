@@ -3,13 +3,10 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 /**
  * Cliente de sólo lectura contra la base de GRADEO.
  *
- * Se usa únicamente desde el servidor (ver `gradeo-stats.ts`): así las
- * credenciales no viajan en el bundle del navegador y el esquema de GRADEO deja
- * de ser una dependencia del cliente (ver C-07 y P-04).
- *
- * Antes esto era `process.env.X!`, que convierte una variable ausente en un
- * fallo opaco en tiempo de import. Ahora que falte significa un mensaje que dice
- * qué falta.
+ * Se usa únicamente desde el servidor (ver `gradeo-stats.ts`): las credenciales
+ * no viajan en el bundle del navegador y el esquema de GRADEO no es una
+ * dependencia del cliente. Una variable ausente produce un aviso que dice cuál
+ * falta, en lugar de un fallo opaco al importar.
  */
 function readEnv(name: string): string | null {
   const value = process.env[name]

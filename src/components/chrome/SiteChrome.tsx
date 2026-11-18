@@ -1,46 +1,31 @@
-"use client"
-
-import * as React from "react"
-import dynamic from "next/dynamic"
 import { SiteNav } from "./SiteNav"
 import { SkipLink } from "./SkipLink"
-import { useModeStore } from "@/store/useModeStore"
-import { WebVitals } from "./WebVitals"
-import { useMotionStore } from "@/store/useMotionStore"
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion"
+import { LanguageSwitcher } from "@/components/mode-switcher/LanguageSwitcher"
+import { MotionSwitcher } from "@/components/mode-switcher/MotionSwitcher"
+import { translations } from "@/lib/i18n"
+import type { Language } from "@/lib/language"
+import { NAV_SECTIONS } from "@/lib/site"
 
 /**
- * El overlay usa Framer Motion y sólo se ve en modo desarrollador, así que se
- * carga aparte: quien nunca activa ese modo no descarga nada de esto (ver P-01).
+ * Todo lo que flota por encima de la página. Se renderiza en el servidor; sólo
+ * la barra (scroll-spy) y el control de movimiento hidratan, y reciben ya
+ * resueltas las cadenas que muestran.
  */
-const DeveloperOverlay = dynamic(
-  () => import("@/features/developer-mode/DeveloperOverlay").then((m) => m.DeveloperOverlay),
-  { ssr: false }
-)
-
-/**
- * Todo lo que flota por encima de la página, en un solo sitio.
- *
- * Antes había tres elementos fijos independientes (idioma arriba a la izquierda,
- * modo arriba a la derecha, overlay) y ninguna navegación. Ahora la barra reúne
- * anclas y controles, que es lo que resuelve U-06.
- */
-export function SiteChrome() {
-  const isDeveloperMode = useModeStore((state) => state.isDeveloperMode)
-  const reduced = usePrefersReducedMotion()
-  React.useEffect(() => {
-    void useModeStore.persist.rehydrate()
-    void useMotionStore.persist.rehydrate()
-  }, [])
-  React.useEffect(() => {
-    document.documentElement.dataset.motion = reduced ? "reduced" : "full"
-  }, [reduced])
+export function SiteChrome({ lang }: { lang: Language }) {
+  const t = translations[lang]
   return (
     <>
-      <SkipLink />
-      <WebVitals />
-      <SiteNav />
-      {isDeveloperMode && <DeveloperOverlay />}
+      <SkipLink label={t.nav.skipToContent} />
+      <SiteNav
+        menuLabel={t.nav.menu}
+        sections={NAV_SECTIONS.map((section) => ({ id: section.id, label: section[lang] }))}
+        controls={
+          <>
+            <LanguageSwitcher lang={lang} />
+            <MotionSwitcher labels={t.motion} />
+          </>
+        }
+      />
     </>
   )
 }

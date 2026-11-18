@@ -1,11 +1,12 @@
 import type { NextConfig } from "next"
+import { contentSecurityPolicy } from "./src/lib/security"
 
-/**
- * Cabeceras de seguridad aplicadas a todas las rutas.
- *
- * La política CSP de los documentos usa nonces por petición en src/proxy.ts.
- */
+/** Cabeceras de seguridad aplicadas a todas las rutas. */
 const securityHeaders = [
+  {
+    key: "Content-Security-Policy",
+    value: contentSecurityPolicy(process.env.NODE_ENV === "development"),
+  },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -22,6 +23,11 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+
+  experimental: {
+    // Hay un root layout por idioma; la 404 global no puede heredar ninguno.
+    globalNotFound: true,
+  },
 
   async headers() {
     return [

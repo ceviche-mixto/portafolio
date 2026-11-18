@@ -1,19 +1,12 @@
-"use client"
-
-import * as React from "react"
 import { Github, Linkedin, Instagram } from "lucide-react"
 import { SOCIALS } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
 /**
- * Enlaces a perfiles, GitHub primero.
+ * Enlaces a perfiles, GitHub primero: es el que busca antes un revisor técnico.
  *
- * El orden importa: antes los únicos enlaces del sitio eran LinkedIn e Instagram,
- * repetidos, y GitHub no aparecía en ninguna parte — justo el enlace que busca
- * primero un revisor técnico (ver U-01).
- *
- * Cada enlace lleva `aria-label`, porque sólo contienen un icono: sin etiqueta un
- * lector de pantalla los anuncia como «enlace» y nada más (ver A-02).
+ * Cada enlace lleva `aria-label` porque sólo contiene un icono; sin etiqueta un
+ * lector de pantalla lo anunciaría como «enlace» y nada más.
  */
 const LINKS = [
   { key: "github", href: SOCIALS.github, label: "GitHub", Icon: Github, hover: "hover:text-foreground hover:border-strong" },
@@ -44,7 +37,7 @@ export function SocialLinks({
             rel="noopener noreferrer"
             aria-label={`${label} (${newTabHint})`}
             className={cn(
-              "flex rounded-full border border-soft bg-card/60 text-muted-foreground shadow-xl backdrop-blur-md transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              "flex rounded-full border border-soft bg-card text-muted-foreground transition-colors",
               pad,
               hover
             )}

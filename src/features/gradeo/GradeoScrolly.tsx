@@ -7,24 +7,25 @@ import {
   useScroll,
 } from "framer-motion"
 import { Fingerprint, ShieldCheck, BarChart3, MousePointer2 } from "lucide-react"
-import { useTranslation } from "@/hooks/useTranslation"
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion"
 import { useScrollLayer, GRADEO_LAYER_THRESHOLDS } from "@/hooks/useScrollLayer"
+
+export type LifecycleCopy = {
+  title: string
+  stepsLabel: string
+  instruction: string
+  scrollIndicator: string
+  steps: { title: string; desc: string }[]
+}
 
 /**
  * Secuencia que explica el ciclo de vida de una reseña.
  *
- * Tres cosas cambiaron respecto a la versión anterior:
- *
- * 1. Los iconos ilustran su paso. Antes el paso «Edge Payload Routing» mostraba
- *    una estrella y «Data Aggregation» un candado (ver U-09).
- * 2. Los cuatro pasos existen también como lista para lectores de pantalla, así
- *    que el contenido no depende de poder hacer scroll (ver A-07).
- * 3. La capa se calcula por umbral, no guardando el progreso crudo en estado
- *    (ver P-03, en `useScrollLayer`).
+ * Es decorativa (`aria-hidden`): los cuatro pasos existen como lista en
+ * `GradeoLifecycle`, así que el contenido no depende de poder hacer scroll. La
+ * capa se calcula por umbral en `useScrollLayer`, sin guardar el progreso crudo.
  */
-export function GradeoScrolly() {
-  const { t } = useTranslation()
+export function GradeoScrolly({ copy }: { copy: LifecycleCopy }) {
   const containerRef = React.useRef<HTMLDivElement>(null)
   const prefersReducedMotion = usePrefersReducedMotion()
 
@@ -34,15 +35,9 @@ export function GradeoScrolly() {
   })
   const layer = useScrollLayer(scrollYProgress, GRADEO_LAYER_THRESHOLDS)
 
-  const steps = [
-    { title: t.scrolly.step1Title, desc: t.scrolly.step1Desc },
-    { title: t.scrolly.step2Title, desc: t.scrolly.step2Desc },
-    { title: t.scrolly.step3Title, desc: t.scrolly.step3Desc },
-    { title: t.scrolly.step4Title, desc: t.scrolly.step4Desc },
-  ]
-
-  const heading = layer === 0 ? t.gradeo.lifecycleTitle : steps[layer - 1].title
-  const body = layer === 0 ? t.scrolly.instruction : steps[layer - 1].desc
+  const steps = copy.steps
+  const heading = layer === 0 ? copy.title : steps[layer - 1].title
+  const body = layer === 0 ? copy.instruction : steps[layer - 1].desc
 
   return (
     <>
@@ -74,7 +69,7 @@ export function GradeoScrolly() {
                 <p className="mt-12 flex items-center gap-3 text-muted-foreground">
                   <MousePointer2 className="h-5 w-5 text-highlight" />
                   <span className="text-sm font-medium tracking-widest uppercase">
-                    {t.gradeo.scrollIndicator}
+                    {copy.scrollIndicator}
                   </span>
                 </p>
               )}
@@ -82,7 +77,7 @@ export function GradeoScrolly() {
           </div>
 
           <div className="relative h-full">
-            <ScrollyStage layer={layer} prefersReducedMotion={!!prefersReducedMotion} />
+            <ScrollyStage layer={layer} prefersReducedMotion={!!prefersReducedMotion} captions={[copy.title, ...steps.map((step) => step.title)]} />
           </div>
         </div>
       </div>
@@ -93,11 +88,12 @@ export function GradeoScrolly() {
 function ScrollyStage({
   layer,
   prefersReducedMotion,
+  captions,
 }: {
   layer: number
   prefersReducedMotion: boolean
+  captions: string[]
 }) {
-  const { t } = useTranslation()
 
   const enter = prefersReducedMotion
     ? { initial: undefined, animate: { opacity: 1 }, exit: undefined }
@@ -106,14 +102,6 @@ function ScrollyStage({
         animate: { opacity: 1, y: 0 },
         exit: { opacity: 0, y: -20 },
       }
-
-  const captions = [
-    t.gradeo.lifecycleTitle,
-    t.scrolly.step1Title,
-    t.scrolly.step2Title,
-    t.scrolly.step3Title,
-    t.scrolly.step4Title,
-  ]
 
   return (
     <div className="sticky top-24 flex h-[70vh] w-full items-center justify-center overflow-hidden rounded-2xl border border-soft bg-background p-4 shadow-2xl md:top-32 md:h-[60vh]">
@@ -147,7 +135,7 @@ function StageIntro({ prefersReducedMotion }: { prefersReducedMotion: boolean })
       <motion.div
         animate={prefersReducedMotion ? undefined : { y: [0, 24, 0] }}
         transition={{ repeat: 2, duration: 1.5, ease: "easeInOut" }}
-        className="h-12 w-8 rounded-full bg-highlight shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+        className="h-12 w-8 rounded-full bg-highlight shadow-sm"
       />
     </div>
   )
@@ -178,7 +166,7 @@ function StageForm() {
   )
 }
 
-/** Paso 2: la IP se convierte en hash. Reemplaza la estrella incoherente. */
+/** Paso 2: la IP se convierte en hash. */
 function StageHash() {
   return (
     <div className="flex flex-col items-center gap-3">
@@ -221,7 +209,7 @@ function StageQueue() {
   )
 }
 
-/** Paso 4: las cuatro medias recalculándose. Reemplaza el candado incoherente. */
+/** Paso 4: las cuatro medias recalculándose. */
 function StageAggregate() {
   const axes = [
     { label: "personality", value: 82 },

@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 import { afterEach, expect, it, vi } from "vitest"
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import axe from "axe-core"
-import { LanguageProvider } from "@/components/i18n/LanguageProvider"
+import { translations } from "@/lib/i18n"
 import GradeoCaseStudyDialog from "@/features/gradeo/GradeoCaseStudyDialog"
 
 afterEach(cleanup)
@@ -10,10 +10,14 @@ it("labels the modal, closes with Escape and returns focus", async () => {
   function Example() {
     const [open, setOpen] = useState(true)
     const returnFocus = useRef<HTMLButtonElement>(null)
-    return <LanguageProvider initialLanguage="en"><button ref={returnFocus}>Origin</button>
+    const t = translations.en
+    return <><button ref={returnFocus}>Origin</button>
       <GradeoCaseStudyDialog open={open} onOpenChange={setOpen} returnFocus={returnFocus}
-        stats={{ professors: 919, reviews: 84, topProfessors: [], live: true }} />
-    </LanguageProvider>
+        content={{ title: t.caseStudy.title, desc: t.caseStudy.desc, closeLabel: t.nav.close,
+          sections: [{ title: t.caseStudy.challengeTitle, body: t.caseStudy.challengeText }],
+          links: { repo: null, demo: "https://gradeo.vercel.app", liveLabel: t.gradeo.viewLive, codeLabel: t.gradeo.viewCode,
+            newTabHint: t.nav.newTab, projectName: "GRADEO", requestCopy: t.projects.codeRequest } }} />
+    </>
   }
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null)
   render(<Example />)

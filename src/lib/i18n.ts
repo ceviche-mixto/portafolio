@@ -1,13 +1,20 @@
+import 'server-only'
+
 import { IDENTITY } from './site'
+import type { Language } from './language'
 
 /**
  * Diccionario de traducciones.
  *
+ * Sólo se importa desde Server Components: cada página renderiza su idioma y
+ * las islas de cliente reciben por props únicamente las cadenas que usan, así
+ * que ningún diccionario completo viaja al navegador.
+ *
  * Dos reglas:
  * 1. Nada de HTML en las cadenas. Lo que necesite énfasis o salto de línea se
- *    parte en trozos y se compone con JSX en el componente (ver D-02).
+ *    parte en trozos y se compone con JSX en el componente.
  * 2. Cada afirmación técnica sobre GRADEO describe el esquema real en
- *    producción. Si cambias el producto, cambia esto (ver C-01, C-04).
+ *    producción. Si cambias el producto, cambia esto.
  */
 
 /**
@@ -38,17 +45,12 @@ const es = {
     viewWork: 'Ver el trabajo',
     contactMe: 'Hablemos',
   },
-  mode: {
-    recruiter: 'Reclutador',
-    developer: 'Desarrollador',
-    switchToDeveloper: 'Cambiar a vista de desarrollador',
-    switchToRecruiter: 'Cambiar a vista de reclutador',
-  },
-  lang: { switchTo: 'Switch to English', current: 'Idioma: español' },
+  // El enlace muestra el código del idioma de destino; el resto del nombre
+  // accesible lo completa sin dejar de contener el texto visible (WCAG 2.5.3).
+  lang: { switchLabel: 'EN', switchName: 'English version' },
   gradeo: {
     loadingCaseStudy: 'Abriendo caso técnico…',
     failedCaseStudy: 'No se pudo abrir. Vuelve a pulsar para reintentar.',
-    professorsFallback: 'más de 900',
     eyebrow: 'PROYECTO DESTACADO',
     title: 'GRADEO',
     subtitle: 'Reseñas anónimas de profesores que siguen siendo fiables.',
@@ -63,21 +65,12 @@ const es = {
   },
   bento: {
     liveMetrics: 'Datos de GRADEO',
-    loadingLabel: 'Consultando datos de producción…',
     screenshotTitle: 'El producto, por dentro',
     screenshotAlt: 'Captura real de GRADEO: búsqueda de profesores y filtros avanzados.',
     screenshotNote: 'Captura real · octubre de 2026',
     totalReviews: 'Reseñas aprobadas',
     listedProfessors: 'Profesores indexados',
-    liveLabel: 'Datos de producción · actualización cada 5 min',
-    unavailableLabel: 'Métricas no disponibles en este momento',
-    emptyRanking: 'Todavía no hay profesores con reseñas aprobadas.',
-    campus: 'Campus USAT',
-    city: 'Chiclayo, Perú',
-    mapTitle: 'Mapa del campus USAT en Chiclayo, Perú',
-    loadMap: 'Cargar mapa interactivo',
-    topRated: 'Profesores mejor calificados',
-    scale: 'sobre 5',
+    snapshotLabel: 'Datos de producción al 18 de noviembre de 2026',
     impactTitle: 'Por qué existe',
     impactText:
       'Los alumnos elegían cursos de oídas. GRADEO convierte eso en {professors} profesores indexados, valorados en cuatro ejes distintos en lugar de una estrella difusa.',
@@ -85,7 +78,6 @@ const es = {
     insightSubtitle: 'Trigger de Postgres · no es un promedio ponderado',
     insightNote:
       'Media de cuatro ejes, sólo reseñas aprobadas. Diez decimales para ordenar sin empates, uno para pintar las barras.',
-    devHint: 'El modo desarrollador muestra el SQL real detrás de cada tarjeta',
   },
   scrolly: {
     instruction:
@@ -201,26 +193,6 @@ const es = {
     },
     skills: { title: 'Competencias', stack: 'Desarrollo', env: 'Herramientas y datos', basicDocker: 'Docker (básico)', excel: 'Microsoft Excel' },
   },
-  devConsole: {
-    visitMetrics: 'Carga de esta visita',
-    pending: 'pendiente',
-    vitalsNote: 'Medición local del navegador. Algunas cifras se cierran al salir de la pestaña. No se envían datos.',
-    illustration: 'Consola de presentación. No ejecuta comandos.',
-    monitor: 'SIS.MONITOR.PERF',
-    monitorPaused: 'Monitor detenido por movimiento reducido. Valores de la última muestra.',
-    measured: 'medido',
-    memory: 'HEAP JS',
-    unavailable: 'n/d',
-    renderLabel: 'TIEMPO DE FRAME',
-    network: 'RED',
-    loading: 'Cargando entorno de desarrollo...',
-    ready: '› Listo',
-    whoamiText1: `${IDENTITY.name} — ${IDENTITY.titleEs}`,
-    whoamiText2:
-      'Construyo sistemas donde lo difícil es el modelo de datos. Ahora mismo: GRADEO y FARMAPLUS.',
-    openTerminal: 'Abrir terminal',
-    closeTerminal: 'Cerrar terminal',
-  },
   contact: {
     sectionTitle: 'Hablemos',
     sectionSubtitle:
@@ -260,17 +232,10 @@ const en: TranslationDict = {
     viewWork: 'See the work',
     contactMe: 'Get in touch',
   },
-  mode: {
-    recruiter: 'Recruiter',
-    developer: 'Developer',
-    switchToDeveloper: 'Switch to developer view',
-    switchToRecruiter: 'Switch to recruiter view',
-  },
-  lang: { switchTo: 'Cambiar a español', current: 'Language: English' },
+  lang: { switchLabel: 'ES', switchName: 'versión en español' },
   gradeo: {
     loadingCaseStudy: 'Opening technical case study…',
     failedCaseStudy: 'Could not open it. Press again to retry.',
-    professorsFallback: '900+',
     eyebrow: 'FEATURED PROJECT',
     title: 'GRADEO',
     subtitle: 'Anonymous professor reviews that stay trustworthy.',
@@ -285,21 +250,12 @@ const en: TranslationDict = {
   },
   bento: {
     liveMetrics: 'GRADEO data',
-    loadingLabel: 'Fetching production data…',
     screenshotTitle: 'Inside the product',
     screenshotAlt: 'Actual GRADEO screenshot: professor search and advanced filters.',
     screenshotNote: 'Actual screenshot · October 2026',
     totalReviews: 'Approved reviews',
     listedProfessors: 'Professors indexed',
-    liveLabel: 'Production data · refreshed every 5 min',
-    unavailableLabel: 'Metrics are currently unavailable',
-    emptyRanking: 'No professors have approved reviews yet.',
-    campus: 'Campus USAT',
-    city: 'Chiclayo, Peru',
-    mapTitle: 'Map of the USAT campus in Chiclayo, Peru',
-    loadMap: 'Load interactive map',
-    topRated: 'Top rated professors',
-    scale: 'out of 5',
+    snapshotLabel: 'Production data as of November 18, 2026',
     impactTitle: 'Why it exists',
     impactText:
       'Students picked courses on hearsay. GRADEO turns that into {professors} indexed professors, rated on four separate axes instead of one blurry star.',
@@ -307,7 +263,6 @@ const en: TranslationDict = {
     insightSubtitle: 'Postgres trigger · not a weighted average',
     insightNote:
       'Four axes averaged, approved reviews only. Ten decimals to sort without ties, one decimal to draw the bars.',
-    devHint: 'Developer mode shows the real SQL behind each card',
   },
   scrolly: {
     instruction:
@@ -423,26 +378,6 @@ const en: TranslationDict = {
     },
     skills: { title: 'Core competencies', stack: 'Development', env: 'Tools and data', basicDocker: 'Docker (basic)', excel: 'Microsoft Excel' },
   },
-  devConsole: {
-    visitMetrics: 'This visit’s loading metrics',
-    pending: 'pending',
-    vitalsNote: 'Local browser measurements. Some values finalize when leaving the tab. No data is sent.',
-    illustration: 'Presentation console. No commands are executed.',
-    monitor: 'SYS.PERF.MONITOR',
-    monitorPaused: 'Monitor stopped for reduced motion. Values from the last sample.',
-    measured: 'measured',
-    memory: 'JS HEAP',
-    unavailable: 'n/a',
-    renderLabel: 'FRAME TIME',
-    network: 'NETWORK',
-    loading: 'Loading developer environment...',
-    ready: '› Ready',
-    whoamiText1: `${IDENTITY.name} — ${IDENTITY.titleEn}`,
-    whoamiText2:
-      'I build systems where the hard part is the data model. Currently: GRADEO and FARMAPLUS.',
-    openTerminal: 'Open terminal',
-    closeTerminal: 'Close terminal',
-  },
   contact: {
     sectionTitle: 'Let’s talk',
     sectionSubtitle:
@@ -457,13 +392,6 @@ const en: TranslationDict = {
   },
 }
 
-export type Language = 'es' | 'en'
+export type { Language }
 
 export const translations: Record<Language, TranslationDict> = { es, en }
-
-export const LANGUAGES: Language[] = ['es', 'en']
-export const DEFAULT_LANGUAGE: Language = 'es'
-
-export function isLanguage(value: unknown): value is Language {
-  return value === 'es' || value === 'en'
-}

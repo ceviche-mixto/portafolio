@@ -15,11 +15,8 @@ const HIDDEN: Record<Direction, string> = {
 /**
  * Aparición al entrar en el viewport, con IntersectionObserver y transiciones CSS.
  *
- * Sustituye al patrón `motion.div` + `whileInView` que había en cada sección.
- * Framer Motion es excelente, pero pesa ~100 KB comprimidos y aquí sólo se usaba
- * para «desvanecer y desplazar una vez»: eso lo hace el navegador solo. Framer
- * queda reservado para lo que de verdad lo necesita —la secuencia de scroll y el
- * overlay— y ambos se cargan de forma diferida (ver P-01).
+ * «Desvanecer y desplazar una vez» lo resuelve el navegador sin cargar Framer
+ * Motion, que queda reservado para la secuencia de scroll y se carga diferido.
  *
  * Con `prefers-reduced-motion` el contenido se muestra ya visible, sin transición.
  */

@@ -1,11 +1,10 @@
-"use client"
-
 import * as React from "react"
 import { ArrowDown, Mail, FileText } from "lucide-react"
-import { HeroBackground } from "@/components/3d/HeroBackground"
 import { SocialLinks } from "@/components/chrome/SocialLinks"
 import { Reveal } from "@/components/motion/Reveal"
-import { useTranslation } from "@/hooks/useTranslation"
+import { buttonVariants } from "@/components/ui/button-variants"
+import { translations } from "@/lib/i18n"
+import type { Language } from "@/lib/language"
 import { CV_FILES } from "@/lib/site"
 
 function countWords(text: string): number {
@@ -16,10 +15,9 @@ function countWords(text: string): number {
  * Parte un texto en palabras envueltas en `<span>`, cada una con su índice en
  * `--i` para que CSS calcule el retardo.
  *
- * El degradado va en cada palabra, no en el `h1`. Tiene que ser así: la
- * animación pone cada palabra en su propia capa de composición, y entonces el
- * fondo del padre recortado con `background-clip: text` ya no las alcanza —
- * quedaban con `color: transparent` y ningún fondo detrás, es decir invisibles.
+ * El degradado va en cada palabra, no en el `h1`: la animación pone cada
+ * palabra en su propia capa de composición, y el fondo del padre recortado con
+ * `background-clip: text` ya no las alcanzaría.
  *
  * Los espacios se emiten fuera de los `span` para que el texto siga
  * seleccionable y se copie como una frase normal.
@@ -51,33 +49,23 @@ function StaggeredWords({
   )
 }
 
-/**
- * Dos tramos del degradado, uno por línea, para conservar la caída de brillo
- * que daba el degradado diagonal único del `h1`: la primera línea entra en
- * blanco y la segunda se apaga hacia zinc.
- */
+/** Un tramo del degradado por línea: la segunda baja hacia el tono secundario. */
 const LINE_1_GRADIENT =
   "bg-gradient-to-b from-foreground to-subtle bg-clip-text text-transparent"
 const LINE_2_GRADIENT =
   "bg-gradient-to-b from-subtle to-muted-foreground bg-clip-text text-transparent"
 
-export function HeroSection() {
-  const { t, lang } = useTranslation()
+export function HeroSection({ lang }: { lang: Language }) {
+  const t = translations[lang]
 
   return (
     <section className="relative flex min-h-svh flex-col items-center justify-center px-6 pt-36 pb-20 text-center sm:pt-24">
-      <HeroBackground />
-
-      {/* El desvanecido al salir de pantalla lo hace CSS con animation-timeline,
-          no JavaScript (ver .hero-parallax en globals.css). */}
+      {/* El desvanecido al salir de pantalla lo hace CSS con animation-timeline
+          (`.hero-parallax` en globals.css). */}
       <div className="hero-parallax flex flex-col items-center">
         <Reveal>
-          {/* El título se compone con JSX en lugar de inyectar HTML desde el
-              diccionario de traducciones (ver D-02).
-
-              Las palabras entran escalonadas: cada `<span>` lleva su índice en
-              `--i` y el retardo se calcula en CSS, así que el efecto no cuesta
-              ni un byte de JavaScript. */}
+          {/* Las palabras entran escalonadas: cada `<span>` lleva su índice en
+              `--i` y el retardo se calcula en CSS, sin JavaScript. */}
           <h1 className="word-in mb-6 text-4xl leading-[1.08] font-black tracking-[-0.035em] sm:text-5xl md:text-7xl">
             <StaggeredWords text={t.hero.nameLine} className={LINE_1_GRADIENT} />
             <br />
@@ -92,8 +80,6 @@ export function HeroSection() {
             {t.hero.subtitle}
           </p>
 
-          {/* Decir qué buscas es la diferencia entre un escaparate y una
-              candidatura (ver U-10). */}
           <p className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-highlight/25 bg-highlight/10 px-4 py-1.5 text-xs font-medium text-highlight md:text-sm">
             <span className="relative flex h-2 w-2" aria-hidden="true">
               <span className="absolute inline-flex h-full w-full rounded-full bg-highlight opacity-75 motion-safe:animate-ping" />
@@ -104,17 +90,11 @@ export function HeroSection() {
 
           <div className="flex flex-col items-center gap-5">
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <a
-                href="#gradeo"
-                className="flex min-h-11 items-center rounded-full bg-action px-6 py-3 text-sm font-bold text-action-foreground shadow-xl transition-colors hover:bg-foreground"
-              >
+              <a href="#gradeo" className={buttonVariants()}>
                 {t.hero.viewWork}
               </a>
-              <a
-                href="#contacto"
-                className="flex min-h-11 items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-bold text-subtle transition-colors hover:border-strong hover:text-foreground"
-              >
-                <Mail className="h-4 w-4" aria-hidden="true" />
+              <a href="#contacto" className={buttonVariants({ variant: "secondary" })}>
+                <Mail aria-hidden="true" />
                 {t.hero.contactMe}
               </a>
             </div>
@@ -124,9 +104,9 @@ export function HeroSection() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${t.cv.viewCv} (${t.nav.newTab})`}
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-body underline decoration-border-strong underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight"
+              className={buttonVariants({ variant: "link" })}
             >
-              <FileText className="h-4 w-4" aria-hidden="true" />
+              <FileText aria-hidden="true" />
               {t.cv.viewCv}
             </a>
             <SocialLinks newTabHint={t.nav.newTab} />

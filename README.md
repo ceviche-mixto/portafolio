@@ -10,13 +10,12 @@ Portafolio bilingüe (español / inglés) de **Giancarlo Larios**, desarrollador
 
 | Capa | Tecnología |
 |---|---|
-| Framework | Next.js 16.4 (App Router, Turbopack) |
+| Framework | Next.js 16.4 (App Router, Turbopack, rutas estáticas) |
 | Lenguaje | TypeScript |
-| Estilos | Tailwind CSS 4 |
-| Componentes | Base UI |
+| Estilos | Tailwind CSS 4 con tokens editoriales |
+| Componentes | Server Components + islas de cliente; Base UI para acciones |
 | Animación | CSS + Framer Motion (sólo donde hace falta, en carga diferida) |
-| 3D | three.js vía React Three Fiber (diferido y condicional) |
-| Estado | React Context (idioma) + Zustand (modo) |
+| Estado | Zustand (preferencia de movimiento del visitante) |
 | Datos | Supabase / PostgreSQL 17, leído desde el servidor |
 
 ## Puesta en marcha
@@ -29,23 +28,17 @@ cp .env.example .env.local   # rellena los valores
 npm run dev
 ```
 
-Abre <http://localhost:3000>.
+Abre <http://localhost:3000> (español) o <http://localhost:3000/en> (inglés).
 
 ### Variables de entorno
 
 Todas opcionales para arrancar: sin ellas el sitio funciona igual y las métricas
-de producción muestran un estado de reserva en lugar de fallar.
+vivas muestran un estado de reserva en lugar de fallar.
 
-El CV español aprobado se conserva sin modificaciones. El selector de idioma
-elige el PDF correspondiente: español o su traducción inglesa de una página.
-Ambos permiten verlo en otra pestaña, sin descarga forzada, o descargarlo.
-También hay acceso desde el hero. Los PDFs se revalidan para evitar versiones
-antiguas en caché tras una publicación.
-
-La auditoría inicial está en `docs/AUDITORIA-2026-10-09.md`; el acabado,
-pruebas y límites actuales están en `docs/ACABADO-2026-10-09.md`.
-La actualización bilingüe y su guía de mantenimiento están en
-`docs/PUBLICACION-2026-10-23.md`; los informes previos conservan su contexto histórico.
+El CV español aprobado se conserva sin modificaciones. Cada idioma enlaza su PDF:
+español o su traducción inglesa de una página. Ambos permiten verlo en otra
+pestaña, sin descarga forzada, o descargarlo. Los PDFs se revalidan para evitar
+versiones antiguas en caché tras una publicación.
 
 | Variable | Para qué |
 |---|---|
@@ -70,66 +63,48 @@ La actualización bilingüe y su guía de mantenimiento están en
 
 Si vienes a leer el código, estos son los puntos donde hay algo que explicar.
 
-**El idioma se guarda en cookie, no en localStorage.** El servidor necesita
-conocerlo para emitir el `<html lang>` correcto y los metadatos en el idioma que
-verá el visitante. `src/lib/language.ts` tiene la parte compartida y
-`language-server.ts` la lectura con `next/headers`, separados para que el cliente
-no arrastre módulos de servidor.
+**El idioma está en la URL.** `/` es español y `/en` inglés. Cada idioma tiene
+su root layout en un grupo de rutas (`app/(es)`, `app/(en)`) que comparte
+`RootDocument`, así que `<html lang>`, canonical y `hreflang` salen correctos del
+HTML prerenderizado. `app/global-not-found.tsx` cubre las URLs inexistentes.
+
+**El diccionario no viaja al navegador.** `src/lib/i18n.ts` lleva
+`import 'server-only'`: las secciones son Server Components que leen su idioma, y
+las islas de cliente (barra, control de movimiento, copiar correo, caso técnico)
+reciben por props sólo las cadenas que usan.
 
 **El español es la fuente de la forma de las traducciones.** En `src/lib/i18n.ts`
 el tipo se deriva del objeto español y el inglés se declara con ese tipo: si
 añades una clave en uno y la olvidas en el otro, falla el build en lugar de
 renderizar `undefined`.
 
-**Las cifras del sitio no se escriben a mano.** La copia usa marcadores como
-`{professors}` que se rellenan con el recuento real (`useGradeoCopy`). Un número
-incrustado en el texto es correcto el día que se escribe y falso un mes después.
+**La portada usa un recuento fechado.** `GRADEO_SNAPSHOT` guarda las cifras de
+producción con su fecha, así la portada es estática y no depende de la base. La
+lectura viva de `src/lib/gradeo-stats.ts` usa `unstable_cache`: la consulta no
+usa `fetch` y su entrada debe sobrevivir a un despliegue, y `'use cache'` exigiría
+activar `cacheComponents` en todo el sitio.
 
-**Las métricas se consultan en el servidor.** `src/lib/gradeo-stats.ts` cachea
-explícitamente las consultas públicas durante cinco minutos, aunque la página
-se renderice por petición para leer la cookie de idioma. Las cifras viajan en
-el HTML y el cliente de Supabase no entra en el bundle del navegador. Suspense
-permite mostrar portada y CV sin esperar a la base. Hay cancelación a los tres
-segundos; un fallo no se guarda como éxito en la caché, para permitir recuperación.
-
-**CSP con nonce por petición.** `src/proxy.ts` aplica la política a los documentos
-y proporciona el nonce a Next.js. En producción no se permiten scripts inline
-sin nonce ni `unsafe-eval`; los estilos inline siguen permitidos para React y
-la animación. Esto requiere renderizado dinámico: no convertir a exportación
-estática sin rediseñar y verificar la política.
-
-**El portafolio prioriza los proyectos reales.** La simulación genérica de
-automatización fue retirada porque no aportaba una integración verificable y
-distraía de GRADEO y FARMAPLUS. Se puede recuperar desde el historial Git.
+**CSP estática.** La política vive en `next.config.ts`, sin nonce por petición,
+que obligaría a renderizar cada página por petición. Next inserta scripts inline
+con los datos de RSC que los hashes SRI no cubren, así que `script-src` admite
+inline, pero sólo desde el propio origen y sin `unsafe-eval`.
 
 **Solicitar código no concede acceso ni envía mensajes.** Abre un desplegable
 nativo con el correo visible, copia con confirmación y recuperación de errores,
 y un enlace opcional para redactar un correo con proyecto y asunto preparados.
-La alternativa de copiar funciona aunque no haya una aplicación de correo
-configurada. Los repositorios privados no se publican automáticamente.
-
-**Las métricas del monitor son locales.** FPS y Web Vitals describen esta visita,
-no el rendimiento de todos los usuarios. No se transmiten ni persisten; algunos
-Web Vitals permanecen pendientes hasta que el navegador los publica. La terminal
-es una presentación identificada como tal y no ejecuta comandos.
+Los repositorios privados no se publican automáticamente.
 
 **Casi nada de la animación usa JavaScript.** `Reveal` hace las apariciones con
 IntersectionObserver y transiciones CSS; el desvanecido del hero usa
-`animation-timeline`. Framer Motion queda para la secuencia de scroll de GRADEO y
-el overlay de desarrollador, y ambos se cargan por separado.
-
-**La escena 3D es opcional en tiempo de ejecución.** `HeroBackground` sólo monta
-three.js si la pantalla es ancha, el visitante no pide movimiento reducido y no
-está en modo ahorro de datos; además la desmonta al salir del viewport. Debajo
-siempre hay un degradado, así que el hero nunca se ve vacío.
+`animation-timeline`. Framer Motion queda para la secuencia de scroll de GRADEO,
+que se carga por separado.
 
 **Todo respeta `prefers-reduced-motion`**, en JS y en CSS.
 
 **El visitante también controla el movimiento.** El botón de pausa de la barra
-activa una versión tranquila: sin escena 3D, pulsos ni secuencia animada; los
-cuatro pasos permanecen visibles como lista. La preferencia se guarda solo en
-este navegador y nunca anula una petición de movimiento reducido del sistema.
-El monitor continuo también se detiene, con su última muestra identificada.
+activa una versión tranquila: sin pulsos ni secuencia animada; los cuatro pasos
+permanecen visibles como lista. La preferencia se guarda solo en este navegador
+y nunca anula una petición de movimiento reducido del sistema.
 
 ---
 
@@ -137,24 +112,26 @@ El monitor continuo también se detiene, con su última muestra identificada.
 
 ```
 src/
-├── app/                    layout, página, sitemap, robots, OG, error, 404
+├── app/
+│   ├── (es)/               layout raíz, portada, error y OG en español
+│   ├── (en)/en/            lo mismo en inglés
+│   └── …                   404 global, sitemap, robots, estilos
 ├── components/
-│   ├── 3d/                 escena del hero y su portero de montaje
-│   ├── chrome/             barra, anclas, skip link, enlaces sociales
+│   ├── chrome/             barra, skip link, enlaces sociales
 │   ├── cv/                 perfil y experiencia
-│   ├── i18n/               proveedor de idioma
+│   ├── mode-switcher/      idioma y control de movimiento
 │   ├── motion/             Reveal (aparición en CSS)
 │   ├── project/            enlaces de proyecto reutilizables
-│   └── ui/                 primitivas (Base UI)
+│   ├── site/               documento, portada y fuentes compartidos
+│   └── ui/                 variantes de botón, Button, Dialog, copiar correo
 ├── features/
 │   ├── contact/            contacto y pie
-│   ├── developer-mode/     overlay con métricas medidas
-│   ├── gradeo/             bento, case study, scrollytelling
+│   ├── gradeo/             bento, caso técnico, ciclo de una reseña
 │   ├── hero/               portada
 │   └── projects/           GRADEO y FARMAPLUS
 ├── hooks/
-├── lib/                    i18n, idioma, datos, identidad y enlaces
-└── store/                  modo desarrollador (persistido)
+├── lib/                    i18n, idioma, metadatos, datos, identidad y enlaces
+└── store/                  preferencia de movimiento (persistida)
 ```
 
 `src/lib/site.ts` es la única fuente de verdad de identidad y enlaces externos.
@@ -162,15 +139,11 @@ Si algo del sitio apunta hacia fuera, su URL está ahí.
 
 ---
 
-## Auditoría
-
-`docs/AUDITORIA-2026-07.md` contiene la auditoría de UI/UX, rendimiento y
-profesionalismo que originó la versión actual, con las mediciones antes y después.
+## Mantenimiento
 
 CI ejecuta lint, tipos, pruebas, auditoría de dependencias de producción y build
-en Node 24. Verifica también `npm audit` al actualizar dependencias; los informes
-de acabado anteriores describen el estado de su fecha, no el de cada publicación.
-No aplicar `audit fix --force` ni ocultar avisos.
+en Node 24. Verifica también `npm audit` al actualizar dependencias. No aplicar
+`audit fix --force` ni ocultar avisos.
 
 ---
 

@@ -1,24 +1,18 @@
-"use client"
-
-import * as React from "react"
 import { Reveal } from "@/components/motion/Reveal"
 import { Pill, GraduationCap, Check } from "lucide-react"
-import { useTranslation } from "@/hooks/useTranslation"
 import { ProjectLinks } from "@/components/project/ProjectLinks"
+import { translations } from "@/lib/i18n"
+import type { Language } from "@/lib/language"
 import { PROJECTS } from "@/lib/site"
 
 /**
  * Sección de proyectos.
  *
- * Antes GRADEO era el único proyecto del sitio y no había estructura donde
- * añadir otro sin rediseñar la página (ver U-04). FARMAPLUS —un ERP de farmacia
- * con facturación electrónica SUNAT— no aparecía en ninguna parte.
- *
  * Cada tarjeta responde lo mismo en el mismo orden: qué problema, qué rol, qué
  * stack, qué tiene de interesante. Añadir un proyecto es añadir una entrada.
  */
-export function ProjectsSection() {
-  const { t } = useTranslation()
+export function ProjectsSection({ lang }: { lang: Language }) {
+  const t = translations[lang]
 
   const projects = [
     {
@@ -44,9 +38,8 @@ export function ProjectsSection() {
   return (
     <section
       id="proyectos"
-      className="relative z-10 overflow-hidden bg-background pt-24 pb-32"
+      className="relative z-10 bg-background pt-24 pb-32"
     >
-      <div className="pointer-events-none absolute top-0 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-accent-secondary/5 blur-[120px]" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <Reveal className="mb-14">
@@ -83,19 +76,19 @@ export function ProjectsSection() {
 
                 <dl className="mb-6 flex flex-col gap-4">
                   <div>
-                    <dt className="mb-1 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+                    <dt className="mb-1 font-mono text-xs tracking-widest text-muted-foreground uppercase">
                       {t.projects.problemLabel}
                     </dt>
                     <dd className="text-sm leading-relaxed text-body">{copy.problem}</dd>
                   </div>
                   <div>
-                    <dt className="mb-1 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+                    <dt className="mb-1 font-mono text-xs tracking-widest text-muted-foreground uppercase">
                       {t.projects.roleLabel}
                     </dt>
                     <dd className="text-sm text-body">{copy.role}</dd>
                   </div>
                   <div>
-                    <dt className="mb-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+                    <dt className="mb-2 font-mono text-xs tracking-widest text-muted-foreground uppercase">
                       {t.projects.stackLabel}
                     </dt>
                     <dd className="flex flex-wrap gap-2">
@@ -112,7 +105,7 @@ export function ProjectsSection() {
                 </dl>
 
                 <div className="mb-6 flex-1">
-                  <h4 className="mb-2 font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+                  <h4 className="mb-2 font-mono text-xs tracking-widest text-muted-foreground uppercase">
                     {t.projects.highlightsLabel}
                   </h4>
                   <ul className="flex flex-col gap-2">
@@ -137,6 +130,7 @@ export function ProjectsSection() {
                   projectName={copy.name}
                   codeOnRequest={links.codeOnRequest}
                   onRequestLabel={t.projects.codeOnRequest}
+                  requestCopy={t.projects.codeRequest}
                 />
               </article>
             </Reveal>

@@ -6,11 +6,8 @@ import { useMotionValueEvent, type MotionValue } from "framer-motion"
 /**
  * Convierte un progreso de scroll continuo en un índice de capa discreto.
  *
- * El problema que resuelve: antes se guardaba el progreso crudo en estado, así
- * que cada frame de scroll re-renderizaba el árbol completo — decenas de veces
- * por segundo— cuando lo único que se necesitaba era saber en cuál de cinco
- * tramos estábamos. Comparando contra la capa anterior se pasa de ~60 renders por
- * segundo a 4 en todo el recorrido (ver P-03).
+ * Sólo se actualiza el estado al cruzar un umbral, así que el recorrido completo
+ * cuesta cuatro renders en lugar de uno por frame.
  */
 export function useScrollLayer(
   progress: MotionValue<number>,

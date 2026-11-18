@@ -4,23 +4,14 @@ import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
-function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
-}
-
 function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
-}
-
-function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
 function DialogOverlay({
@@ -31,9 +22,8 @@ function DialogOverlay({
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        // z-[150]: por encima de la cabecera fija (z-100) y del overlay de
-        // desarrollador (z-90). Con el z-50 anterior la cabecera quedaba encima
-        // del modal y tapaba su título y su botón de cerrar en móvil.
+        // z-[150]: por encima de la cabecera fija (z-100), que de otro modo
+        // taparía el título y el botón de cerrar en móvil.
         "fixed inset-0 isolate z-[150] bg-surface-deep/50 duration-100 supports-backdrop-filter:backdrop-blur-sm data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className
       )}
@@ -66,10 +56,8 @@ function DialogContent({
       >
         {children}
         {showCloseButton && (
-          /* 44×44 px, el mínimo táctil recomendado, y con fondo propio: antes era
-             un icono suelto de 16 px sin relleno, difícil de acertar con el pulgar
-             sobre un diálogo oscuro. `sticky` lo mantiene visible aunque el
-             contenido del diálogo se desplace. */
+          /* 44×44 px, el mínimo táctil recomendado, y con fondo propio para
+             acertarlo con el pulgar sobre el contenido del diálogo. */
           <DialogPrimitive.Close
             data-slot="dialog-close"
             aria-label={closeLabel}
@@ -90,33 +78,6 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("flex flex-col gap-2", className)}
       {...props}
     />
-  )
-}
-
-function DialogFooter({
-  className,
-  showCloseButton = false,
-  children,
-  ...props
-}: React.ComponentProps<"div"> & {
-  showCloseButton?: boolean
-}) {
-  return (
-    <div
-      data-slot="dialog-footer"
-      className={cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
-        className
-      )}
-      {...props}
-    >
-      {children}
-      {showCloseButton && (
-        <DialogPrimitive.Close render={<Button variant="outline" />}>
-          Close
-        </DialogPrimitive.Close>
-      )}
-    </div>
   )
 }
 
@@ -146,15 +107,4 @@ function DialogDescription({
   )
 }
 
-export {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-}
+export { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle }

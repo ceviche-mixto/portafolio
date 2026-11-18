@@ -24,7 +24,7 @@ export function useSystemReducedMotion(): boolean {
   return reduced
 }
 
-/** The visitor can stop motion without changing operating-system preferences. */
+/** El visitante puede detener el movimiento sin cambiar la preferencia del sistema. */
 export function usePrefersReducedMotion(): boolean {
   const systemReduced = useSystemReducedMotion()
   const paused = useMotionStore((state) => state.paused)

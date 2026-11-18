@@ -11,7 +11,6 @@ import { PROJECTS } from "@/content/projects"
 
 const pathname = vi.hoisted(() => ({ current: "/" }))
 vi.mock("next/navigation", () => ({ usePathname: () => pathname.current }))
-vi.mock("@/components/motion/Reveal", () => ({ Reveal: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }))
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); pathname.current = "/" })
 
 const AXE_RULES = {
@@ -23,6 +22,7 @@ const AXE_RULES = {
 function browserStubs() {
   Object.defineProperty(window, "matchMedia", { configurable: true, value: () => ({ matches: false, addEventListener() {}, removeEventListener() {} }) })
   vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} })
+  vi.stubGlobal("IntersectionObserver", class { observe() {} disconnect() {} })
 }
 
 describe("CV integrity and actions", () => {

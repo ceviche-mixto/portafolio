@@ -7,7 +7,6 @@ import {
   Download,
   Eye,
 } from "lucide-react"
-import { Reveal } from "@/components/motion/Reveal"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { translations } from "@/lib/i18n"
 import type { Language } from "@/lib/language"
@@ -29,7 +28,7 @@ export function TrajectorySection({ lang }: { lang: Language }) {
   return (
     <section id="perfil" aria-labelledby="perfil-title" className="relative z-10 bg-background py-24">
       <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <Reveal className="mb-14">
+        <div className="mb-14">
           <div className="mb-4 flex items-center gap-4">
             <div className="rounded-xl bg-card p-3">
               <FileText className="h-6 w-6 text-highlight" aria-hidden="true" />
@@ -62,10 +61,10 @@ export function TrajectorySection({ lang }: { lang: Language }) {
             </a>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">{t.cv.documentNote}</p>
-        </Reveal>
+        </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:auto-rows-[minmax(260px,auto)] lg:grid-cols-3">
-          <Reveal from="left" className="md:col-span-2">
+          <div className="md:col-span-2">
             <article className={CARD}>
               <div className="absolute top-0 left-0 h-1 w-full bg-highlight" />
               <div className="relative z-10 flex h-full flex-col justify-center">
@@ -80,9 +79,9 @@ export function TrajectorySection({ lang }: { lang: Language }) {
                 </p>
               </div>
             </article>
-          </Reveal>
+          </div>
 
-          <Reveal from="right" delay={80} className="md:col-span-2 lg:col-span-1 lg:row-span-2">
+          <div className="md:col-span-2 lg:col-span-1 lg:row-span-2">
             <article className={`${CARD} flex flex-col`}>
               <h3 className="relative z-10 mb-8 flex items-center gap-3 text-xl font-bold text-foreground">
                 <span className="rounded-lg bg-info/10 p-2">
@@ -112,9 +111,9 @@ export function TrajectorySection({ lang }: { lang: Language }) {
                 </ul>
               </div>
             </article>
-          </Reveal>
+          </div>
 
-          <Reveal delay={160}>
+          <div>
             <article className={`${CARD} flex flex-col justify-center`}>
               <h3 className="mb-6 flex items-center gap-3 text-lg font-bold text-foreground">
                 <span className="rounded-lg bg-discovery/10 p-2">
@@ -133,9 +132,9 @@ export function TrajectorySection({ lang }: { lang: Language }) {
                 ))}
               </ul>
             </article>
-          </Reveal>
+          </div>
 
-          <Reveal delay={240}>
+          <div>
             <article className={`${CARD} flex flex-col justify-center`}>
               <h3 className="mb-6 flex items-center gap-3 text-lg font-bold text-foreground">
                 <span className="rounded-lg bg-utility/10 p-2">
@@ -154,7 +153,7 @@ export function TrajectorySection({ lang }: { lang: Language }) {
                 ))}
               </ul>
             </article>
-          </Reveal>
+          </div>
         </div>
       </div>
     </section>

@@ -4,8 +4,10 @@ import * as React from "react"
 import { activeSection } from "@/lib/navigation"
 
 /**
- * Barra fija con scroll-spy; las lecturas de layout se agrupan una vez por
- * frame. Los controles llegan ya renderizados desde el servidor.
+ * Barra fija con scroll-spy. No escucha el scroll: un IntersectionObserver
+ * avisa cuando una sección cruza la línea de activación (justo bajo la
+ * cabecera) o cuando se llega al final, y sólo entonces se mide. Los
+ * controles llegan ya renderizados desde el servidor.
  */
 export function SiteNav({
   home,
@@ -27,31 +29,41 @@ export function SiteNav({
     )
     if (sections.length === 0) return
 
-    let frame = 0
     let headerHeight = 112
+    let band: IntersectionObserver | null = null
     const update = () => {
-      frame = 0
       const positions = sections.map((el) => ({ id: el.id, top: el.getBoundingClientRect().top }))
       const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 3
       setActive(activeSection(positions, headerHeight + 24, atBottom))
     }
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update)
+    // Franja de 1 px a la altura de activación; se rehace si cambia la cabecera o la ventana.
+    const observe = () => {
+      band?.disconnect()
+      const line = Math.round(headerHeight + 24)
+      band = new IntersectionObserver(update, {
+        rootMargin: `-${line}px 0px -${Math.max(0, window.innerHeight - line - 1)}px 0px`,
+      })
+      sections.forEach((el) => band?.observe(el))
     }
+    // La última sección puede ser más corta que la pantalla: el pie visible marca el final.
+    const end = new IntersectionObserver(update, { threshold: 1 })
+    const footer = document.querySelector("footer")
+    if (footer) end.observe(footer)
     const resize = new ResizeObserver(([entry]) => {
       headerHeight = entry.target.getBoundingClientRect().height
       document.documentElement.style.setProperty("--header-height", `${headerHeight}px`)
-      schedule()
+      observe()
+      update()
     })
     if (headerRef.current) resize.observe(headerRef.current)
-    window.addEventListener("scroll", schedule, { passive: true })
-    window.addEventListener("resize", schedule, { passive: true })
+    window.addEventListener("resize", observe, { passive: true })
+    observe()
     update()
     return () => {
-      cancelAnimationFrame(frame)
+      band?.disconnect()
+      end.disconnect()
       resize.disconnect()
-      window.removeEventListener("scroll", schedule)
-      window.removeEventListener("resize", schedule)
+      window.removeEventListener("resize", observe)
     }
   }, [links])
 

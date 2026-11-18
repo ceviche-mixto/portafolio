@@ -7,6 +7,7 @@ import { nextProject, projectPath, type Project } from "@/content/projects"
 import { fill, formatDate, translations } from "@/lib/i18n"
 import { HOME_PATH, type Language } from "@/lib/language"
 import { ArchitectureFlow } from "./ArchitectureFlow"
+import { EmphasisTrack } from "./ArchitectureEmphasis"
 
 /**
  * Página de un caso. Sigue siempre la misma secuencia: resultado visible,
@@ -105,6 +106,7 @@ export function CaseStudyArticle({
         </div>
 
         <section id="arquitectura" aria-labelledby="arquitectura-titulo">
+          <EmphasisTrack steps={project.architecture.steps.length}>
           <h2 id="arquitectura-titulo" className="text-2xl font-bold text-foreground md:text-3xl">{c.architecture}</h2>
           <p id="arquitectura-flujo" className="mt-2 text-lg text-body">{project.architecture.title[lang]}</p>
           <div className="mt-8">
@@ -113,6 +115,7 @@ export function CaseStudyArticle({
           {project.architecture.note && (
             <p className="mt-8 max-w-3xl text-sm leading-relaxed text-muted-foreground">{project.architecture.note[lang]}</p>
           )}
+          </EmphasisTrack>
         </section>
 
         <section id="decisiones" aria-labelledby="decisiones-titulo">

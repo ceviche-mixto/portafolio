@@ -14,7 +14,7 @@ Presenta tres sistemas: **GRADEO** (reseñas anónimas de profesores con cola de
 | Lenguaje | TypeScript |
 | Estilos | Tailwind CSS 4 con tokens editoriales |
 | Componentes | Server Components + islas de cliente; Base UI para acciones |
-| Animación | CSS + Framer Motion (sólo donde hace falta, en carga diferida) |
+| Animación | CSS + Motion (`framer-motion`) sobre `ViewTimeline` nativo |
 | Estado | Zustand (preferencia de movimiento del visitante) |
 | Datos | Supabase / PostgreSQL 17, leído desde el servidor |
 
@@ -105,9 +105,12 @@ nativo con el correo visible, copia con confirmación y recuperación de errores
 y un enlace opcional para redactar un correo con proyecto y asunto preparados.
 Los repositorios privados no se publican automáticamente.
 
-**Casi nada de la animación usa JavaScript.** `Reveal` hace las apariciones con
-IntersectionObserver y transiciones CSS, y la barra de progreso usa
-`animation-timeline`.
+**El movimiento ligado al scroll corre en el compositor.** El hero, las imágenes
+del listado y el realce del diagrama de cada caso usan `scroll(animate(...))` de
+Motion con rangos preset (`entry`/`exit`), que se traducen a un `ViewTimeline`
+nativo: no hay JavaScript por frame ni estilos inline. `useScroll` mediría el
+layout en cada frame, así que no se usa. La entrada de la guía cobalto y el zoom
+de las tarjetas son CSS. Todo el contenido llega visible en el HTML.
 
 **Todo respeta `prefers-reduced-motion`**, en JS y en CSS.
 
@@ -129,7 +132,7 @@ src/
 │   ├── case-study/         artículo del caso, flujo de arquitectura, lectura viva
 │   ├── chrome/             barra, skip link, enlaces sociales
 │   ├── mode-switcher/      idioma y control de movimiento
-│   ├── motion/             Reveal (aparición en CSS)
+│   ├── motion/             hero y listado ligados al scroll
 │   ├── project/            tarjeta, figura, estado y enlaces de proyecto
 │   ├── site/               documento, portada y fuentes compartidos
 │   └── ui/                 variantes de botón, Button, copiar correo

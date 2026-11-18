@@ -36,7 +36,7 @@ const es = {
   lang: { switchLabel: 'EN', switchName: 'English version' },
   hero: {
     eyebrow: `${IDENTITY.name} · ${IDENTITY.titleEs}`,
-    title: 'Construyo sistemas web y móviles de punta a punta.',
+    title: 'Construyo sistemas web y plataformas SaaS de punta a punta.',
     subtitle: 'Diseño la interfaz, modelo los datos y despliego el producto. GRADEO y OneCtrl están en producción.',
     primary: 'Ver proyectos',
     secondary: 'Contactar',
@@ -150,7 +150,7 @@ const en: TranslationDict = {
   lang: { switchLabel: 'ES', switchName: 'versión en español' },
   hero: {
     eyebrow: `${IDENTITY.name} · ${IDENTITY.titleEn}`,
-    title: 'I build web and mobile systems end to end.',
+    title: 'I build web systems and SaaS platforms end to end.',
     subtitle: 'I design the interface, model the data, and ship the product. GRADEO and OneCtrl run in production.',
     primary: 'Explore projects',
     secondary: 'Get in touch',

@@ -1,6 +1,5 @@
 import { Mail } from "lucide-react"
 import { SocialLinks } from "@/components/chrome/SocialLinks"
-import { Reveal } from "@/components/motion/Reveal"
 import { CopyEmailButton } from "@/components/ui/CopyEmailButton"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { translations } from "@/lib/i18n"
@@ -19,7 +18,7 @@ export function ContactSection({ lang }: { lang: Language }) {
 
   return (
     <section id="contacto" className="relative z-10 border-t border-soft bg-background pt-24 pb-24">
-      <Reveal className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 text-center">
+      <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 text-center">
         <h2 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
           {t.contact.sectionTitle}
         </h2>
@@ -40,7 +39,7 @@ export function ContactSection({ lang }: { lang: Language }) {
           <p className="font-mono text-xs tracking-widest text-muted-foreground uppercase">{t.contact.orFind}</p>
           <SocialLinks size="lg" newTabHint={t.nav.newTab} />
         </div>
-      </Reveal>
+      </div>
     </section>
   )
 }

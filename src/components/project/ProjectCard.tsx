@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { ListShift } from "@/components/motion/ListShift"
 import { projectPath, type Project } from "@/content/projects"
 import { fill, translations } from "@/lib/i18n"
 import type { Language } from "@/lib/language"
@@ -10,6 +11,9 @@ import { StatusBadge } from "./StatusBadge"
  * Tarjeta de un proyecto en el listado: pantalla real, problema y decisión en
  * una frase. Toda la tarjeta abre el caso con un solo toque; el `id` es el slug,
  * así «Volver a proyectos» regresa a esta misma tarjeta.
+ *
+ * Dos capas de movimiento separadas: `ListShift` traslada la imagen con el
+ * scroll y `.card-media` la amplía al pasar un puntero fino (globals.css).
  */
 export function ProjectCard({
   project,
@@ -28,11 +32,12 @@ export function ProjectCard({
       id={project.slug}
       aria-labelledby={titleId}
       className={cn(
-        "relative flex h-full flex-col overflow-clip rounded-2xl border border-border bg-card",
+        "group relative flex h-full flex-col overflow-clip rounded-2xl border border-border bg-card",
         featured && "lg:grid lg:grid-cols-12"
       )}
     >
-      <div className={cn("border-b border-soft bg-surface-raised", featured && "lg:col-span-7 lg:border-r lg:border-b-0")}>
+      <div className={cn("overflow-clip border-b border-soft bg-surface-raised", featured && "lg:col-span-7 lg:border-r lg:border-b-0")}>
+        <ListShift>
         <Image
           src={project.cover.src}
           width={project.cover.width}
@@ -40,8 +45,9 @@ export function ProjectCard({
           alt={project.cover.alt[lang]}
           sizes={featured ? "(min-width: 1024px) 700px, 100vw" : "(min-width: 1024px) 600px, 100vw"}
           unoptimized={project.cover.src.endsWith(".svg")}
-          className="aspect-[16/10] h-auto w-full object-cover object-top"
+          className="card-media aspect-[16/10] h-auto w-full object-cover object-top"
         />
+        </ListShift>
       </div>
       <div className={cn("flex flex-1 flex-col gap-5 p-6 sm:p-8", featured && "lg:col-span-5 lg:justify-center")}>
         <div className="flex flex-wrap items-center gap-3">

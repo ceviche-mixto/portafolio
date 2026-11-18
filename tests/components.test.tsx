@@ -1,15 +1,18 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import axe from "axe-core"
-import { CVSection } from "@/components/cv/CVSection"
+import { TrajectorySection } from "@/features/trajectory/TrajectorySection"
 import { ContactSection } from "@/features/contact/ContactSection"
-import { HeroSection } from "@/features/hero/HeroSection"
 import { SiteChrome } from "@/components/chrome/SiteChrome"
 import { HomePage } from "@/components/site/HomePage"
+import { CaseStudyArticle } from "@/components/case-study/CaseStudyArticle"
 import { LanguageSwitcher } from "@/components/mode-switcher/LanguageSwitcher"
+import { PROJECTS } from "@/content/projects"
 
+const pathname = vi.hoisted(() => ({ current: "/" }))
+vi.mock("next/navigation", () => ({ usePathname: () => pathname.current }))
 vi.mock("@/components/motion/Reveal", () => ({ Reveal: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }))
-afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); pathname.current = "/" })
 
 const AXE_RULES = {
   "color-contrast": { enabled: false },
@@ -17,9 +20,14 @@ const AXE_RULES = {
   "label-content-name-mismatch": { enabled: true },
 }
 
+function browserStubs() {
+  Object.defineProperty(window, "matchMedia", { configurable: true, value: () => ({ matches: false, addEventListener() {}, removeEventListener() {} }) })
+  vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} })
+}
+
 describe("CV integrity and actions", () => {
   it.each(["es", "en"] as const)("uses the matching PDF for preview and download in %s", (lang) => {
-    render(<CVSection lang={lang} />)
+    render(<TrajectorySection lang={lang} />)
     const view = screen.getByRole("link", { name: lang === "es" ? /Ver CV/ : /View CV/ })
     const download = screen.getByRole("link", { name: lang === "es" ? /Descargar CV/ : /Download CV/ })
     expect(view.getAttribute("href")).toBe(download.getAttribute("href"))
@@ -29,49 +37,60 @@ describe("CV integrity and actions", () => {
     expect(download.getAttribute("download")).toBe(`Giancarlo-Larios-CV-${lang.toUpperCase()}.pdf`)
     expect(screen.getByText(lang === "es" ? /PDF en español/ : /English PDF/)).toBeTruthy()
   })
-  it.each(["es", "en"] as const)("links every CV preview to the page language in %s", (lang) => {
-    render(<><HeroSection lang={lang} /><CVSection lang={lang} /></>)
-    const previews = screen.getAllByRole("link", { name: lang === "es" ? /Ver CV/ : /View CV/ })
-    expect(previews).toHaveLength(2)
-    previews.forEach((link) => expect(link.getAttribute("href")).toBe(`/cv/giancarlo-larios-cv-${lang}.pdf?v=20261023`))
-  })
   it("has no automatically detected structural violations", async () => {
-    const { container } = render(<CVSection lang="es" />)
+    const { container } = render(<TrajectorySection lang="es" />)
     const results = await axe.run(container, { rules: AXE_RULES })
     expect(results.violations.map((issue) => issue.id)).toEqual([])
   })
 })
 
 describe("language switch", () => {
-  it.each([["es", "/en", "en", "EN"], ["en", "/", "es-PE", "ES"]] as const)(
-    "links %s to the equivalent page with a name that starts with its visible text",
-    (lang, href, target, visible) => {
-      render(<LanguageSwitcher lang={lang} />)
-      const link = screen.getByRole("link")
-      expect(link.getAttribute("href")).toBe(href)
-      expect(link.getAttribute("hreflang")).toBe(target)
-      expect(link.getAttribute("lang")).toBe(target)
-      expect(link.textContent?.startsWith(visible)).toBe(true)
-      expect(link.getAttribute("aria-label")).toBeNull()
-    }
-  )
+  it.each([
+    ["es", "/", "/en", "en", "EN"],
+    ["en", "/en", "/", "es-PE", "ES"],
+    ["es", "/proyectos/onectrl", "/en/projects/onectrl", "en", "EN"],
+    ["en", "/en/projects/farmaplus", "/proyectos/farmaplus", "es-PE", "ES"],
+  ] as const)("links %s %s to %s with a name that starts with its visible text", (lang, from, href, target, visible) => {
+    pathname.current = from
+    render(<LanguageSwitcher lang={lang} label={visible} name="x" />)
+    const link = screen.getByRole("link")
+    expect(link.getAttribute("href")).toBe(href)
+    expect(link.getAttribute("hreflang")).toBe(target)
+    expect(link.textContent?.startsWith(visible)).toBe(true)
+    expect(link.getAttribute("aria-label")).toBeNull()
+  })
 })
 
 describe("public page accessibility", () => {
-  it.each(["es", "en"] as const)("keeps complete readable structure in %s", async (lang) => {
-    Object.defineProperty(window, "matchMedia", { configurable: true, value: () => ({ matches: false, addEventListener() {}, removeEventListener() {} }) })
-    vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} })
+  it.each(["es", "en"] as const)("keeps the home page complete and readable in %s", async (lang) => {
+    browserStubs()
     const { container } = render(<><SiteChrome lang={lang} /><HomePage lang={lang} /></>)
     const results = await axe.run(container, { rules: AXE_RULES })
     expect(results.violations.map((issue) => ({ id: issue.id, elements: issue.nodes.map((node) => node.target) }))).toEqual([])
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1)
     expect(screen.getByRole("contentinfo")).toBeTruthy()
-    const profile = container.querySelector("#perfil")?.textContent ?? ""
-    expect(profile).not.toMatch(/estudiante|\bstudent\b|\bjunior\b|aprendiendo|learning to/i)
-    expect(profile).toContain(lang === "es" ? "Desarrollador de software." : "Software developer.")
-    expect(profile).not.toContain("Universidad Católica")
-    expect(container.textContent).not.toMatch(/reclutador|recruiter/i)
+    // Orden del recorrido y anclas heredadas.
+    const ids = [...container.querySelectorAll("main > section[id]")].map((section) => section.id)
+    expect(ids).toEqual(["proyectos", "ingenieria", "perfil", "contacto"])
+    expect(container.querySelector("#gradeo")).toBeTruthy()
+    const text = container.textContent ?? ""
+    expect(text).not.toMatch(/\bjunior\b|estudiante|aprendiendo|learning to|reclutador|recruiter|vexo/i)
+    PROJECTS.forEach((project) => expect(text).toContain(project.name))
   })
+
+  it.each(PROJECTS.flatMap((project) => (["es", "en"] as const).map((lang) => [project.slug, lang, project] as const)))(
+    "renders the %s case study in %s with its anchors and no detected violations",
+    async (_, lang, project) => {
+      const { container } = render(<main><CaseStudyArticle project={project} lang={lang} /></main>)
+      const results = await axe.run(container, { rules: { ...AXE_RULES, region: { enabled: false } } })
+      expect(results.violations.map((issue) => issue.id)).toEqual([])
+      expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1)
+      for (const id of ["resultado", "responsabilidad", "restriccion", "arquitectura", "decisiones", "resultados", ...project.decisions.map((d) => d.id)]) {
+        expect(container.querySelector(`#${id}`), id).toBeTruthy()
+      }
+      expect(container.textContent).not.toMatch(/\bjunior\b|estudiante|vexo/i)
+    }
+  )
 })
 
 describe("contact recovery", () => {

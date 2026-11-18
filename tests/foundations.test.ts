@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest"
 import { activeSection } from "@/lib/navigation"
 import { contentSecurityPolicy } from "@/lib/security"
 import { withDeadline } from "@/lib/deadline"
+import { equivalentPath } from "@/lib/language"
 
 describe("active navigation", () => {
   const sections = [{ id: "perfil", top: -600 }, { id: "gradeo", top: 100 }, { id: "proyectos", top: 1800 }, { id: "contacto", top: 2100 }]
@@ -12,6 +13,19 @@ describe("active navigation", () => {
   it("accepts empty and zoomed layouts", () => {
     expect(activeSection([], 320, true)).toBeNull()
     expect(activeSection(sections, 2000, false)).toBe("proyectos")
+  })
+})
+
+describe("language switch target", () => {
+  it("maps every page to its counterpart", () => {
+    expect(equivalentPath("/", "en")).toBe("/en")
+    expect(equivalentPath("/en", "es")).toBe("/")
+    expect(equivalentPath("/proyectos/gradeo", "en")).toBe("/en/projects/gradeo")
+    expect(equivalentPath("/en/projects/gradeo/", "es")).toBe("/proyectos/gradeo")
+  })
+  it("falls back to the other home for unknown paths", () => {
+    expect(equivalentPath("/no-existe", "en")).toBe("/en")
+    expect(equivalentPath("/en/otra", "es")).toBe("/")
   })
 })
 

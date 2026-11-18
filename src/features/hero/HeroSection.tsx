@@ -1,122 +1,75 @@
-import * as React from "react"
-import { ArrowDown, Mail, FileText } from "lucide-react"
-import { SocialLinks } from "@/components/chrome/SocialLinks"
-import { Reveal } from "@/components/motion/Reveal"
+import { getImageProps } from "next/image"
+import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button-variants"
+import { gradeo } from "@/content/projects/gradeo"
+import { projectPath } from "@/content/projects"
 import { translations } from "@/lib/i18n"
 import type { Language } from "@/lib/language"
-import { CV_FILES } from "@/lib/site"
 
-function countWords(text: string): number {
-  return text.trim().split(/\s+/).length
-}
+const MOBILE_CAPTURE = { src: "/images/projects/gradeo-busqueda-movil.png", width: 780, height: 1688 }
 
 /**
- * Parte un texto en palabras envueltas en `<span>`, cada una con su índice en
- * `--i` para que CSS calcule el retardo.
+ * Hero con prueba real: GRADEO en producción. Titular, acciones y captura
+ * llegan visibles en el HTML; nada empieza con opacidad cero.
  *
- * El degradado va en cada palabra, no en el `h1`: la animación pone cada
- * palabra en su propia capa de composición, y el fondo del padre recortado con
- * `background-clip: text` ya no las alcanzaría.
- *
- * Los espacios se emiten fuera de los `span` para que el texto siga
- * seleccionable y se copie como una frase normal.
+ * La captura usa dirección de arte (móvil vertical, escritorio apaisada) y
+ * prioridad de carga alta porque es el candidato a LCP.
  */
-function StaggeredWords({
-  text,
-  startIndex = 0,
-  className,
-}: {
-  text: string
-  startIndex?: number
-  className: string
-}) {
-  const words = text.trim().split(/\s+/)
-  return (
-    <>
-      {words.map((word, i) => (
-        <React.Fragment key={`${word}-${i}`}>
-          <span
-            className={className}
-            style={{ "--i": startIndex + i } as React.CSSProperties}
-          >
-            {word}
-          </span>
-          {i < words.length - 1 ? " " : null}
-        </React.Fragment>
-      ))}
-    </>
-  )
-}
-
-/** Un tramo del degradado por línea: la segunda baja hacia el tono secundario. */
-const LINE_1_GRADIENT =
-  "bg-gradient-to-b from-foreground to-subtle bg-clip-text text-transparent"
-const LINE_2_GRADIENT =
-  "bg-gradient-to-b from-subtle to-muted-foreground bg-clip-text text-transparent"
-
 export function HeroSection({ lang }: { lang: Language }) {
   const t = translations[lang]
+  const common = {
+    alt: gradeo.cover.alt[lang],
+    sizes: "(min-width: 1024px) 58vw, 100vw",
+    fetchPriority: "high" as const,
+    loading: "eager" as const,
+  }
+  const {
+    props: { srcSet: desktop },
+  } = getImageProps({ ...common, src: gradeo.cover.src, width: gradeo.cover.width, height: gradeo.cover.height })
+  // El <img> lleva la variante móvil; <source> la sustituye desde 768 px.
+  const { props: image } = getImageProps({ ...common, ...MOBILE_CAPTURE })
 
   return (
-    <section className="relative flex min-h-svh flex-col items-center justify-center px-6 pt-36 pb-20 text-center sm:pt-24">
-      {/* El desvanecido al salir de pantalla lo hace CSS con animation-timeline
-          (`.hero-parallax` en globals.css). */}
-      <div className="hero-parallax flex flex-col items-center">
-        <Reveal>
-          {/* Las palabras entran escalonadas: cada `<span>` lleva su índice en
-              `--i` y el retardo se calcula en CSS, sin JavaScript. */}
-          <h1 className="word-in mb-6 text-4xl leading-[1.08] font-black tracking-[-0.035em] sm:text-5xl md:text-7xl">
-            <StaggeredWords text={t.hero.nameLine} className={LINE_1_GRADIENT} />
-            <br />
-            <StaggeredWords
-              text={t.hero.titleLine}
-              startIndex={countWords(t.hero.nameLine)}
-              className={LINE_2_GRADIENT}
-            />
-          </h1>
-
-          <p className="mx-auto mb-6 max-w-2xl text-balance text-base font-light text-body md:text-xl">
-            {t.hero.subtitle}
-          </p>
-
-          <p className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-highlight/25 bg-highlight/10 px-4 py-1.5 text-xs font-medium text-highlight md:text-sm">
-            <span className="relative flex h-2 w-2" aria-hidden="true">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-highlight opacity-75 motion-safe:animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-highlight" />
-            </span>
-            {t.hero.availability}
-          </p>
-
-          <div className="flex flex-col items-center gap-5">
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <a href="#gradeo" className={buttonVariants()}>
-                {t.hero.viewWork}
-              </a>
-              <a href="#contacto" className={buttonVariants({ variant: "secondary" })}>
-                <Mail aria-hidden="true" />
-                {t.hero.contactMe}
-              </a>
-            </div>
-
-            <a
-              href={CV_FILES[lang]}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${t.cv.viewCv} (${t.nav.newTab})`}
-              className={buttonVariants({ variant: "link" })}
-            >
-              <FileText aria-hidden="true" />
-              {t.cv.viewCv}
-            </a>
-            <SocialLinks newTabHint={t.nav.newTab} />
-          </div>
-        </Reveal>
+    <section
+      aria-labelledby="hero-titulo"
+      className="mx-auto grid max-w-[1280px] items-center gap-12 px-6 pt-36 pb-20 sm:pt-32 lg:grid-cols-12 lg:gap-10 lg:px-10 lg:pb-28"
+    >
+      <div className="lg:col-span-5">
+        <p className="font-mono text-sm text-muted-foreground">{t.hero.eyebrow}</p>
+        <h1
+          id="hero-titulo"
+          className="mt-4 text-[clamp(2.25rem,5vw,4.75rem)] leading-[1.04] font-bold tracking-[-0.035em] text-balance text-foreground"
+        >
+          {t.hero.title}
+        </h1>
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-body">{t.hero.subtitle}</p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <a href="#proyectos" className={buttonVariants()}>{t.hero.primary}</a>
+          <a href="#contacto" className={buttonVariants({ variant: "secondary" })}>{t.hero.secondary}</a>
+        </div>
       </div>
 
-      <div className="absolute bottom-8 text-muted-foreground">
-        <ArrowDown className="h-6 w-6" aria-hidden="true" />
-      </div>
+      <figure className="relative lg:col-span-7">
+        {/* Línea cobalto: une la nota con el fragmento de interfaz que explica. */}
+        <span aria-hidden="true" className="absolute top-1/2 -right-6 -left-6 h-px bg-highlight" />
+        <picture className="relative block overflow-clip rounded-2xl border border-border bg-card shadow-[0_12px_32px_-16px_rgba(21,23,28,0.35)]">
+          <source media="(min-width: 768px)" srcSet={desktop} sizes={common.sizes} />
+          <img
+            {...image}
+            alt={image.alt}
+            className="aspect-[4/5] h-auto w-full object-cover object-top md:aspect-[16/10]"
+          />
+        </picture>
+        <figcaption className="mt-3 text-sm text-muted-foreground">
+          {t.hero.caption}{" "}
+          <Link
+            href={projectPath(lang, gradeo.slug)}
+            className="inline-flex min-h-11 items-center font-semibold text-highlight underline underline-offset-4"
+          >
+            {t.hero.captionLink}
+          </Link>
+        </figcaption>
+      </figure>
     </section>
   )
 }

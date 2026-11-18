@@ -2,7 +2,7 @@
 
 Portafolio bilingüe (español / inglés) de **Giancarlo Larios**, desarrollador de software.
 
-**GRADEO** es una plataforma de reseñas anónimas de profesores con cola de moderación y está en producción. **FARMAPLUS** es un ERP de farmacia con facturación electrónica SUNAT en fase beta; todavía no está desplegado.
+Presenta tres sistemas: **GRADEO** (reseñas anónimas de profesores con cola de moderación, en producción), **OneCtrl** (SaaS multi-negocio en Flask y MySQL, en producción) y **FARMAPLUS** (punto de venta farmacéutico con trazabilidad por lote, como demo técnica).
 
 ---
 
@@ -28,7 +28,7 @@ cp .env.example .env.local   # rellena los valores
 npm run dev
 ```
 
-Abre <http://localhost:3000> (español) o <http://localhost:3000/en> (inglés).
+Abre <http://localhost:3000> (español) o <http://localhost:3000/en> (inglés). Cada caso vive en `/proyectos/<slug>` y `/en/projects/<slug>`.
 
 ### Variables de entorno
 
@@ -70,7 +70,7 @@ HTML prerenderizado. `app/global-not-found.tsx` cubre las URLs inexistentes.
 
 **El diccionario no viaja al navegador.** `src/lib/i18n.ts` lleva
 `import 'server-only'`: las secciones son Server Components que leen su idioma, y
-las islas de cliente (barra, control de movimiento, copiar correo, caso técnico)
+las islas de cliente (barra, idioma, control de movimiento, copiar correo)
 reciben por props sólo las cadenas que usan.
 
 **El español es la fuente de la forma de las traducciones.** En `src/lib/i18n.ts`
@@ -78,11 +78,22 @@ el tipo se deriva del objeto español y el inglés se declara con ese tipo: si
 añades una clave en uno y la olvidas en el otro, falla el build en lugar de
 renderizar `undefined`.
 
-**La portada usa un recuento fechado.** `GRADEO_SNAPSHOT` guarda las cifras de
-producción con su fecha, así la portada es estática y no depende de la base. La
-lectura viva de `src/lib/gradeo-stats.ts` usa `unstable_cache`: la consulta no
-usa `fetch` y su entrada debe sobrevivir a un despliegue, y `'use cache'` exigiría
-activar `cacheComponents` en todo el sitio.
+**Los casos son una colección tipada.** `src/content/projects` define cada
+proyecto con textos ES/EN obligatorios, capturas, pasos de arquitectura,
+decisiones (qué garantizar, qué elegí, qué coste, cómo lo comprobé) y evidencia
+fechada. Las páginas `[slug]` se generan con `generateStaticParams` y
+`dynamicParams = false`: un slug desconocido es un 404.
+
+**Las cifras llevan fecha.** La evidencia de cada caso indica cuándo y dónde se
+consultó. La página de GRADEO añade una lectura viva (ISR cada cinco minutos)
+desde `src/lib/gradeo-stats.ts`, que usa `unstable_cache`: la consulta no usa
+`fetch` y su entrada debe sobrevivir a un despliegue, y `'use cache'` exigiría
+activar `cacheComponents` en todo el sitio. Sin respuesta muestra «no
+disponible», que es distinto de cero.
+
+**Las capturas no muestran datos personales.** Las de GRADEO se tomaron en
+producción con los nombres de docentes y el texto de las reseñas sustituidos.
+FARMAPLUS se representa con un esquema vectorial con datos ficticios.
 
 **CSP estática.** La política vive en `next.config.ts`, sin nonce por petición,
 que obligaría a renderizar cada página por petición. Next inserta scripts inline
@@ -95,16 +106,14 @@ y un enlace opcional para redactar un correo con proyecto y asunto preparados.
 Los repositorios privados no se publican automáticamente.
 
 **Casi nada de la animación usa JavaScript.** `Reveal` hace las apariciones con
-IntersectionObserver y transiciones CSS; el desvanecido del hero usa
-`animation-timeline`. Framer Motion queda para la secuencia de scroll de GRADEO,
-que se carga por separado.
+IntersectionObserver y transiciones CSS, y la barra de progreso usa
+`animation-timeline`.
 
 **Todo respeta `prefers-reduced-motion`**, en JS y en CSS.
 
 **El visitante también controla el movimiento.** El botón de pausa de la barra
-activa una versión tranquila: sin pulsos ni secuencia animada; los cuatro pasos
-permanecen visibles como lista. La preferencia se guarda solo en este navegador
-y nunca anula una petición de movimiento reducido del sistema.
+activa una versión tranquila. La preferencia se guarda solo en este navegador y
+nunca anula una petición de movimiento reducido del sistema.
 
 ---
 
@@ -113,22 +122,24 @@ y nunca anula una petición de movimiento reducido del sistema.
 ```
 src/
 ├── app/
-│   ├── (es)/               layout raíz, portada, error y OG en español
-│   ├── (en)/en/            lo mismo en inglés
+│   ├── (es)/               layout raíz, portada, casos (/proyectos/[slug]), error y OG
+│   ├── (en)/en/            lo mismo en inglés (/en/projects/[slug])
 │   └── …                   404 global, sitemap, robots, estilos
 ├── components/
+│   ├── case-study/         artículo del caso, flujo de arquitectura, lectura viva
 │   ├── chrome/             barra, skip link, enlaces sociales
-│   ├── cv/                 perfil y experiencia
 │   ├── mode-switcher/      idioma y control de movimiento
 │   ├── motion/             Reveal (aparición en CSS)
-│   ├── project/            enlaces de proyecto reutilizables
+│   ├── project/            tarjeta, figura, estado y enlaces de proyecto
 │   ├── site/               documento, portada y fuentes compartidos
-│   └── ui/                 variantes de botón, Button, Dialog, copiar correo
+│   └── ui/                 variantes de botón, Button, copiar correo
+├── content/projects/       colección tipada: GRADEO, OneCtrl, FARMAPLUS
 ├── features/
 │   ├── contact/            contacto y pie
-│   ├── gradeo/             bento, caso técnico, ciclo de una reseña
-│   ├── hero/               portada
-│   └── projects/           GRADEO y FARMAPLUS
+│   ├── engineering/        enfoque de ingeniería
+│   ├── hero/               hero con captura de GRADEO
+│   ├── projects/           trabajo seleccionado
+│   └── trajectory/         trayectoria y CV
 ├── hooks/
 ├── lib/                    i18n, idioma, metadatos, datos, identidad y enlaces
 └── store/                  preferencia de movimiento (persistida)

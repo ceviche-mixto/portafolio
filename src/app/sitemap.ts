@@ -1,14 +1,25 @@
 import type { MetadataRoute } from "next"
-import { HOME_PATH } from "@/lib/language"
+import { PROJECT_SLUGS, projectPath } from "@/content/projects"
+import { HOME_PATH, htmlLang, type Language } from "@/lib/language"
 import { SITE_URL } from "@/lib/site"
 
+/** Portada y casos en los dos idiomas, cada URL con su alternante. */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const languages = { "es-PE": `${SITE_URL}${HOME_PATH.es}`, en: `${SITE_URL}${HOME_PATH.en}` }
-  return (["es", "en"] as const).map((lang) => ({
-    url: `${SITE_URL}${HOME_PATH[lang]}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly",
-    priority: 1,
-    alternates: { languages },
-  }))
+  const pages: Record<Language, string>[] = [
+    HOME_PATH,
+    ...PROJECT_SLUGS.map((slug) => ({ es: projectPath("es", slug), en: projectPath("en", slug) })),
+  ]
+  return pages.flatMap((paths) => {
+    const languages = {
+      [htmlLang("es")]: `${SITE_URL}${paths.es}`,
+      [htmlLang("en")]: `${SITE_URL}${paths.en}`,
+    }
+    return (["es", "en"] as const).map((lang) => ({
+      url: `${SITE_URL}${paths[lang]}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: paths === HOME_PATH ? 1 : 0.8,
+      alternates: { languages },
+    }))
+  })
 }

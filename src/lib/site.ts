@@ -48,39 +48,6 @@ export const SOCIALS = {
 } as const
 
 /**
- * Proyectos.
- *
- * `null` oculta el botón correspondiente en lugar de renderizar un enlace roto
- * (ver `ProjectLinks`). Un enlace que da 404 es peor que no ofrecer enlace, así
- * que aquí sólo va lo que existe y es público.
- *
- * Estado comprobado el 29 de julio de 2026:
- * - `ceviche-mixto/gradeo` existe pero es **privado**: un visitante vería un 404,
- *   así que el enlace queda oculto. Si haces el repositorio público, cambia
- *   `repo` por la URL y el botón aparece solo.
- * - FARMAPLUS todavía no tiene repositorio en la cuenta. Cuando lo publiques,
- *   pon aquí su URL.
- */
-export const PROJECTS = {
-  gradeo: {
-    // https://github.com/ceviche-mixto/gradeo — privado ahora mismo.
-    repo: null as string | null,
-    demo: 'https://gradeo.vercel.app' as string | null,
-    /**
-     * Sin enlace público, en lugar de callar se ofrece la vía real: el código
-     * está y se puede compartir en una entrevista. Ponlo en `false` cuando el
-     * repositorio sea público y el botón lo sustituya.
-     */
-    codeOnRequest: true,
-  },
-  farmaplus: {
-    repo: null as string | null,
-    demo: null as string | null,
-    codeOnRequest: true,
-  },
-} as const
-
-/**
  * CV en PDF por idioma. Los archivos van en /public/cv/.
  * Actualizar la revisión al sustituir un PDF, también para visitas que aún
  * conservan la política de caché de una publicación anterior.
@@ -90,10 +57,13 @@ export const CV_FILES = {
   en: '/cv/giancarlo-larios-cv-en.pdf?v=20261023',
 } as const
 
-/** Anclas de la navegación. El id debe existir como `id` en la sección. */
+/**
+ * Anclas de la navegación global. El id debe existir como `id` en una sección
+ * de la portada; los enlaces y repositorios de cada proyecto viven en
+ * `src/content/projects`.
+ */
 export const NAV_SECTIONS = [
-  { id: 'perfil', es: 'Perfil', en: 'Profile' },
-  { id: 'gradeo', es: 'GRADEO', en: 'GRADEO' },
   { id: 'proyectos', es: 'Proyectos', en: 'Projects' },
+  { id: 'ingenieria', es: 'Ingeniería', en: 'Engineering' },
   { id: 'contacto', es: 'Contacto', en: 'Contact' },
 ] as const

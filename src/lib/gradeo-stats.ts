@@ -25,14 +25,6 @@ export const GRADEO_STATS_EMPTY: GradeoStats = {
 }
 
 /**
- * Recuento de producción fechado, para la portada estática.
- *
- * Consultado en la base de GRADEO el 18 de noviembre de 2026 a las 08:51 UTC.
- * La lectura viva queda para la página del caso, que se regenera con ISR.
- */
-export const GRADEO_SNAPSHOT = { professors: 919, reviews: 84 } as const
-
-/**
  * Cada cuánto se revalida la caché de las métricas. Cinco minutos: son datos de
  * escaparate, no un panel de control, y así una visita no golpea producción.
  */
@@ -42,8 +34,8 @@ export const GRADEO_STATS_TIMEOUT = 3000
 /**
  * Consulta las métricas en el servidor.
  *
- * Consulta opcional en Suspense: la portada y el CV no esperan a la base.
- * Los datos se transmiten desde el servidor sin cargar Supabase en el cliente.
+ * Lectura viva de la página del caso GRADEO, que se regenera con ISR. Las
+ * cifras fechadas de la portada viven en `src/content/projects/gradeo.ts`.
  *
  * Sólo cuenta reseñas aprobadas, que es lo que el trigger de GRADEO agrega y por
  * tanto lo único coherente con los puntajes que se muestran.

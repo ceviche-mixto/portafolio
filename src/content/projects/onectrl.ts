@@ -16,7 +16,7 @@ export const onectrl: Project = {
     es: "Desarrollador e investigador de software · desde nov. 2026",
     en: "Software developer and researcher · since Nov 2026",
   },
-  url: "https://thingshopp.pythonanywhere.com/",
+  url: "https://www.onectrl.es/",
   repo: null,
   codeOnRequest: false,
   stack: ["Python", "Flask", "MySQL", "pytest", "PythonAnywhere"],

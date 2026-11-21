@@ -161,25 +161,72 @@
   }
 }
 
-/* ── Guía cobalto del hero ───────────────────────────────────────────────────
-   Entra una vez en 240 ms. Es CSS para que ocurra en la primera pintura y la
-   media query la anule sin esperar a JavaScript. */
-@keyframes guide-in {
-  from {
-    opacity: 0;
-    transform: scaleX(0.92);
+/* ── Ventana de recorte del hero ─────────────────────────────────────────────
+   La ventana (borde inferior cobalto) no se mueve y da el timeline; la captura
+   de dentro se escala, así el recorte se ve contra el borde. En escritorio la
+   captura llega visible: sólo se aleja al salir (1 → .94). Por debajo de
+   1024 px entra bajo el pliegue: crece al entrar y se aleja al salir
+   (.95 → 1 → .95). Origen arriba, para que el titular de la captura no se mueva. */
+.hero-window {
+  view-timeline: --hero block;
+}
+
+@keyframes hero-in {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+@keyframes hero-out-mobile {
+  from { transform: scale(1); }
+  to { transform: scale(0.95); }
+}
+@keyframes hero-out {
+  from { transform: scale(1); }
+  to { transform: scale(0.94); }
+}
+
+/* ── Revelado del resultado en la tarjeta de GRADEO ──────────────────────────
+   La ficha de resultado asoma por el borde inferior de la ventana cuando la
+   tarjeta cruza el centro de la pantalla: sube ~18 % de la altura de la
+   ventana (35 % de su propia altura). Sin soporte, queda en su sitio final. */
+.reveal-window {
+  view-timeline: --reveal block;
+}
+.reveal-layer {
+  transform: translateY(65%);
+}
+
+@keyframes reveal-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(65%); }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-layer {
+      transform-origin: 50% 0;
+      /* `hero-out-mobile` sólo rellena hacia delante: antes de su rango manda `hero-in`. */
+      animation: hero-in linear both, hero-out-mobile linear forwards;
+      animation-timeline: --hero, --hero;
+      animation-range: entry, exit;
+    }
+    .reveal-layer {
+      animation: reveal-up linear both;
+      animation-timeline: --reveal;
+      animation-range: entry 100% cover 50%;
+    }
+  }
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .hero-layer {
+      animation: hero-out linear both;
+      animation-timeline: --hero;
+      animation-range: exit;
+    }
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .hero-guide {
-    transform-origin: 0 50%;
-    animation: guide-in 240ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
-  }
-}
-
-/* ── Zoom de la imagen de una tarjeta ────────────────────────────────────────
-   Sólo con puntero fino: en táctil el primer toque abre el caso. */
+/* ── Tarjetas ────────────────────────────────────────────────────────────────
+   Zoom de la imagen sólo con puntero fino; respuesta inmediata al pulsar en
+   cualquier dispositivo. Sin movimiento ligado al scroll. */
 .card-media {
   transition: transform 180ms cubic-bezier(0.2, 0.75, 0.25, 1);
 }
@@ -187,6 +234,15 @@
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .group:hover .card-media {
     transform: scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .project-card {
+    transition: transform 100ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+  .project-card:active {
+    transform: scale(0.98);
   }
 }
 
@@ -202,7 +258,7 @@
     scroll-behavior: auto;
   }
   .scroll-progress,
-  .hero-guide,
+  .hero-layer,
   .card-media {
     animation: none;
     transform: none;

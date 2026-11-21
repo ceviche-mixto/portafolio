@@ -47,6 +47,8 @@ const es = {
     problemLabel: 'Problema',
     decisionLabel: 'Decisión',
     systemLabel: 'Principio del sistema',
+    demoQuery: '«Lucia Morlaes» → Lucía Morales · similitud 0,33',
+    demoLink: 'Probar la búsqueda',
     readCase: 'Leer el caso {name}',
   },
   engineering: {
@@ -181,6 +183,8 @@ const en: TranslationDict = {
     problemLabel: 'Problem',
     decisionLabel: 'Decision',
     systemLabel: 'System principle',
+    demoQuery: '“Lucia Morlaes” → Lucía Morales · similarity 0.33',
+    demoLink: 'Try the search',
     readCase: 'Read the {name} case study',
   },
   engineering: {

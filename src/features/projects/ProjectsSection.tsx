@@ -20,7 +20,7 @@ export function ProjectsSection({ lang }: { lang: Language }) {
         <p className="mt-4 max-w-2xl text-lg leading-relaxed text-body">{t.work.subtitle}</p>
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
           <div className="lg:col-span-2">
-            <ProjectCard project={featured} lang={lang} featured />
+            <ProjectCard project={featured} lang={lang} featured reveal={featured.gallery[0]} />
           </div>
           {rest.map((project) => (
             <ProjectCard key={project.slug} project={project} lang={lang} />

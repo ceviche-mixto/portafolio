@@ -14,8 +14,9 @@ const MOBILE_CAPTURE = { src: "/images/projects/gradeo-busqueda-movil.png", widt
  * llegan visibles en el HTML; nada empieza con opacidad cero.
  *
  * La captura usa dirección de arte (móvil vertical, escritorio apaisada) y
- * prioridad de carga alta porque es el elemento LCP medido. La línea cobalto
- * entra en CSS (`.hero-guide`); la leyenda queda en flujo.
+ * prioridad de carga alta porque es el elemento LCP medido. Va dentro de una
+ * ventana de recorte con borde cobalto; el escalado ligado al scroll es CSS
+ * (`.hero-window`, `.hero-layer`) y la leyenda queda en flujo.
  */
 export function HeroSection({ lang }: { lang: Language }) {
   const t = translations[lang]
@@ -61,11 +62,9 @@ export function HeroSection({ lang }: { lang: Language }) {
       </div>
 
       <figure className="relative lg:col-span-7">
-        <div className="relative">
-          <span aria-hidden="true" className="absolute top-1/2 -right-6 -left-6">
-            <span className="hero-guide block h-px bg-highlight" />
-          </span>
-          <picture className="block overflow-clip rounded-2xl border border-border bg-card shadow-[0_12px_32px_-16px_rgba(21,23,28,0.35)]">
+        {/* Ventana fija con borde cobalto; sólo la captura interior se escala (globals.css). */}
+        <div className="hero-window overflow-clip rounded-2xl border border-b-2 border-border border-b-highlight bg-surface-raised shadow-[0_12px_32px_-16px_rgba(21,23,28,0.35)]">
+          <picture className="hero-layer block">
             <source media="(min-width: 768px)" srcSet={desktop} sizes={common.sizes} />
             <img
               {...image}

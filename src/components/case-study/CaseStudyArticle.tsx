@@ -17,11 +17,14 @@ export function CaseStudyArticle({
   project,
   lang,
   live,
+  demo,
 }: {
   project: Project
   lang: Language
   /** Bloque opcional con datos vivos, dentro de la evidencia. */
   live?: React.ReactNode
+  /** Demo interactiva opcional, en su propia sección `#demo` tras las decisiones. */
+  demo?: React.ReactNode
 }) {
   const t = translations[lang]
   const c = t.caseStudy
@@ -36,6 +39,7 @@ export function CaseStudyArticle({
     { id: "restriccion", label: c.constraint },
     { id: "arquitectura", label: c.architecture },
     { id: "decisiones", label: d.decisions },
+    ...(demo ? [{ id: "demo", label: c.demo.title }] : []),
     { id: "resultados", label: c.results },
   ]
 
@@ -158,6 +162,14 @@ export function CaseStudyArticle({
             ))}
           </div>
         </section>
+
+        {demo && (
+          <section id="demo" aria-labelledby="demo-titulo">
+            <h2 id="demo-titulo" className="text-2xl font-bold text-foreground md:text-3xl">{c.demo.title}</h2>
+            <p className="mt-2 max-w-3xl text-lg leading-relaxed text-body">{c.demo.intro}</p>
+            <div className="mt-8">{demo}</div>
+          </section>
+        )}
 
         <section id="resultados" aria-labelledby="resultados-titulo">
           <h2 id="resultados-titulo" className="text-2xl font-bold text-foreground md:text-3xl">{c.results}</h2>

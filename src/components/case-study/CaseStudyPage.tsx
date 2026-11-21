@@ -6,6 +6,8 @@ import type { Language } from "@/lib/language"
 import { caseStructuredData } from "@/lib/structured-data"
 import { CaseStudyArticle } from "./CaseStudyArticle"
 import { GradeoLiveMetrics } from "./GradeoLiveMetrics"
+import { SearchDemo } from "./SearchDemo"
+import { translations } from "@/lib/i18n"
 
 /** Página completa de un caso, compartida por las rutas de cada idioma. */
 export function CaseStudyPage({ lang, slug }: { lang: Language; slug: string }) {
@@ -19,6 +21,7 @@ export function CaseStudyPage({ lang, slug }: { lang: Language; slug: string }) 
           project={project}
           lang={lang}
           live={project.slug === "gradeo" ? <GradeoLiveMetrics lang={lang} /> : undefined}
+          demo={project.slug === "gradeo" ? <SearchDemo lang={lang} copy={translations[lang].caseStudy.demo} /> : undefined}
         />
       </main>
       <SiteFooter lang={lang} />

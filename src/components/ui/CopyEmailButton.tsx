@@ -2,8 +2,7 @@
 
 import * as React from "react"
 import { Check, Copy } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "./button"
+import { buttonVariants } from "./button-variants"
 
 /**
  * Copia el correo y confirma el resultado en una región activa, también para
@@ -38,10 +37,10 @@ export function CopyEmailButton({
 
   return (
     <div className="flex flex-col gap-2">
-      <Button variant="secondary" onClick={copy} className={cn(className)}>
+      <button type="button" onClick={copy} className={buttonVariants({ variant: "secondary", className })}>
         {state === "copied" ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
         {state === "copied" ? labels.copied : labels.idle}
-      </Button>
+      </button>
       <p role="status" aria-live="polite" className="min-h-5 text-sm text-body">
         {state === "failed" ? labels.failed : state === "copied" ? labels.copied : ""}
       </p>

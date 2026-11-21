@@ -163,8 +163,7 @@
 
 /* ── Guía cobalto del hero ───────────────────────────────────────────────────
    Entra una vez en 240 ms. Es CSS para que ocurra en la primera pintura y la
-   media query la anule sin esperar a JavaScript; su salida por scroll la lleva
-   `HeroParallax`. */
+   media query la anule sin esperar a JavaScript. */
 @keyframes guide-in {
   from {
     opacity: 0;
@@ -180,8 +179,7 @@
 }
 
 /* ── Zoom de la imagen de una tarjeta ────────────────────────────────────────
-   Sólo con puntero fino: en táctil el primer toque abre el caso. Capa distinta
-   de la traslación por scroll de `ListShift`. */
+   Sólo con puntero fino: en táctil el primer toque abre el caso. */
 .card-media {
   transition: transform 180ms cubic-bezier(0.2, 0.75, 0.25, 1);
 }
@@ -195,9 +193,9 @@
 /**
  * Movimiento reducido.
  *
- * Las animaciones de Framer Motion se desactivan en JS y las clases de Tailwind
- * usan la variante `motion-safe:`. Esto es la red de seguridad para todo lo
- * demás, incluido el `scroll-smooth` del html (WCAG 2.3.3).
+ * Todo el movimiento es CSS y depende de esta preferencia del sistema; no hay
+ * un control propio porque nada se mueve solo más de 5 s (WCAG 2.2.2). Este
+ * bloque anula también el `scroll-smooth` del html (WCAG 2.3.3, técnica C39).
  */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -237,16 +235,3 @@ main section { overflow-x: clip; }
   .text-transparent { color: CanvasText !important; background: none !important; }
   button, a { forced-color-adjust: auto; }
 }
-
-/* Modo tranquilo elegido por el visitante: conserva contenido, estado y foco. */
-html[data-motion="reduced"] { scroll-behavior: auto; }
-html[data-motion="reduced"] .hero-guide,
-html[data-motion="reduced"] .card-media {
-  animation: none !important;
-  opacity: 1 !important;
-  transform: none !important;
-  transition: none !important;
-}
-html[data-motion="reduced"] .motion-safe\:animate-ping,
-html[data-motion="reduced"] .motion-safe\:animate-pulse { animation: none; }
-html[data-motion="reduced"] .scroll-progress { display: none; }

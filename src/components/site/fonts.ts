@@ -6,10 +6,12 @@ const geistSans = Geist({
   display: "swap",
 })
 
+// Sólo etiquetas y código: no compite con la imagen LCP en la ruta crítica.
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
+  preload: false,
 })
 
 /**

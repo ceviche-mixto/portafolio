@@ -1,6 +1,5 @@
 import { getImageProps } from "next/image"
 import Link from "next/link"
-import { HeroParallax } from "@/components/motion/HeroParallax"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { gradeo } from "@/content/projects/gradeo"
 import { projectPath } from "@/content/projects"
@@ -15,8 +14,8 @@ const MOBILE_CAPTURE = { src: "/images/projects/gradeo-busqueda-movil.png", widt
  * llegan visibles en el HTML; nada empieza con opacidad cero.
  *
  * La captura usa dirección de arte (móvil vertical, escritorio apaisada) y
- * prioridad de carga alta porque es el candidato a LCP. `HeroParallax` añade la
- * línea cobalto y la salida ligada al scroll; la leyenda queda en flujo.
+ * prioridad de carga alta porque es el elemento LCP medido. La línea cobalto
+ * entra en CSS (`.hero-guide`); la leyenda queda en flujo.
  */
 export function HeroSection({ lang }: { lang: Language }) {
   const t = translations[lang]
@@ -62,7 +61,10 @@ export function HeroSection({ lang }: { lang: Language }) {
       </div>
 
       <figure className="relative lg:col-span-7">
-        <HeroParallax>
+        <div className="relative">
+          <span aria-hidden="true" className="absolute top-1/2 -right-6 -left-6">
+            <span className="hero-guide block h-px bg-highlight" />
+          </span>
           <picture className="block overflow-clip rounded-2xl border border-border bg-card shadow-[0_12px_32px_-16px_rgba(21,23,28,0.35)]">
             <source media="(min-width: 768px)" srcSet={desktop} sizes={common.sizes} />
             <img
@@ -71,7 +73,7 @@ export function HeroSection({ lang }: { lang: Language }) {
               className="aspect-[4/5] h-auto w-full object-cover object-top md:aspect-[16/10]"
             />
           </picture>
-        </HeroParallax>
+        </div>
         <figcaption className="mt-3 text-sm text-muted-foreground">
           {t.hero.caption}{" "}
           <Link

@@ -1,13 +1,10 @@
 import type { ArchitectureStep } from "@/content/projects/types"
 import type { Language } from "@/lib/language"
-import { EmphasisLayer } from "./ArchitectureEmphasis"
 
 /**
  * Pasos de una arquitectura como lista ordenada. La línea cobalto que une los
  * nodos es decorativa: el texto de cada paso se entiende sin la figura. Es la
- * única fuente de los pasos de cada caso. En escritorio, el scroll realza el
- * nodo que corresponde: cada nodo lleva su `EmphasisLayer` y el progreso lo
- * aporta el `EmphasisTrack` que envuelve la sección. Los pasos no se desmontan.
+ * única fuente de los pasos de cada caso.
  */
 export function ArchitectureFlow({
   steps,
@@ -30,8 +27,7 @@ export function ArchitectureFlow({
             aria-hidden="true"
             className="relative flex h-10 w-10 flex-none items-center justify-center rounded-full border-2 border-highlight bg-card font-mono text-sm font-bold text-highlight"
           >
-            <EmphasisLayer index={index} />
-            <span className="relative">{index + 1}</span>
+            {index + 1}
           </span>
           <div>
             <h3 className="font-semibold text-foreground">{step.title[lang]}</h3>

@@ -21,11 +21,6 @@ import type { Language } from './language'
  * otro, el build falla en lugar de renderizar `undefined`.
  */
 const es = {
-  motion: {
-    pause: 'Reducir animaciones',
-    resume: 'Activar animaciones',
-    system: 'Movimiento reducido por tu sistema',
-  },
   nav: {
     skipToContent: 'Saltar al contenido',
     menu: 'Secciones',
@@ -162,11 +157,6 @@ const es = {
 export type TranslationDict = typeof es
 
 const en: TranslationDict = {
-  motion: {
-    pause: 'Reduce animations',
-    resume: 'Enable animations',
-    system: 'Reduced motion requested by your system',
-  },
   nav: {
     skipToContent: 'Skip to content',
     menu: 'Sections',

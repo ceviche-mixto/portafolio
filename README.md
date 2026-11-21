@@ -13,9 +13,8 @@ Presenta tres sistemas: **GRADEO** (reseñas anónimas de profesores con cola de
 | Framework | Next.js 16.4 (App Router, Turbopack, rutas estáticas) |
 | Lenguaje | TypeScript |
 | Estilos | Tailwind CSS 4 con tokens editoriales |
-| Componentes | Server Components + islas de cliente; Base UI para acciones |
-| Animación | CSS + Motion (`framer-motion`) sobre `ViewTimeline` nativo |
-| Estado | Zustand (preferencia de movimiento del visitante) |
+| Componentes | Server Components + islas de cliente mínimas |
+| Animación | Solo CSS (`animation-timeline` con `@supports`), sin JS de motion |
 | Datos | Supabase / PostgreSQL 17, leído desde el servidor |
 
 ## Puesta en marcha
@@ -70,7 +69,7 @@ HTML prerenderizado. `app/global-not-found.tsx` cubre las URLs inexistentes.
 
 **El diccionario no viaja al navegador.** `src/lib/i18n.ts` lleva
 `import 'server-only'`: las secciones son Server Components que leen su idioma, y
-las islas de cliente (barra, idioma, control de movimiento, copiar correo)
+las islas de cliente (barra, idioma, copiar correo)
 reciben por props sólo las cadenas que usan.
 
 **El español es la fuente de la forma de las traducciones.** En `src/lib/i18n.ts`
@@ -111,18 +110,14 @@ nativo con el correo visible, copia con confirmación y recuperación de errores
 y un enlace opcional para redactar un correo con proyecto y asunto preparados.
 Los repositorios privados no se publican automáticamente.
 
-**El movimiento ligado al scroll corre en el compositor.** El hero, las imágenes
-del listado y el realce del diagrama de cada caso usan `scroll(animate(...))` de
-Motion con rangos preset (`entry`/`exit`), que se traducen a un `ViewTimeline`
-nativo: no hay JavaScript por frame ni estilos inline. `useScroll` mediría el
-layout en cada frame, así que no se usa. La entrada de la guía cobalto y el zoom
-de las tarjetas son CSS. Todo el contenido llega visible en el HTML.
+**El movimiento es solo CSS.** La entrada de la guía cobalto, el zoom de las
+tarjetas y la barra de progreso corren en el compositor, sin JavaScript de
+motion en el bundle (lo vigila `tests/motion.test.ts`). Todo el contenido
+llega visible en el HTML.
 
-**Todo respeta `prefers-reduced-motion`**, en JS y en CSS.
-
-**El visitante también controla el movimiento.** El botón de pausa de la barra
-activa una versión tranquila. La preferencia se guarda solo en este navegador y
-nunca anula una petición de movimiento reducido del sistema.
+**Todo respeta `prefers-reduced-motion` del sistema.** No hay un control propio:
+nada se mueve solo más de 5 s (WCAG 2.2.2) y la preferencia del sistema cubre
+el movimiento ligado a la interacción (WCAG 2.3.3, técnica C39).
 
 ---
 
@@ -137,11 +132,10 @@ src/
 ├── components/
 │   ├── case-study/         artículo del caso, flujo de arquitectura, lectura viva
 │   ├── chrome/             barra, skip link, enlaces sociales
-│   ├── mode-switcher/      idioma y control de movimiento
-│   ├── motion/             hero y listado ligados al scroll
+│   ├── mode-switcher/      idioma
 │   ├── project/            tarjeta, figura, estado y enlaces de proyecto
 │   ├── site/               documento, portada y fuentes compartidos
-│   └── ui/                 variantes de botón, Button, copiar correo
+│   └── ui/                 variantes de botón, copiar correo
 ├── content/projects/       colección tipada: GRADEO, OneCtrl, FARMAPLUS
 ├── features/
 │   ├── contact/            contacto y pie
@@ -149,9 +143,7 @@ src/
 │   ├── hero/               hero con captura de GRADEO
 │   ├── projects/           trabajo seleccionado
 │   └── trajectory/         trayectoria y CV
-├── hooks/
-├── lib/                    i18n, idioma, metadatos, datos, identidad y enlaces
-└── store/                  preferencia de movimiento (persistida)
+└── lib/                    i18n, idioma, metadatos, datos, identidad y enlaces
 ```
 
 `src/lib/site.ts` es la única fuente de verdad de identidad y enlaces externos.

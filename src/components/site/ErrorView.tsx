@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button-variants"
 import type { Language } from "@/lib/language"
 
 const COPY = {
@@ -38,7 +38,7 @@ export function ErrorView({
           {error.digest}
         </code>
       )}
-      <Button onClick={reset}>{copy.retry}</Button>
+      <button type="button" onClick={reset} className={buttonVariants()}>{copy.retry}</button>
     </main>
   )
 }

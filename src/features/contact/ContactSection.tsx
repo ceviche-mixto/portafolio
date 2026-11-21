@@ -22,7 +22,8 @@ export function ContactSection({ lang }: { lang: Language }) {
         <h2 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
           {t.contact.sectionTitle}
         </h2>
-        <p className="mb-8 max-w-xl text-balance text-lg text-body">{t.contact.sectionSubtitle}</p>
+        <p className="mb-3 max-w-xl text-balance text-lg text-body">{t.contact.sectionSubtitle}</p>
+        <p className="mb-8 font-mono text-sm text-muted-foreground">{t.hero.availability}</p>
 
         <div className="mb-8 flex w-full max-w-md flex-col items-stretch gap-3 sm:flex-row sm:items-start">
           <a

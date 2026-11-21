@@ -5,7 +5,6 @@ import {
   Code2,
   Briefcase as BriefcaseIcon,
   Download,
-  Eye,
 } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { translations } from "@/lib/i18n"
@@ -15,8 +14,9 @@ import { CV_FILES } from "@/lib/site"
 const CARD =
   "portfolio-panel relative h-full overflow-clip p-6 sm:p-8"
 
-const STACK = ["TypeScript", "JavaScript", "Python", "Java", "SQL", "React", "Next.js", "Node.js", "Tailwind CSS"]
-const ENV = ["PostgreSQL", "MySQL", "Supabase", "Git", "GitHub", "Postman", "VS Code", "Vercel"]
+/** Sólo lo que respaldan los proyectos del portafolio. */
+const STACK = ["TypeScript", "JavaScript", "Python", "SQL", "React", "Next.js", "Flask", "Tailwind CSS"]
+const ENV = ["PostgreSQL", "MySQL", "Supabase", "pytest", "Git", "GitHub", "VS Code", "Vercel"]
 
 /**
  * Trayectoria: perfil, experiencia y competencias, con el CV del idioma de la
@@ -39,22 +39,12 @@ export function TrajectorySection({ lang }: { lang: Language }) {
           </div>
           <p className="max-w-2xl text-lg text-body">{t.cv.sectionSubtitle}</p>
 
-          {/* El PDF del idioma de la página: lectura nativa o descarga. */}
+          {/* El PDF del idioma de la página; el hero ofrece la vista en otra pestaña. */}
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <a
               href={CV_FILES[lang]}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${t.cv.viewCv} (${t.nav.newTab})`}
-              className={buttonVariants()}
-            >
-              <Eye aria-hidden="true" />
-              {t.cv.viewCv}
-            </a>
-            <a
-              href={CV_FILES[lang]}
               download={`Giancarlo-Larios-CV-${lang.toUpperCase()}.pdf`}
-              className={buttonVariants({ variant: "secondary" })}
+              className={buttonVariants()}
             >
               <Download aria-hidden="true" />
               {t.cv.downloadCv}
@@ -90,26 +80,28 @@ export function TrajectorySection({ lang }: { lang: Language }) {
                 {t.cv.experience.title}
               </h3>
 
-              <div className="relative z-10 flex-1 border-l border-soft pl-6">
-                <span
-                  className="absolute -left-[9px] top-1 h-4 w-4 rounded-full border-2 border-info bg-card"
-                  aria-hidden="true"
-                />
-                <h4 className="mb-2 text-lg leading-none font-bold text-foreground">
-                  {t.cv.experience.xpande.role}
-                </h4>
-                <p className="mb-6 text-sm font-medium text-info">
-                  {t.cv.experience.xpande.company} · {t.cv.experience.xpande.date}
-                </p>
-                <ul className="space-y-4 text-sm text-body">
-                  {t.cv.experience.xpande.bullets.map((bullet) => (
-                    <li key={bullet} className="flex items-start gap-3 leading-snug">
-                      <span className="mt-1 text-xs text-info" aria-hidden="true">▹</span>
-                      <span>{bullet}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ol className="relative z-10 flex flex-1 flex-col gap-10">
+                {t.cv.experience.items.map((job) => (
+                  <li key={job.company} className="relative border-l border-soft pl-6">
+                    <span
+                      className="absolute -left-[9px] top-1 h-4 w-4 rounded-full border-2 border-info bg-card"
+                      aria-hidden="true"
+                    />
+                    <h4 className="mb-2 text-lg leading-tight font-bold text-foreground">{job.role}</h4>
+                    <p className="mb-6 text-sm font-medium text-info">
+                      {job.company} · {job.date}
+                    </p>
+                    <ul className="space-y-4 text-sm text-body">
+                      {job.bullets.map((bullet) => (
+                        <li key={bullet} className="flex items-start gap-3 leading-snug">
+                          <span className="mt-1 text-xs text-info" aria-hidden="true">▹</span>
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ol>
             </article>
           </div>
 

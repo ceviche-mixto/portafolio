@@ -2,7 +2,7 @@
 
 Portafolio bilingüe (español / inglés) de **Giancarlo Larios**, desarrollador de software.
 
-Presenta tres sistemas: **GRADEO** (reseñas anónimas de profesores con cola de moderación, en producción), **OneCtrl** (SaaS multi-negocio en Flask y MySQL, en producción) y **FARMAPLUS** (punto de venta farmacéutico con trazabilidad por lote, como demo técnica).
+Presenta tres sistemas: **GRADEO** (reseñas anónimas de profesores con cola de moderación, en producción), **OneCtrl** (SaaS multi-negocio de un equipo, en producción, donde contribuyo como desarrollador e investigador de software) y **FARMAPLUS** (punto de venta farmacéutico con trazabilidad por lote, como demo técnica).
 
 ---
 

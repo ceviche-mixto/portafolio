@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import axe from "axe-core"
+import { HeroSection } from "@/features/hero/HeroSection"
 import { TrajectorySection } from "@/features/trajectory/TrajectorySection"
 import { ContactSection } from "@/features/contact/ContactSection"
 import { SiteChrome } from "@/components/chrome/SiteChrome"
@@ -26,9 +27,10 @@ function browserStubs() {
 }
 
 describe("CV integrity and actions", () => {
-  it.each(["es", "en"] as const)("uses the matching PDF for preview and download in %s", (lang) => {
-    render(<TrajectorySection lang={lang} />)
-    const view = screen.getByRole("link", { name: lang === "es" ? /Ver CV/ : /View CV/ })
+  it.each(["es", "en"] as const)("uses the matching PDF for preview (hero) and download (track record) in %s", (lang) => {
+    browserStubs()
+    render(<><HeroSection lang={lang} /><TrajectorySection lang={lang} /></>)
+    const view = screen.getByRole("link", { name: lang === "es" ? /Ver CV \(PDF\)/ : /View CV \(PDF\)/ })
     const download = screen.getByRole("link", { name: lang === "es" ? /Descargar CV/ : /Download CV/ })
     expect(view.getAttribute("href")).toBe(download.getAttribute("href"))
     expect(view.getAttribute("href")).toBe(`/cv/giancarlo-larios-cv-${lang}.pdf?v=20261023`)
@@ -127,6 +129,12 @@ describe("public page accessibility", () => {
         expect(container.querySelector(`#${id}`), id).toBeTruthy()
       }
       expect(container.textContent).not.toMatch(/\bjunior\b|estudiante|vexo/i)
+      // El rol se lee sin depender del color, junto al estado.
+      expect(container.textContent).toContain(project.role[lang])
+      if (project.relation === "contribution") {
+        expect(screen.queryByText(lang === "es" ? "Solicitar código" : "Request code")).toBeNull()
+        expect(screen.getByText(lang === "es" ? "El panel requiere cuenta." : "The dashboard requires an account.")).toBeTruthy()
+      }
     }
   )
 })

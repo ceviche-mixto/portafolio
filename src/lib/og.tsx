@@ -61,7 +61,7 @@ export async function homeOgImage(lang: Language, size: { width: number; height:
         {/* Línea cobalto: el gesto visual del sitio. */}
         <div style={{ display: "flex", height: 3, width: "100%", background: COLOR.cobalt }} />
 
-        <div style={{ display: "flex", gap: 12 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
           {PROJECTS.map((project) => (
             <div
               key={project.slug}
@@ -73,7 +73,7 @@ export async function homeOgImage(lang: Language, size: { width: number; height:
                 borderRadius: 999,
                 border: `1px solid ${COLOR.border}`,
                 background: "#FFFFFF",
-                fontSize: 22,
+                fontSize: 20,
               }}
             >
               <div
@@ -86,7 +86,9 @@ export async function homeOgImage(lang: Language, size: { width: number; height:
                 }}
               />
               <div style={{ display: "flex", fontWeight: 600 }}>{project.name}</div>
-              <div style={{ display: "flex", color: COLOR.muted }}>{t.status[project.status]}</div>
+              <div style={{ display: "flex", color: COLOR.muted }}>
+                {t.relation[project.relation]} · {t.status[project.status]}
+              </div>
             </div>
           ))}
         </div>

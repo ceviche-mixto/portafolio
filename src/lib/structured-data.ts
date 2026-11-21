@@ -3,12 +3,12 @@ import { HOME_PATH, htmlLang, type Language } from "./language"
 import { IDENTITY, SITE_URL, SOCIALS } from "./site"
 
 /**
- * Datos estructurados schema.org. En español se evita «Ingeniero», un título
- * profesional colegiado en Perú; en inglés, «Engineer» describe el puesto.
+ * Datos estructurados schema.org. El título es el mismo del sitio; en español
+ * se evita «Ingeniero», un título profesional colegiado en Perú.
  */
 const JOB_TITLE: Record<Language, string> = {
-  es: "Desarrollador de software full-stack",
-  en: "Full-Stack Software Engineer",
+  es: IDENTITY.titleEs,
+  en: IDENTITY.titleEn,
 }
 
 const PERSON_ID = `${SITE_URL}/#person`
@@ -26,17 +26,20 @@ function person(lang: Language) {
   }
 }
 
-/** GRADEO y OneCtrl son aplicaciones públicas; FARMAPLUS, una demo técnica. */
+/**
+ * GRADEO y OneCtrl son aplicaciones públicas; FARMAPLUS, una demo técnica.
+ * En un sistema de equipo la persona es `contributor`, nunca `author`/`creator`.
+ */
 function work(project: Project, lang: Language) {
   const page = `${SITE_URL}${projectPath(lang, project.slug)}`
+  const me = { "@id": PERSON_ID }
   const common = {
     "@id": `${page}#${project.slug}`,
     name: project.name,
     description: project.summary[lang],
     inLanguage: htmlLang(lang),
     image: `${SITE_URL}${project.cover.src}`,
-    author: { "@id": PERSON_ID },
-    creator: { "@id": PERSON_ID },
+    ...(project.relation === "own" ? { author: me, creator: me } : { contributor: me }),
     keywords: project.stack.join(", "),
     mainEntityOfPage: page,
   }
@@ -64,7 +67,7 @@ export function homeStructuredData(lang: Language) {
   }
 }
 
-/** Página de un caso: el proyecto y su autor. */
+/** Página de un caso: el proyecto y la persona, con su relación (autor o contribuidor). */
 export function caseStructuredData(lang: Language, project: Project) {
   return { "@context": "https://schema.org", "@graph": [person(lang), work(project, lang)] }
 }

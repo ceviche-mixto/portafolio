@@ -44,6 +44,18 @@ describe("project collection", () => {
     ids.forEach((id) => expect(id).toMatch(/^[a-z0-9-]+$/))
   })
 
+  it("presents OneCtrl as a contribution without proprietary details", () => {
+    const onectrl = getProject("onectrl")!
+    expect(onectrl.relation).toBe("contribution")
+    expect(onectrl.codeOnRequest).toBe(false)
+    expect(onectrl.decisions.every((decision) => decision.code === undefined)).toBe(true)
+    const text = JSON.stringify(onectrl).toLowerCase()
+    for (const internal of ["negocio_id", "importacion.py", "servicios/", "for update", "select ", "4 dígitos", "gimnasio", "gym", "responsable del desarrollo"]) {
+      expect(text, internal).not.toContain(internal)
+    }
+    expect(PROJECTS.filter((project) => project.relation === "own").map((project) => project.slug)).toEqual(["gradeo", "farmaplus"])
+  })
+
   it("walks the cases in a circle", () => {
     expect(nextProject("gradeo").slug).toBe("onectrl")
     expect(nextProject("onectrl").slug).toBe("farmaplus")

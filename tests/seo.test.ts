@@ -13,11 +13,20 @@ describe("structured data", () => {
     const [person, list] = graph(homeStructuredData(lang))
     expect(person["@type"]).toBe("Person")
     expect(person.sameAs).toEqual([SOCIALS.github, SOCIALS.linkedin])
-    expect(person.jobTitle).toBe(lang === "es" ? "Desarrollador de software full-stack" : "Full-Stack Software Engineer")
+    expect(person.jobTitle).toBe(lang === "es" ? "Desarrollador de software" : "Software developer")
     const items = (list.itemListElement as Node[]).map((entry) => entry.item as Node)
     expect(items.map((item) => item.name)).toEqual(["GRADEO", "OneCtrl", "FARMAPLUS"])
     expect(items.map((item) => item["@type"])).toEqual(["SoftwareApplication", "SoftwareApplication", "CreativeWork"])
-    items.forEach((item) => expect(item.author).toEqual({ "@id": person["@id"] }))
+    const me = { "@id": person["@id"] }
+    const [gradeo, onectrl, farmaplus] = items
+    for (const own of [gradeo, farmaplus]) {
+      expect(own.author).toEqual(me)
+      expect(own.creator).toEqual(me)
+    }
+    // OneCtrl es un sistema de equipo: la persona contribuye, no lo creó.
+    expect(onectrl.contributor).toEqual(me)
+    expect(onectrl).not.toHaveProperty("author")
+    expect(onectrl).not.toHaveProperty("creator")
     expect(JSON.stringify(list).toLowerCase()).not.toContain("vexo")
   })
 

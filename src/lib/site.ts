@@ -43,8 +43,6 @@ export const IDENTITY = {
 export const SOCIALS = {
   github: 'https://github.com/ceviche-mixto',
   linkedin: 'https://www.linkedin.com/in/giancarlo-larios-infantes/',
-  instagram:
-    'https://www.instagram.com/giancarlolarios_?igsh=MXBhbmJycGxpOTU5eQ%3D%3D&utm_source=qr',
 } as const
 
 /**
@@ -65,5 +63,6 @@ export const CV_FILES = {
 export const NAV_SECTIONS = [
   { id: 'proyectos', es: 'Proyectos', en: 'Projects' },
   { id: 'ingenieria', es: 'Ingeniería', en: 'Engineering' },
+  { id: 'perfil', es: 'CV', en: 'CV' },
   { id: 'contacto', es: 'Contacto', en: 'Contact' },
 ] as const

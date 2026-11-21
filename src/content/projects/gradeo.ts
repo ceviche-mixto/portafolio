@@ -21,6 +21,8 @@ export const gradeo: Project = {
   slug: "gradeo",
   name: "GRADEO",
   status: "production",
+  relation: "own",
+  role: { es: "Creador y único desarrollador", en: "Creator and sole developer" },
   url: "https://gradeo.vercel.app",
   repo: null,
   codeOnRequest: true,

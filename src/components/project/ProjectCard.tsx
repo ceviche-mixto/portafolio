@@ -53,6 +53,9 @@ export function ProjectCard({
           <h3 id={titleId} className="text-2xl font-bold tracking-tight text-foreground">{project.name}</h3>
           <StatusBadge status={project.status} label={t.status[project.status]} />
         </div>
+        <p className="-mt-2 font-mono text-xs text-muted-foreground">
+          {t.relation[project.relation]} · {project.role[lang]}
+        </p>
         <p className="leading-relaxed text-body">{project.summary[lang]}</p>
         <dl className="flex flex-col gap-4 text-sm">
           <div>
@@ -60,7 +63,9 @@ export function ProjectCard({
             <dd className="mt-1 leading-relaxed text-body">{project.problem[lang]}</dd>
           </div>
           <div>
-            <dt className="font-mono text-xs tracking-widest text-muted-foreground uppercase">{t.work.decisionLabel}</dt>
+            <dt className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
+              {project.relation === "own" ? t.work.decisionLabel : t.work.systemLabel}
+            </dt>
             <dd className="mt-1 leading-relaxed text-body">{project.decisions[0].title[lang]}</dd>
           </div>
         </dl>

@@ -22,7 +22,9 @@ export function EngineeringSection({ lang }: { lang: Language }) {
             const decision = project.decisions[0]
             return (
               <li key={project.slug} className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6">
-                <p className="font-mono text-xs font-bold tracking-widest text-highlight uppercase">{project.name}</p>
+                <p className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
+                  <span className="font-bold text-highlight">{project.name}</span> · {t.relation[project.relation]}
+                </p>
                 <h3 className="text-xl font-semibold text-foreground">{decision.title[lang]}</h3>
                 <p className="text-sm leading-relaxed text-body">{decision.choice[lang]}</p>
                 <Link

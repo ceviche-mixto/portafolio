@@ -11,7 +11,7 @@ function example(lang: Language = "es", projectName = "GRADEO", repo: string | n
   const t = translations[lang]
   return render(<ProjectLinks
     repo={repo} demo={null} projectName={projectName} codeOnRequest
-    onRequestLabel={t.projects.codeOnRequest} liveLabel={t.projects.open}
+    onRequestLabel={t.projects.codeOnRequest} liveLabel={t.projects.publicSite}
     codeLabel={t.projects.viewCode} newTabHint={t.nav.newTab}
     requestCopy={t.projects.codeRequest}
   />)

@@ -6,6 +6,12 @@ export type Localized = Record<Language, string>
 /** `production`: en uso público. `demo`: demo técnica con datos y servicios simulados. */
 export type ProjectStatus = "production" | "demo"
 
+/**
+ * `own`: proyecto propio, de autoría completa. `contribution`: sistema de un
+ * equipo en el que contribuyo; sus mecanismos se presentan como del sistema.
+ */
+export type ProjectRelation = "own" | "contribution"
+
 export type ProjectMedia = {
   src: string
   width: number
@@ -38,6 +44,9 @@ export type Project = {
   slug: string
   name: string
   status: ProjectStatus
+  relation: ProjectRelation
+  /** Mi rol en una línea: se muestra junto al nombre en tarjeta, caso y OG. */
+  role: Localized
   /** Producto público, si existe. */
   url: string | null
   /** Repositorio público, si existe. */

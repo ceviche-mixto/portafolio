@@ -4,6 +4,8 @@ export const farmaplus: Project = {
   slug: "farmaplus",
   name: "FARMAPLUS",
   status: "demo",
+  relation: "own",
+  role: { es: "Desarrollador único", en: "Sole developer" },
   url: null,
   repo: null,
   codeOnRequest: true,

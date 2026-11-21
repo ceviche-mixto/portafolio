@@ -28,12 +28,15 @@ export function CaseStudyArticle({
   const c = t.caseStudy
   const home = HOME_PATH[lang]
   const next = nextProject(project.slug)
+  const own = project.relation === "own"
+  // En una contribución, las decisiones se presentan como del sistema, no en primera persona.
+  const d = own ? c : c.system
   const toc = [
     { id: "resultado", label: c.result },
     { id: "responsabilidad", label: c.responsibility },
     { id: "restriccion", label: c.constraint },
     { id: "arquitectura", label: c.architecture },
-    { id: "decisiones", label: c.decisions },
+    { id: "decisiones", label: d.decisions },
     { id: "resultados", label: c.results },
   ]
 
@@ -54,6 +57,9 @@ export function CaseStudyArticle({
           <p className="font-mono text-sm font-bold tracking-widest text-foreground uppercase">{project.name}</p>
           <StatusBadge status={project.status} label={t.status[project.status]} />
         </div>
+        <p className="mt-3 font-mono text-sm text-muted-foreground">
+          {t.relation[project.relation]} · {project.role[lang]}
+        </p>
         <h1 id="caso-titulo" className="mt-4 max-w-3xl text-[clamp(2.25rem,5vw,4rem)] leading-[1.06] font-bold tracking-[-0.03em] text-balance text-foreground">
           {project.headline[lang]}
         </h1>
@@ -62,7 +68,8 @@ export function CaseStudyArticle({
           <ProjectLinks
             repo={project.repo}
             demo={project.url}
-            liveLabel={`${t.projects.open} ${project.name}`}
+            liveLabel={own ? fill(t.projects.try, { name: project.name }) : t.projects.publicSite}
+            liveNote={own ? undefined : t.projects.accountNote}
             codeLabel={t.projects.viewCode}
             newTabHint={t.nav.newTab}
             projectName={project.name}
@@ -119,17 +126,17 @@ export function CaseStudyArticle({
         </section>
 
         <section id="decisiones" aria-labelledby="decisiones-titulo">
-          <h2 id="decisiones-titulo" className="text-2xl font-bold text-foreground md:text-3xl">{c.decisions}</h2>
+          <h2 id="decisiones-titulo" className="text-2xl font-bold text-foreground md:text-3xl">{d.decisions}</h2>
           <div className="mt-8 flex flex-col gap-10">
             {project.decisions.map((decision) => (
               <article key={decision.id} id={decision.id} aria-labelledby={`${decision.id}-titulo`} className="rounded-2xl border border-border bg-card p-6 sm:p-8">
                 <h3 id={`${decision.id}-titulo`} className="text-xl font-semibold text-foreground">{decision.title[lang]}</h3>
                 <dl className="mt-6 grid gap-6 md:grid-cols-2">
                   {([
-                    [c.need, decision.need],
-                    [c.choice, decision.choice],
-                    [c.cost, decision.cost],
-                    [c.proof, decision.proof],
+                    [d.need, decision.need],
+                    [d.choice, decision.choice],
+                    [d.cost, decision.cost],
+                    [d.proof, decision.proof],
                   ] as const).map(([label, text]) => (
                     <div key={label}>
                       <dt className="font-mono text-xs tracking-widest text-muted-foreground uppercase">{label}</dt>
@@ -188,7 +195,7 @@ export function CaseStudyArticle({
         <Link href={`${home}#${project.slug}`} className={buttonVariants({ variant: "secondary" })}>
           <span aria-hidden="true">←</span> {c.back}
         </Link>
-        <Link href={projectPath(lang, next.slug)} className={buttonVariants()}>
+        <Link href={projectPath(lang, next.slug)} className={buttonVariants({ variant: "secondary" })}>
           {c.next}: {next.name} <span aria-hidden="true">→</span>
         </Link>
       </footer>

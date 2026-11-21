@@ -19,6 +19,7 @@ export function ProjectLinks({
   repo,
   demo,
   liveLabel,
+  liveNote,
   codeLabel,
   newTabHint,
   projectName,
@@ -29,6 +30,8 @@ export function ProjectLinks({
   repo: string | null
   demo: string | null
   liveLabel: string
+  /** Aclaración junto al enlace público, p. ej. que el panel requiere cuenta. */
+  liveNote?: string
   codeLabel: string
   newTabHint: string
   projectName: string
@@ -56,6 +59,7 @@ export function ProjectLinks({
           {liveLabel}
         </a>
       )}
+      {demo && liveNote && <p className="flex min-h-11 items-center text-sm text-muted-foreground">{liveNote}</p>}
 
       {repo && (
         <a

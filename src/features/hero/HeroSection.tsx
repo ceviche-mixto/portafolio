@@ -6,6 +6,7 @@ import { gradeo } from "@/content/projects/gradeo"
 import { projectPath } from "@/content/projects"
 import { translations } from "@/lib/i18n"
 import type { Language } from "@/lib/language"
+import { CV_FILES } from "@/lib/site"
 
 const MOBILE_CAPTURE = { src: "/images/projects/gradeo-busqueda-movil.png", width: 780, height: 1688 }
 
@@ -47,8 +48,17 @@ export function HeroSection({ lang }: { lang: Language }) {
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-body">{t.hero.subtitle}</p>
         <div className="mt-8 flex flex-wrap gap-3">
           <a href="#proyectos" className={buttonVariants()}>{t.hero.primary}</a>
-          <a href="#contacto" className={buttonVariants({ variant: "secondary" })}>{t.hero.secondary}</a>
+          <a
+            href={CV_FILES[lang]}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${t.hero.secondary} (${t.nav.newTab})`}
+            className={buttonVariants({ variant: "secondary" })}
+          >
+            {t.hero.secondary}
+          </a>
         </div>
+        <p className="mt-6 font-mono text-sm text-muted-foreground">{t.hero.availability}</p>
       </div>
 
       <figure className="relative lg:col-span-7">

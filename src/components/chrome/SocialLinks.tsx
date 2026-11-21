@@ -1,4 +1,4 @@
-import { Github, Linkedin, Instagram } from "lucide-react"
+import { Github, Linkedin } from "lucide-react"
 import { SOCIALS } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
@@ -10,9 +10,7 @@ import { cn } from "@/lib/utils"
  */
 const LINKS = [
   { key: "github", href: SOCIALS.github, label: "GitHub", Icon: Github, hover: "hover:text-foreground hover:border-strong" },
-  { key: "linkedin", href: SOCIALS.linkedin, label: "LinkedIn", Icon: Linkedin, hover: "hover:text-info hover:border-info/50" },
-  { key: "instagram", href: SOCIALS.instagram, label: "Instagram", Icon: Instagram, hover: "hover:text-personal hover:border-personal/50" },
-] as const
+  { key: "linkedin", href: SOCIALS.linkedin, label: "LinkedIn", Icon: Linkedin, hover: "hover:text-info hover:border-info/50" },] as const
 
 export function SocialLinks({
   size = "md",

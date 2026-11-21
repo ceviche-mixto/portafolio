@@ -83,7 +83,7 @@ export function SiteNav({
           aria-label={menuLabel}
           className="col-span-2 row-start-2 min-w-0 flex-1"
         >
-          <ul className="grid grid-cols-3 items-center gap-1 sm:flex">
+          <ul className="grid grid-cols-4 items-center gap-1 sm:flex">
             {links.map((section) => {
               const isActive = active === section.id
               return (

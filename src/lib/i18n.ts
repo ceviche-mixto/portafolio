@@ -140,7 +140,7 @@ const es = {
         },
       ],
     },
-    skills: { title: 'Competencias', stack: 'Desarrollo', env: 'Herramientas y datos', basicDocker: 'Docker (básico)', excel: 'Microsoft Excel' },
+    skills: { title: 'Competencias', stack: 'Desarrollo', env: 'Herramientas y datos', excel: 'Microsoft Excel' },
   },
   contact: {
     sectionTitle: '¿Qué sistema necesitas construir o mejorar?',
@@ -274,7 +274,7 @@ const en: TranslationDict = {
         },
       ],
     },
-    skills: { title: 'Core competencies', stack: 'Development', env: 'Tools and data', basicDocker: 'Docker (basic)', excel: 'Microsoft Excel' },
+    skills: { title: 'Core competencies', stack: 'Development', env: 'Tools and data', excel: 'Microsoft Excel' },
   },
   contact: {
     sectionTitle: 'What system do you need to build or improve?',

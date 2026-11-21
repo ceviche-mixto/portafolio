@@ -135,7 +135,7 @@ export function TrajectorySection({ lang }: { lang: Language }) {
                 {t.cv.skills.env}
               </h3>
               <ul className="flex flex-wrap gap-2">
-                {[...ENV, t.cv.skills.basicDocker, t.cv.skills.excel].map((tool) => (
+                {[...ENV, t.cv.skills.excel].map((tool) => (
                   <li
                     key={tool}
                     className="rounded-lg border border-soft bg-background px-3 py-1.5 font-mono text-xs text-body"

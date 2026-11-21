@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 import { getProject, nextProject, PROJECT_SLUGS, PROJECTS, projectPath } from "@/content/projects"
@@ -49,7 +49,9 @@ describe("project collection", () => {
     expect(onectrl.relation).toBe("contribution")
     expect(onectrl.codeOnRequest).toBe(false)
     expect(onectrl.decisions.every((decision) => decision.code === undefined)).toBe(true)
-    const text = JSON.stringify(onectrl).toLowerCase()
+    // El contenido del caso y la figura de importación, que muestra datos de ejemplo.
+    const figure = readFileSync(join(process.cwd(), "src/components/case-study/ImportFigure.tsx"), "utf8")
+    const text = (JSON.stringify(onectrl) + figure).toLowerCase()
     for (const internal of ["negocio_id", "importacion.py", "servicios/", "for update", "select ", "4 dígitos", "gimnasio", "gym", "responsable del desarrollo"]) {
       expect(text, internal).not.toContain(internal)
     }

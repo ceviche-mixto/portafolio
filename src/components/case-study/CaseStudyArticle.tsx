@@ -7,6 +7,7 @@ import { nextProject, projectPath, type Project } from "@/content/projects"
 import { fill, formatDate, translations } from "@/lib/i18n"
 import { HOME_PATH, type Language } from "@/lib/language"
 import { ArchitectureFlow } from "./ArchitectureFlow"
+import { StepObserver } from "./StepObserver"
 
 /**
  * Página de un caso. Sigue siempre la misma secuencia: resultado visible,
@@ -18,6 +19,7 @@ export function CaseStudyArticle({
   lang,
   live,
   demo,
+  stepPanels,
 }: {
   project: Project
   lang: Language
@@ -25,6 +27,8 @@ export function CaseStudyArticle({
   live?: React.ReactNode
   /** Demo interactiva opcional, en su propia sección `#demo` tras las decisiones. */
   demo?: React.ReactNode
+  /** Un panel de estado por paso de arquitectura: figura fija en escritorio, bajo cada paso en móvil. */
+  stepPanels?: React.ReactNode[]
 }) {
   const t = translations[lang]
   const c = t.caseStudy
@@ -115,12 +119,21 @@ export function CaseStudyArticle({
           </section>
         </div>
 
-        <section id="arquitectura" aria-labelledby="arquitectura-titulo">
+        <section id="arquitectura" aria-labelledby="arquitectura-titulo" data-step={stepPanels ? "1" : undefined}>
           <h2 id="arquitectura-titulo" className="text-2xl font-bold text-foreground md:text-3xl">{c.architecture}</h2>
           <p id="arquitectura-flujo" className="mt-2 text-lg text-body">{project.architecture.title[lang]}</p>
-          <div className="mt-8">
-            <ArchitectureFlow steps={project.architecture.steps} lang={lang} labelledBy="arquitectura-flujo" />
+          <div className={stepPanels ? "arch-layout mt-8" : "mt-8"}>
+            <ArchitectureFlow steps={project.architecture.steps} lang={lang} labelledBy="arquitectura-flujo" panels={stepPanels} />
+            {stepPanels && (
+              // Copia visual de los paneles de cada paso; los lectores de pantalla los leen en la lista.
+              <div aria-hidden="true" className="step-figure">
+                {stepPanels.map((panel, index) => (
+                  <div key={index} data-panel={index + 1} className="step-figure-panel">{panel}</div>
+                ))}
+              </div>
+            )}
           </div>
+          {stepPanels && <StepObserver sectionId="arquitectura" />}
           {project.architecture.note && (
             <p className="mt-8 max-w-3xl text-sm leading-relaxed text-muted-foreground">{project.architecture.note[lang]}</p>
           )}

@@ -224,6 +224,87 @@
   }
 }
 
+/* ── Flujo de arquitectura de un caso ────────────────────────────────────────
+   Cada paso es un view-timeline con el borde inferior recortado al 55 % de la
+   pantalla: «entry-crossing» va de que el paso toque esa línea a que la deje
+   atrás. El nodo se rellena al principio y el tramo hasta el siguiente crece
+   mientras se lee. Reversible al volver arriba. Estado base: todo relleno. */
+.arch-step {
+  view-timeline: --step block;
+  view-timeline-inset: 0% 45%;
+}
+.arch-segment {
+  transform-origin: 50% 0;
+}
+
+@keyframes arch-fill {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes arch-grow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .arch-fill {
+      animation: arch-fill linear both;
+      animation-timeline: --step;
+      animation-range: entry-crossing 0% entry-crossing 12%;
+    }
+    .arch-segment {
+      animation: arch-grow linear both;
+      animation-timeline: --step;
+      animation-range: entry-crossing 0% entry-crossing 100%;
+    }
+  }
+}
+
+/* Figura fija de OneCtrl: sólo con ancho y alto de escritorio. Los paneles se
+   apilan en la misma celda y `data-step` de la sección elige el visible. En
+   el resto de tamaños, cada paso muestra su mini-panel en la lista. */
+.step-figure {
+  display: none;
+}
+@media (min-width: 1024px) and (min-height: 700px) {
+  .arch-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 22rem;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  .step-figure {
+    display: grid;
+    position: sticky;
+    top: calc(var(--header-height) + 24px);
+  }
+  .step-figure-panel {
+    grid-area: 1 / 1;
+    opacity: 0;
+  }
+  [data-step="1"] [data-panel="1"],
+  [data-step="2"] [data-panel="2"],
+  [data-step="3"] [data-panel="3"],
+  [data-step="4"] [data-panel="4"] {
+    opacity: 1;
+  }
+  /* Con la figura a la vista, el mini-panel de cada paso queda para lectores de pantalla. */
+  .arch-layout .step-panel-inline {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+@media (min-width: 1024px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+  .step-figure-panel {
+    transition: opacity 180ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+}
+
 /* ── Tarjetas ────────────────────────────────────────────────────────────────
    Zoom de la imagen sólo con puntero fino; respuesta inmediata al pulsar en
    cualquier dispositivo. Sin movimiento ligado al scroll. */

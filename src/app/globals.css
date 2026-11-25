@@ -327,6 +327,254 @@
   }
 }
 
+/* ── Micro-interacciones (src/components/motion) ─────────────────────────────
+   Todas tocan sólo `transform`, `scale` u `opacity`. Las islas de cliente se
+   limitan a escribir variables o atributos; las curvas viven aquí. */
+
+/* Split text: cada carácter sube desde la máscara de su palabra. El padding
+   compensado agranda la máscara sin mover la línea (tildes y descendentes). */
+.split-word {
+  display: inline-block;
+  padding: 0.12em 0.04em;
+  margin: -0.12em -0.04em;
+  overflow: clip;
+  white-space: nowrap;
+}
+.split-char {
+  display: inline-block;
+}
+@keyframes split-in {
+  from { transform: translate3d(0, 120%, 0); }
+  to { transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .split[data-split="armed"] .split-char {
+    transform: translate3d(0, 120%, 0);
+  }
+  .split-load .split-char,
+  .split[data-split="play"] .split-char {
+    animation: split-in 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i) * 24ms);
+  }
+}
+
+/* Odómetro: un carril 0–9 por dígito, una línea de alto. `--d` deja el carril
+   en su valor final; WAAPI lo hace rodar desde 0 al entrar en pantalla. */
+.odometer {
+  font-variant-numeric: tabular-nums;
+}
+.odometer-digit {
+  display: inline-block;
+  height: 1lh;
+  overflow: clip;
+  vertical-align: top;
+}
+.odometer-reel {
+  display: block;
+  white-space: pre;
+  transform: translate3d(0, calc(var(--d) * -10%), 0);
+}
+
+/* Botón magnético: el JS escribe --mx/--my; el texto interior sigue a la
+   mitad (paralaje). Al salir vuelve con rebote elástico. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .magnetic,
+  .magnetic [data-magnetic-text] {
+    transition: transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .magnetic {
+    transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
+  }
+  .magnetic [data-magnetic-text] {
+    display: inline-block;
+    transform: translate3d(calc(var(--mx, 0px) * 0.5), calc(var(--my, 0px) * 0.5), 0);
+  }
+  .magnetic[data-active],
+  .magnetic[data-active] [data-magnetic-text] {
+    transition: transform 140ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+}
+.magnetic {
+  display: inline-flex;
+}
+
+/* Pulsación táctil de todos los botones: compresión firme en 80 ms y rebote
+   elástico al soltar. Conserva las transiciones de color de la variante. */
+@media (prefers-reduced-motion: no-preference) {
+  .tactile {
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .tactile:active {
+    transform: translateY(2px) scale(0.97);
+    transition-duration: 150ms, 150ms, 150ms, 80ms;
+    transition-timing-function: ease, ease, ease, ease-out;
+  }
+}
+
+/* Píldora «¡Copiado!» y check con rebote elástico. */
+@keyframes pop-in {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pop-in {
+    animation: pop-in 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+}
+
+/* Carrusel guiado por scroll (ScrollCarousel). Base: pista horizontal nativa
+   con scroll-snap, válida en táctil y sin `animation-timeline`. */
+.carousel-frame {
+  container-type: inline-size;
+  timeline-scope: --strip;
+  /* Alinea la primera tarjeta con el margen del contenido (máx. 1280 px). */
+  --carousel-gutter: max(1.5rem, calc((100cqw - 80rem) / 2 + 2.5rem));
+}
+.carousel-track {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--carousel-gutter);
+  padding: 0.25rem var(--carousel-gutter) 1rem;
+  scroll-timeline: --strip inline;
+}
+.carousel-track > li {
+  display: flex;
+  flex: 0 0 min(85%, 26rem);
+  scroll-snap-align: start;
+}
+.carousel-progress {
+  display: none;
+  height: 2px;
+  margin-inline: var(--carousel-gutter);
+  overflow: clip;
+  background: var(--border);
+}
+.carousel-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--highlight);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+@media (max-width: 1023px) {
+  .carousel-track {
+    scrollbar-width: none;
+  }
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .carousel-track {
+    gap: 1.5rem;
+  }
+  .carousel-track > li {
+    flex-basis: min(44rem, 62vw);
+  }
+}
+@supports (timeline-scope: --strip) {
+  @media (prefers-reduced-motion: no-preference) {
+    .carousel-progress {
+      display: block;
+    }
+    .carousel-progress > span {
+      animation: scroll-progress linear both;
+      animation-timeline: --strip;
+    }
+  }
+}
+@keyframes carousel-x {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(calc(-100% + 100cqw), 0, 0); }
+}
+/* Escritorio con movimiento: la pista avanza en horizontal mientras el marco
+   queda fijo bajo la cabecera. El recorrido `contain` empieza cuando el
+   contenedor toca la cabecera y acaba cuando su borde inferior llega abajo. */
+@supports (animation-timeline: view()) {
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .carousel {
+      height: 240vh;
+      view-timeline: --carousel block;
+      view-timeline-inset: var(--header-height) 0px;
+    }
+    .carousel-frame {
+      position: sticky;
+      top: var(--header-height);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.5rem;
+      height: calc(100vh - var(--header-height));
+      overflow: clip;
+    }
+    .carousel-track {
+      width: max-content;
+      overflow: visible;
+      scroll-snap-type: none;
+      animation: carousel-x linear both;
+      animation-timeline: --carousel;
+      animation-range: contain 0% contain 100%;
+    }
+    .carousel-progress {
+      display: block;
+    }
+    .carousel-progress > span {
+      animation: scroll-progress linear both;
+      animation-timeline: --carousel;
+      animation-range: contain 0% contain 100%;
+    }
+  }
+}
+/* Escritorio con movimiento reducido: sin recorrido ligado al scroll, rejilla. */
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  .carousel-track {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    overflow: visible;
+  }
+}
+
+/* Vista previa flotante (HoverImageReveal). Sólo se monta con puntero fino;
+   el JS mueve la capa y el revelado es esta transición de 180 ms. */
+.hover-reveal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  width: 280px;
+  height: 180px;
+  pointer-events: none;
+  transform: translate3d(-400px, -400px, 0);
+  will-change: transform;
+}
+.hover-reveal-card {
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--card);
+  box-shadow: 0 10px 24px -14px rgba(21, 23, 28, 0.45);
+  opacity: 0;
+  scale: 0.9;
+  transition:
+    opacity 180ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    scale 180ms cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+.hover-reveal[data-visible] .hover-reveal-card {
+  opacity: 1;
+  scale: 1;
+}
+
 /**
  * Movimiento reducido.
  *

@@ -1,4 +1,7 @@
 import Link from "next/link"
+import { HoverImageReveal } from "@/components/motion/HoverImageReveal"
+import { Odometer } from "@/components/motion/Odometer"
+import { SplitText } from "@/components/motion/SplitText"
 import { ProjectFigure } from "@/components/project/ProjectFigure"
 import { ProjectLinks } from "@/components/project/ProjectLinks"
 import { StatusBadge } from "@/components/project/StatusBadge"
@@ -13,6 +16,10 @@ import { StepObserver } from "./StepObserver"
  * Página de un caso. Sigue siempre la misma secuencia: resultado visible,
  * responsabilidad, restricción del dominio, arquitectura, decisiones con su
  * coste, evidencia y siguiente caso.
+ *
+ * El titular sube carácter a carácter (`SplitText`), las cifras enteras de la
+ * evidencia ruedan al entrar en pantalla (`Odometer`) y el enlace al siguiente
+ * caso asoma su captura junto al cursor (`HoverImageReveal`).
  */
 export function CaseStudyArticle({
   project,
@@ -68,7 +75,7 @@ export function CaseStudyArticle({
           {t.relation[project.relation]} · {project.role[lang]}
         </p>
         <h1 id="caso-titulo" className="mt-4 max-w-3xl text-[clamp(2.25rem,5vw,4rem)] leading-[1.06] font-bold tracking-[-0.03em] text-balance text-foreground">
-          {project.headline[lang]}
+          <SplitText text={project.headline[lang]} trigger="load" />
         </h1>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-body">{project.summary[lang]}</p>
         <div className="mt-8">
@@ -193,7 +200,9 @@ export function CaseStudyArticle({
             {project.evidence.items.map((item) => (
               <div key={item.label.es} className="rounded-2xl border border-border bg-card p-5">
                 <dt className="text-sm text-muted-foreground">{item.label[lang]}</dt>
-                <dd className="mt-2 font-mono text-2xl font-bold text-foreground">{item.value[lang]}</dd>
+                <dd className="mt-2 font-mono text-2xl font-bold text-foreground">
+                  {/^\d+$/.test(item.value[lang]) ? <Odometer value={Number(item.value[lang])} locale={lang === "es" ? "es-PE" : "en-US"} /> : item.value[lang]}
+                </dd>
                 {item.note && <dd className="mt-1 text-sm text-muted-foreground">{item.note[lang]}</dd>}
               </div>
             ))}
@@ -217,9 +226,11 @@ export function CaseStudyArticle({
         <Link href={`${home}#${project.slug}`} className={buttonVariants({ variant: "secondary" })}>
           <span aria-hidden="true">←</span> {c.back}
         </Link>
-        <Link href={projectPath(lang, next.slug)} className={buttonVariants({ variant: "secondary" })}>
-          {c.next}: {next.name} <span aria-hidden="true">→</span>
-        </Link>
+        <HoverImageReveal image={next.cover} className="flex">
+          <Link href={projectPath(lang, next.slug)} className={buttonVariants({ variant: "secondary" })}>
+            {c.next}: {next.name} <span aria-hidden="true">→</span>
+          </Link>
+        </HoverImageReveal>
       </footer>
     </article>
   )

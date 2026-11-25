@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { celebrate, pulse } from "@/components/motion/TactileFeedback"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { search, sharedMask, SIMILARITY_THRESHOLD } from "@/lib/trigram"
 
@@ -49,12 +50,19 @@ function Highlighted({ name, query }: { name: string; query: string }) {
  * orden, cada fila se desliza desde donde estaba (FLIP con WAAPI, 180 ms);
  * una consulta nueva interrumpe la animación anterior. El resumen para lector
  * de pantalla se anuncia cuando la escritura se detiene, no en cada tecla.
+ *
+ * Una búsqueda con coincidencia celebra el acierto: el puntaje del primero
+ * late con rebote y estalla `celebrate`. Con los botones de ejemplo es
+ * inmediato; al escribir, cuando la escritura se detiene (como el anuncio).
  */
 export function SearchDemo({ lang, copy }: { lang: "es" | "en"; copy: SearchDemoCopy }) {
   const [query, setQuery] = React.useState<string>(EXAMPLES.typo)
   const [announcement, setAnnouncement] = React.useState("")
   const rows = React.useRef(new Map<string, HTMLLIElement>())
   const first = React.useRef(new Map<string, number>())
+  const topScore = React.useRef<HTMLElement>(null)
+  // La próxima consulta viene de un botón de ejemplo: se celebra sin esperar.
+  const instant = React.useRef(false)
   const results = search(NAMES, query, ROWS)
   const format = new Intl.NumberFormat(lang === "es" ? "es" : "en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
@@ -62,6 +70,17 @@ export function SearchDemo({ lang, copy }: { lang: "es" | "en"; copy: SearchDemo
   function update(next: string) {
     first.current = new Map([...rows.current].map(([name, el]) => [name, el.getBoundingClientRect().top]))
     setQuery(next)
+  }
+
+  function cheer() {
+    pulse(topScore.current)
+    celebrate(topScore.current)
+  }
+
+  function pick(next: string) {
+    if (next === query) return cheer()
+    instant.current = true
+    update(next)
   }
 
   // Last, Invert, Play. Al hidratar no se anima: el HTML del servidor ya está en su sitio.
@@ -82,6 +101,9 @@ export function SearchDemo({ lang, copy }: { lang: "es" | "en"; copy: SearchDemo
       if (keyframes) el.animate(keyframes, { duration: 180, easing: "cubic-bezier(0.2, 0.75, 0.25, 1)" })
     }
     first.current = new Map()
+    if (instant.current && results.length > 0) cheer()
+    // Sólo cambia con la consulta; `results` se deriva de ella.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query])
 
   // Nada que anunciar al cargar: sólo cuando el visitante cambia la consulta.
@@ -91,8 +113,11 @@ export function SearchDemo({ lang, copy }: { lang: "es" | "en"; copy: SearchDemo
       announced.current = true
       return
     }
+    const typed = !instant.current
+    instant.current = false
     const timer = setTimeout(() => {
       const top = results[0]
+      if (typed && top) cheer()
       setAnnouncement(top ? copy.announce.replace("{count}", String(results.length)).replace("{name}", top.name).replace("{score}", format.format(top.score)) : copy.none)
     }, 450)
     return () => clearTimeout(timer)
@@ -116,16 +141,16 @@ export function SearchDemo({ lang, copy }: { lang: "es" | "en"; copy: SearchDemo
             className="mt-2 min-h-11 w-full rounded-xl border border-border bg-background px-4 text-base text-foreground focus-visible:border-highlight"
           />
           <div className="mt-3 flex flex-wrap gap-2">
-            <button type="button" onClick={() => update(EXAMPLES.accent)} className={buttonVariants({ variant: "secondary" })}>
+            <button type="button" onClick={() => pick(EXAMPLES.accent)} className={buttonVariants({ variant: "secondary" })}>
               {copy.withAccent}
             </button>
-            <button type="button" onClick={() => update(EXAMPLES.typo)} className={buttonVariants({ variant: "secondary" })}>
+            <button type="button" onClick={() => pick(EXAMPLES.typo)} className={buttonVariants({ variant: "secondary" })}>
               {copy.withTypo}
             </button>
           </div>
           {/* Altura reservada para tres filas: cambiar de consulta no mueve la página. */}
           <ol className="mt-5 flex min-h-[10.5rem] flex-col gap-2">
-            {results.map((match) => (
+            {results.map((match, index) => (
               <li
                 key={match.name}
                 ref={(el) => { if (el) rows.current.set(match.name, el); else rows.current.delete(match.name) }}
@@ -133,7 +158,10 @@ export function SearchDemo({ lang, copy }: { lang: "es" | "en"; copy: SearchDemo
               >
                 <span className="min-w-0 truncate text-foreground"><Highlighted name={match.name} query={query} /></span>
                 <span className="shrink-0 font-mono text-sm text-muted-foreground">
-                  {copy.score} <strong className="text-foreground">{format.format(match.score)}</strong>
+                  {copy.score}{" "}
+                  <strong ref={index === 0 ? topScore : undefined} className="inline-block text-foreground">
+                    {format.format(match.score)}
+                  </strong>
                 </span>
               </li>
             ))}

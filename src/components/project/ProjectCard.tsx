@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { Odometer } from "@/components/motion/Odometer"
 import { projectPath, type Project } from "@/content/projects"
 import type { ProjectMedia } from "@/content/projects/types"
 import { fill, translations } from "@/lib/i18n"
@@ -15,18 +16,22 @@ import { StatusBadge } from "./StatusBadge"
  * `.card-media` amplía la imagen al pasar un puntero fino y `.project-card`
  * responde al pulsar (globals.css). Con `reveal`, una segunda captura asoma
  * por el borde de la ventana al cruzar el centro de la pantalla, y una línea
- * de ejemplo enlaza a la demo del caso.
+ * de ejemplo enlaza a la demo del caso. Con `metrics`, las cifras verificadas
+ * ruedan hasta su valor al entrar en pantalla (`Odometer`).
  */
 export function ProjectCard({
   project,
   lang,
   featured = false,
   reveal,
+  metrics,
 }: {
   project: Project
   lang: Language
   featured?: boolean
   reveal?: ProjectMedia
+  /** Cifras verificadas con su leyenda (fecha de la consulta). */
+  metrics?: { items: { label: string; value: number }[]; caption: string }
 }) {
   const t = translations[lang]
   const titleId = `${project.slug}-titulo`
@@ -74,6 +79,22 @@ export function ProjectCard({
           {t.relation[project.relation]} · {project.role[lang]}
         </p>
         <p className="leading-relaxed text-body">{project.summary[lang]}</p>
+        {metrics && (
+          <figure>
+            <dl className="grid grid-cols-3 gap-3 border-y border-soft py-4">
+              {metrics.items.map((item) => (
+                // `dt` antes que `dd` en el DOM; la cifra se pinta arriba.
+                <div key={item.label} className="flex flex-col-reverse gap-1">
+                  <dt className="text-xs leading-snug text-muted-foreground">{item.label}</dt>
+                  <dd className="font-mono text-2xl font-bold text-foreground sm:text-3xl">
+                    <Odometer value={item.value} locale={lang === "es" ? "es-PE" : "en-US"} />
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <figcaption className="mt-2 font-mono text-xs text-muted-foreground">{metrics.caption}</figcaption>
+          </figure>
+        )}
         <dl className="flex flex-col gap-4 text-sm">
           <div>
             <dt className="font-mono text-xs tracking-widest text-muted-foreground uppercase">{t.work.problemLabel}</dt>

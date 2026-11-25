@@ -1,3 +1,4 @@
+import { Odometer } from "@/components/motion/Odometer"
 import { GRADEO_VERIFIED } from "@/content/projects/gradeo"
 import { getGradeoStats } from "@/lib/gradeo-stats"
 import { fill, formatDate, translations } from "@/lib/i18n"
@@ -11,8 +12,9 @@ import type { Language } from "@/lib/language"
 export async function GradeoLiveMetrics({ lang }: { lang: Language }) {
   const stats = await getGradeoStats()
   const t = translations[lang].caseStudy.live
+  // Las cifras ruedan hasta su valor al entrar en pantalla; sin dato, un guion fijo.
   const format = (value: number | null) =>
-    value === null ? "—" : value.toLocaleString(lang === "es" ? "es-PE" : "en-US")
+    value === null ? "—" : <Odometer value={value} locale={lang === "es" ? "es-PE" : "en-US"} />
 
   const items = stats.live
     ? [

@@ -1,5 +1,7 @@
 import { getImageProps } from "next/image"
 import Link from "next/link"
+import { MagneticButton } from "@/components/motion/MagneticButton"
+import { SplitText } from "@/components/motion/SplitText"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { gradeo } from "@/content/projects/gradeo"
 import { projectPath } from "@/content/projects"
@@ -11,7 +13,9 @@ const MOBILE_CAPTURE = { src: "/images/projects/gradeo-busqueda-movil.png", widt
 
 /**
  * Hero con prueba real: GRADEO en producción. Titular, acciones y captura
- * llegan visibles en el HTML; nada empieza con opacidad cero.
+ * llegan en el HTML; nada empieza con opacidad cero. El titular sube carácter
+ * a carácter desde su máscara en CSS (`SplitText`, modo `load`) y los CTA son
+ * magnéticos con puntero fino (`MagneticButton`).
  *
  * La captura usa dirección de arte (móvil vertical, escritorio apaisada) y
  * prioridad de carga alta porque es el elemento LCP medido. Va dentro de una
@@ -43,20 +47,26 @@ export function HeroSection({ lang }: { lang: Language }) {
           id="hero-titulo"
           className="mt-4 text-[clamp(2.25rem,5vw,4.75rem)] leading-[1.04] font-bold tracking-[-0.035em] text-balance text-foreground"
         >
-          {t.hero.title}
+          <SplitText text={t.hero.title} trigger="load" />
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-body">{t.hero.subtitle}</p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <a href="#proyectos" className={buttonVariants()}>{t.hero.primary}</a>
-          <a
-            href={CV_FILES[lang]}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${t.hero.secondary} (${t.nav.newTab})`}
-            className={buttonVariants({ variant: "secondary" })}
-          >
-            {t.hero.secondary}
-          </a>
+          <MagneticButton>
+            <a href="#proyectos" className={buttonVariants()}>
+              <span data-magnetic-text>{t.hero.primary}</span>
+            </a>
+          </MagneticButton>
+          <MagneticButton>
+            <a
+              href={CV_FILES[lang]}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${t.hero.secondary} (${t.nav.newTab})`}
+              className={buttonVariants({ variant: "secondary" })}
+            >
+              <span data-magnetic-text>{t.hero.secondary}</span>
+            </a>
+          </MagneticButton>
         </div>
         <p className="mt-6 font-mono text-sm text-muted-foreground">{t.hero.availability}</p>
       </div>

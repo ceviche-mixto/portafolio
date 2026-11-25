@@ -1,4 +1,5 @@
 import { ChevronDown, ExternalLink, Github, Lock, Mail } from "lucide-react"
+import { MagneticButton } from "@/components/motion/MagneticButton"
 import { CopyEmailButton } from "@/components/ui/CopyEmailButton"
 import { buttonVariants } from "@/components/ui/button-variants"
 import type { TranslationDict } from "@/lib/i18n"
@@ -48,16 +49,18 @@ export function ProjectLinks({
   return (
     <div className="flex min-w-0 flex-wrap items-start gap-3">
       {demo && (
-        <a
-          href={demo}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`${liveLabel} — ${projectName} (${newTabHint})`}
-          className={buttonVariants()}
-        >
-          <ExternalLink aria-hidden="true" />
-          {liveLabel}
-        </a>
+        <MagneticButton>
+          <a
+            href={demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${liveLabel} — ${projectName} (${newTabHint})`}
+            className={buttonVariants()}
+          >
+            <ExternalLink aria-hidden="true" />
+            <span data-magnetic-text>{liveLabel}</span>
+          </a>
+        </MagneticButton>
       )}
       {demo && liveNote && <p className="flex min-h-11 items-center text-sm text-muted-foreground">{liveNote}</p>}
 
@@ -90,7 +93,7 @@ export function ProjectLinks({
             <div className="flex flex-wrap items-start gap-3">
               <CopyEmailButton
                 email={IDENTITY.email}
-                labels={{ idle: requestCopy.copyEmail, copied: requestCopy.copied, failed: requestCopy.copyFailed }}
+                labels={{ idle: requestCopy.copyEmail, copied: requestCopy.copied, failed: requestCopy.copyFailed, pill: requestCopy.copiedPill }}
               />
               <a
                 href={`mailto:${IDENTITY.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`}

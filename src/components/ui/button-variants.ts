@@ -6,10 +6,11 @@ import { cva, type VariantProps } from "class-variance-authority"
  * Viven fuera de `button.tsx` porque un Server Component no puede llamar a una
  * función exportada desde un módulo `"use client"`: los enlaces de navegación
  * se renderizan en el servidor con estas clases y `Button` las reutiliza para
- * las acciones. El foco usa el contorno global de `globals.css`.
+ * las acciones. El foco usa el contorno global de `globals.css`; `tactile`
+ * añade la pulsación física (compresión y rebote, también en `globals.css`).
  */
 export const buttonVariants = cva(
-  "inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "tactile inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {

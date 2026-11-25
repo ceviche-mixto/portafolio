@@ -64,7 +64,7 @@ const es = {
     codeOnRequest: 'Solicitar código',
     codeRequest: {
       description: 'El código de {project} no es público. Escríbeme para coordinar una revisión técnica.',
-      copyEmail: 'Copiar correo', copied: 'Correo copiado',
+      copyEmail: 'Copiar correo', copied: 'Correo copiado', copiedPill: '¡Copiado!',
       copyFailed: 'No se pudo copiar. Selecciona y copia la dirección que aparece arriba.',
       compose: 'Redactar correo',
       mailHint: 'Abre tu aplicación de correo. Si no tienes una configurada, copia la dirección y escribe desde tu correo habitual.',
@@ -161,6 +161,7 @@ const es = {
     sectionSubtitle: 'Escríbeme con el contexto del sistema o del proyecto y lo conversamos.',
     copy: 'Copiar',
     copied: 'Copiado',
+    copiedPill: '¡Copiado!',
     copyFailed: 'No se pudo copiar. Selecciona el correo o abre el enlace para escribir.',
     orFind: 'También en',
     rights: 'Todos los derechos reservados.',
@@ -212,7 +213,7 @@ const en: TranslationDict = {
     codeOnRequest: 'Request code',
     codeRequest: {
       description: 'The code for {project} is not public. Email me to arrange a technical review.',
-      copyEmail: 'Copy email', copied: 'Email copied',
+      copyEmail: 'Copy email', copied: 'Email copied', copiedPill: 'Copied!',
       copyFailed: 'Could not copy. Select and copy the address shown above.',
       compose: 'Compose email',
       mailHint: 'Opens your email app. If none is configured, copy the address and write from your usual email service.',
@@ -309,6 +310,7 @@ const en: TranslationDict = {
     sectionSubtitle: 'Email me with the context of the system or project and we can talk it through.',
     copy: 'Copy',
     copied: 'Copied',
+    copiedPill: 'Copied!',
     copyFailed: 'Could not copy. Select the email address or open the link to write.',
     orFind: 'Also on',
     rights: 'All rights reserved.',

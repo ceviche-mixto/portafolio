@@ -6,6 +6,7 @@ import {
   Briefcase as BriefcaseIcon,
   Download,
 } from "lucide-react"
+import { SplitText } from "@/components/motion/SplitText"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { translations } from "@/lib/i18n"
 import type { Language } from "@/lib/language"
@@ -34,7 +35,7 @@ export function TrajectorySection({ lang }: { lang: Language }) {
               <FileText className="h-6 w-6 text-highlight" aria-hidden="true" />
             </div>
             <h2 id="perfil-title" className="text-[clamp(1.75rem,3.5vw,2.75rem)] font-bold tracking-tight text-foreground">
-              {t.cv.sectionTitle}
+              <SplitText text={t.cv.sectionTitle} />
             </h2>
           </div>
           <p className="max-w-2xl text-lg text-body">{t.cv.sectionSubtitle}</p>

@@ -21,8 +21,9 @@ describe("private code contact disclosure", () => {
   it.each(["es", "en"] as const)("reveals an inline contact path without opening a tab in %s", (lang) => {
     const t = translations[lang]
     const { container } = example(lang)
-    const summary = screen.getByText(t.projects.codeOnRequest)
-    expect(summary.tagName).toBe("SUMMARY")
+    // El texto va en su propio <span> (paralaje del botón magnético); el control es el <summary>.
+    const summary = screen.getByText(t.projects.codeOnRequest).closest("summary")!
+    expect(summary).toBeTruthy()
     expect(summary.getAttribute("aria-label")).toContain("GRADEO")
     fireEvent.click(summary)
     expect(container.querySelector("details")?.open).toBe(true)

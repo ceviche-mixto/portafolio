@@ -2,8 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import axe from "axe-core"
 import { HoverImageReveal } from "@/components/motion/HoverImageReveal"
-import { MagneticButton } from "@/components/motion/MagneticButton"
+import { MagneticField } from "@/components/motion/MagneticField"
 import { Odometer } from "@/components/motion/Odometer"
+import { SplashLoader } from "@/components/motion/SplashLoader"
 import { SplitText } from "@/components/motion/SplitText"
 import { CopyEmailButton } from "@/components/ui/CopyEmailButton"
 
@@ -150,13 +151,16 @@ describe("pointer-only effects", () => {
   it("adds no pointer listeners on touch devices", () => {
     media({ fine: false })
     const listen = vi.spyOn(HTMLElement.prototype, "addEventListener")
+    const global = vi.spyOn(document, "addEventListener")
     const { container } = render(
       <>
-        <MagneticButton><a href="#proyectos"><span data-magnetic-text>Ver proyectos</span></a></MagneticButton>
+        <MagneticField />
+        <a href="#proyectos" className="tactile"><span>Ver proyectos</span></a>
         <HoverImageReveal image={{ src: "/images/projects/farmaplus-pos.png", width: 1600, height: 1000 }}><p>Farmaplus</p></HoverImageReveal>
       </>
     )
     expect(own(listen, container)).toEqual([])
+    expect(global.mock.calls.filter(([type]) => type.startsWith("pointer"))).toEqual([])
     expect(document.querySelector(".hover-reveal")).toBeNull()
   })
 
@@ -164,13 +168,33 @@ describe("pointer-only effects", () => {
     media({ fine: true })
     const listen = vi.spyOn(HTMLElement.prototype, "addEventListener")
     const { container } = render(
+      <HoverImageReveal image={{ src: "/images/projects/farmaplus-pos.png", width: 1600, height: 1000 }}><p>Farmaplus</p></HoverImageReveal>
+    )
+    expect(own(listen, container).filter((type) => type === "pointermove")).toHaveLength(1)
+    expect(document.querySelector('.hover-reveal[aria-hidden="true"]')).toBeTruthy()
+  })
+
+  it("pulls any tactile button toward the pointer and releases it on leave", () => {
+    media({ fine: true })
+    render(
       <>
-        <MagneticButton><a href="#proyectos">Ver proyectos</a></MagneticButton>
-        <HoverImageReveal image={{ src: "/images/projects/farmaplus-pos.png", width: 1600, height: 1000 }}><p>Farmaplus</p></HoverImageReveal>
+        <MagneticField />
+        <button type="button" className="tactile"><span>Reintentar</span></button>
       </>
     )
-    expect(own(listen, container).filter((type) => type === "pointermove")).toHaveLength(2)
-    expect(document.querySelector('.hover-reveal[aria-hidden="true"]')).toBeTruthy()
+    const button = screen.getByRole("button", { name: "Reintentar" })
+    vi.spyOn(button, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 100, height: 40 } as DOMRect)
+    fireEvent.pointerOver(button.firstChild as Element)
+    // Esquina inferior derecha y más allá: el tirón se limita a ±8 px.
+    fireEvent.pointerMove(button, { clientX: 100, clientY: 400 })
+    expect(button.dataset.magnet).toBe("")
+    expect([button.style.getPropertyValue("--mx"), button.style.getPropertyValue("--my")]).toEqual(["8.0px", "8.0px"])
+    // Pasar a un hijo no lo suelta; salir del botón sí.
+    fireEvent.pointerOut(button, { relatedTarget: button.firstChild })
+    expect(button.dataset.magnet).toBe("")
+    fireEvent.pointerOut(button, { relatedTarget: document.body })
+    expect(button.dataset.magnet).toBeUndefined()
+    expect(button.style.getPropertyValue("--mx")).toBe("")
   })
 })
 
@@ -184,5 +208,59 @@ describe("copy celebration", () => {
     const pill = screen.getByText("¡Copiado!")
     expect(pill.closest('[aria-hidden="true"]')).toBeTruthy()
     expect(screen.getByRole("status").textContent).toBe("Copiado")
+  })
+})
+
+describe("SplashLoader", () => {
+  /** Ejecuta el script en línea tal cual sale en el HTML. */
+  const run = (container: HTMLElement) => new Function(container.querySelector("script")!.textContent!)()
+
+  afterEach(() => {
+    sessionStorage.clear()
+    delete document.documentElement.dataset.splash
+  })
+
+  it("keeps the page in the DOM and offers an accessible skip", async () => {
+    const { container } = render(<main><h1>Portafolio</h1><SplashLoader lang="en" /></main>)
+    expect(screen.getByRole("heading", { name: "Portafolio" })).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Skip" })).toBeTruthy()
+    expect(container.querySelector(".splash-bubble img")?.getAttribute("alt")).toBe("")
+    const results = await axe.run(container)
+    expect(results.violations.map((issue) => issue.id)).toEqual([])
+  })
+
+  it("plays once per session and closes on any key", () => {
+    media()
+    const { container } = render(<SplashLoader lang="es" />)
+    run(container)
+    expect(document.documentElement.dataset.splash).toBe("play")
+    fireEvent.keyDown(document, { key: "Escape" })
+    expect(document.documentElement.dataset.splash).toBe("done")
+    // Segunda carga en la misma sesión: no vuelve a reproducirse.
+    delete document.documentElement.dataset.splash
+    run(container)
+    expect(document.documentElement.dataset.splash).toBeUndefined()
+  })
+
+  it("closes on click and when its own animation ends", () => {
+    media()
+    const { container } = render(<SplashLoader lang="es" />)
+    run(container)
+    fireEvent.click(screen.getByRole("button", { name: "Saltar" }))
+    expect(document.documentElement.dataset.splash).toBe("done")
+    sessionStorage.clear()
+    run(container)
+    // El final de una animación interna no la retira; el de la capa sí.
+    fireEvent.animationEnd(container.querySelector(".splash-logo")!)
+    expect(document.documentElement.dataset.splash).toBe("play")
+    fireEvent.animationEnd(container.querySelector(".splash")!)
+    expect(document.documentElement.dataset.splash).toBe("done")
+  })
+
+  it("never plays with reduced motion", () => {
+    media({ reduce: true })
+    const { container } = render(<SplashLoader lang="es" />)
+    run(container)
+    expect(document.documentElement.dataset.splash).toBeUndefined()
   })
 })

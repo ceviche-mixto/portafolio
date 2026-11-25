@@ -38,7 +38,7 @@ export function ErrorView({
           {error.digest}
         </code>
       )}
-      <button type="button" onClick={reset} className={buttonVariants()}>{copy.retry}</button>
+      <button type="button" onClick={reset} className={buttonVariants()}><span>{copy.retry}</span></button>
     </main>
   )
 }

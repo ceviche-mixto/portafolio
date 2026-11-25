@@ -1,5 +1,6 @@
 import "./globals.css"
 import type { Metadata } from "next"
+import { MagneticField } from "@/components/motion/MagneticField"
 import { fontVariables } from "@/components/site/fonts"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { HOME_PATH } from "@/lib/language"
@@ -26,10 +27,11 @@ export default function GlobalNotFound() {
             <p className="text-muted-foreground" lang="en">This page does not exist.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
-            <a href={HOME_PATH.es} className={buttonVariants()}>Volver al inicio</a>
-            <a href={HOME_PATH.en} lang="en" className={buttonVariants({ variant: "secondary" })}>Back home</a>
+            <a href={HOME_PATH.es} className={buttonVariants()}><span>Volver al inicio</span></a>
+            <a href={HOME_PATH.en} lang="en" className={buttonVariants({ variant: "secondary" })}><span>Back home</span></a>
           </div>
         </main>
+        <MagneticField />
       </body>
     </html>
   )

@@ -29,10 +29,10 @@ export function LanguageSwitcher({
       href={equivalentPath(pathname ?? "/", target)}
       hrefLang={htmlLang(target)}
       lang={htmlLang(target)}
-      className="flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-subtle transition-colors hover:border-strong hover:text-foreground md:text-sm"
+      className="tactile flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-subtle transition-colors hover:border-strong hover:text-foreground md:text-sm"
     >
       <Languages className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-      {label}
+      <span>{label}</span>
       <span className="sr-only">, {name}</span>
     </a>
   )

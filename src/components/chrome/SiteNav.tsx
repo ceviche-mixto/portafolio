@@ -72,9 +72,9 @@ export function SiteNav({
       <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr] items-center gap-x-3 gap-y-2 px-4 py-2 sm:flex sm:gap-3 sm:py-3 md:px-6">
         <a
           href={home}
-          className="flex min-h-11 min-w-11 flex-none items-center justify-center rounded-lg px-2 py-1 font-mono text-sm font-bold tracking-tight text-foreground transition-colors hover:text-highlight"
+          className="tactile flex min-h-11 min-w-11 flex-none items-center justify-center rounded-lg px-2 py-1 font-mono text-sm font-bold tracking-tight text-foreground transition-colors hover:text-highlight"
         >
-          GL<span className="text-highlight">.</span>
+          <span>GL<span className="text-highlight">.</span></span>
           <span className="sr-only"> Giancarlo Larios</span>
         </a>
 
@@ -92,13 +92,13 @@ export function SiteNav({
                     href={section.href}
                     aria-current={isActive ? "true" : undefined}
                     className={
-                      "flex min-h-11 items-center justify-center rounded-lg px-2 py-1.5 text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight md:px-2.5 md:text-sm " +
+                      "tactile flex min-h-11 items-center justify-center rounded-lg px-2 py-1.5 text-xs font-medium whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-highlight md:px-2.5 md:text-sm " +
                       (isActive
                         ? "bg-surface-raised/80 text-foreground"
                         : "text-muted-foreground hover:text-foreground")
                     }
                   >
-                    {section.label}
+                    <span>{section.label}</span>
                   </a>
                 </li>
               )

@@ -48,7 +48,7 @@ export function TrajectorySection({ lang }: { lang: Language }) {
               className={buttonVariants()}
             >
               <Download aria-hidden="true" />
-              {t.cv.downloadCv}
+              <span>{t.cv.downloadCv}</span>
             </a>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">{t.cv.documentNote}</p>

@@ -1,5 +1,4 @@
 import { ChevronDown, ExternalLink, Github, Lock, Mail } from "lucide-react"
-import { MagneticButton } from "@/components/motion/MagneticButton"
 import { CopyEmailButton } from "@/components/ui/CopyEmailButton"
 import { buttonVariants } from "@/components/ui/button-variants"
 import type { TranslationDict } from "@/lib/i18n"
@@ -49,18 +48,16 @@ export function ProjectLinks({
   return (
     <div className="flex min-w-0 flex-wrap items-start gap-3">
       {demo && (
-        <MagneticButton>
-          <a
-            href={demo}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${liveLabel} — ${projectName} (${newTabHint})`}
-            className={buttonVariants()}
-          >
-            <ExternalLink aria-hidden="true" />
-            <span data-magnetic-text>{liveLabel}</span>
-          </a>
-        </MagneticButton>
+        <a
+          href={demo}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${liveLabel} — ${projectName} (${newTabHint})`}
+          className={buttonVariants()}
+        >
+          <ExternalLink aria-hidden="true" />
+          <span>{liveLabel}</span>
+        </a>
       )}
       {demo && liveNote && <p className="flex min-h-11 items-center text-sm text-muted-foreground">{liveNote}</p>}
 
@@ -73,7 +70,7 @@ export function ProjectLinks({
           className={buttonVariants({ variant: "secondary" })}
         >
           <Github aria-hidden="true" />
-          {codeLabel}
+          <span>{codeLabel}</span>
         </a>
       )}
 
@@ -81,10 +78,10 @@ export function ProjectLinks({
         <details className="group/request min-w-0 max-w-full">
           <summary
             aria-label={`${onRequestLabel} — ${projectName}`}
-            className="flex min-h-11 w-fit max-w-full cursor-pointer list-none items-center gap-2 rounded-full border border-dashed border-border px-4 py-2 text-sm font-medium text-body transition-colors hover:border-highlight hover:text-foreground [&::-webkit-details-marker]:hidden"
+            className="tactile flex min-h-11 w-fit max-w-full cursor-pointer list-none items-center gap-2 rounded-full border border-dashed border-border px-4 py-2 text-sm font-medium text-body transition-colors hover:border-highlight hover:text-foreground [&::-webkit-details-marker]:hidden"
           >
             <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-            {onRequestLabel}
+            <span>{onRequestLabel}</span>
             <ChevronDown className="h-4 w-4 shrink-0 transition-transform group-open/request:rotate-180" aria-hidden="true" />
           </summary>
           <div className="mt-4 max-w-sm space-y-3 text-sm leading-relaxed text-body">
@@ -100,7 +97,7 @@ export function ProjectLinks({
                 className={buttonVariants({ variant: "secondary" })}
               >
                 <Mail aria-hidden="true" />
-                {requestCopy.compose}
+                <span>{requestCopy.compose}</span>
               </a>
             </div>
             <p>{requestCopy.mailHint}</p>

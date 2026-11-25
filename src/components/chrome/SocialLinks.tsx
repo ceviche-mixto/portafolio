@@ -35,7 +35,7 @@ export function SocialLinks({
             rel="noopener noreferrer"
             aria-label={`${label} (${newTabHint})`}
             className={cn(
-              "flex rounded-full border border-soft bg-card text-muted-foreground transition-colors",
+              "tactile flex rounded-full border border-soft bg-card text-muted-foreground transition-colors",
               pad,
               hover
             )}

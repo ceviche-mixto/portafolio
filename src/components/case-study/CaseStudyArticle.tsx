@@ -224,11 +224,11 @@ export function CaseStudyArticle({
 
       <footer className="mt-20 flex flex-col gap-4 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
         <Link href={`${home}#${project.slug}`} className={buttonVariants({ variant: "secondary" })}>
-          <span aria-hidden="true">←</span> {c.back}
+          <span aria-hidden="true">←</span> <span>{c.back}</span>
         </Link>
         <HoverImageReveal image={next.cover} className="flex">
           <Link href={projectPath(lang, next.slug)} className={buttonVariants({ variant: "secondary" })}>
-            {c.next}: {next.name} <span aria-hidden="true">→</span>
+            <span>{c.next}: {next.name}</span> <span aria-hidden="true">→</span>
           </Link>
         </HoverImageReveal>
       </footer>

@@ -142,10 +142,10 @@ export function SearchDemo({ lang, copy }: { lang: "es" | "en"; copy: SearchDemo
           />
           <div className="mt-3 flex flex-wrap gap-2">
             <button type="button" onClick={() => pick(EXAMPLES.accent)} className={buttonVariants({ variant: "secondary" })}>
-              {copy.withAccent}
+              <span>{copy.withAccent}</span>
             </button>
             <button type="button" onClick={() => pick(EXAMPLES.typo)} className={buttonVariants({ variant: "secondary" })}>
-              {copy.withTypo}
+              <span>{copy.withTypo}</span>
             </button>
           </div>
           {/* Altura reservada para tres filas: cambiar de consulta no mueve la página. */}

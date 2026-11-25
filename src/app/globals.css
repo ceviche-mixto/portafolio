@@ -375,43 +375,53 @@
   transform: translate3d(0, calc(var(--d) * -10%), 0);
 }
 
-/* Botón magnético: el JS escribe --mx/--my; el texto interior sigue a la
-   mitad (paralaje). Al salir vuelve con rebote elástico. */
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .magnetic,
-  .magnetic [data-magnetic-text] {
-    transition: transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .magnetic {
-    transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
-  }
-  .magnetic [data-magnetic-text] {
-    display: inline-block;
-    transform: translate3d(calc(var(--mx, 0px) * 0.5), calc(var(--my, 0px) * 0.5), 0);
-  }
-  .magnetic[data-active],
-  .magnetic[data-active] [data-magnetic-text] {
-    transition: transform 140ms cubic-bezier(0.2, 0.75, 0.25, 1);
-  }
-}
-.magnetic {
-  display: inline-flex;
-}
-
-/* Pulsación táctil de todos los botones: compresión firme en 80 ms y rebote
-   elástico al soltar. Conserva las transiciones de color de la variante. */
+/* Botones (`.tactile`: todas las variantes y los controles de la cabecera).
+   Pulsación: compresión firme en 80 ms y rebote elástico al soltar, en
+   `transform`. Imán (MagneticField): con puntero fino el JS escribe --mx/--my
+   y el botón los sigue con la propiedad `translate`, que se suma a la
+   pulsación sin pisarla; al salir vuelve con rebote elástico. Conserva las
+   transiciones de color de la variante. */
 @media (prefers-reduced-motion: no-preference) {
   .tactile {
     transition:
       color 150ms ease,
       background-color 150ms ease,
       border-color 150ms ease,
-      transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      translate 650ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .tactile {
+    translate: var(--mx, 0px) var(--my, 0px);
+  }
+  /* Mientras sigue al cursor, respuesta rápida; el rebote queda para la salida. */
+  .tactile[data-magnet] {
+    transition-duration: 150ms, 150ms, 150ms, 420ms, 140ms;
+    transition-timing-function: ease, ease, ease, cubic-bezier(0.34, 1.56, 0.64, 1), cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+}
+/* Después del imán: con el cursor encima, la pulsación conserva sus 80 ms. */
+@media (prefers-reduced-motion: no-preference) {
   .tactile:active {
     transform: translateY(2px) scale(0.97);
-    transition-duration: 150ms, 150ms, 150ms, 80ms;
-    transition-timing-function: ease, ease, ease, ease-out;
+    transition-duration: 150ms, 150ms, 150ms, 80ms, 140ms;
+    transition-timing-function: ease, ease, ease, ease-out, cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+}
+/* Paralaje del contenido: cada hijo sigue al botón con la mitad de recorrido
+   (4 px). En la capa `components` para que la transición propia de un hijo
+   (p. ej. el giro del chevron) gane sobre esta. */
+@layer components {
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .tactile > * {
+      translate: calc(var(--mx, 0px) / 2) calc(var(--my, 0px) / 2);
+      transition: translate 650ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .tactile[data-magnet] > * {
+      transition-duration: 140ms;
+      transition-timing-function: cubic-bezier(0.2, 0.75, 0.25, 1);
+    }
   }
 }
 
@@ -573,6 +583,155 @@
 .hover-reveal[data-visible] .hover-reveal-card {
   opacity: 1;
   scale: 1;
+}
+
+/* ── Intro de marca (SplashLoader) ──────────────────────────────────────────
+   Oculta por defecto: sin JS, con movimiento reducido o ya vista en la sesión
+   no existe. El script en línea marca `data-splash="play"` en <html> antes de
+   la primera pintura. A: el logo gira en su burbuja (0–550 ms). B: la burbuja
+   sube con impulso y deja estela (550–850 ms). C: la tinta cae como slime
+   (750–1350 ms); al final `visibility` la retira sin esperar al JS. */
+.splash {
+  display: none;
+}
+@keyframes splash-end {
+  to { visibility: hidden; }
+}
+@keyframes splash-pop {
+  0% { opacity: 0; transform: scale(0.6); }
+  35% { opacity: 1; transform: scale(1.06); }
+  70% { transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1.02); }
+}
+@keyframes splash-spin {
+  from { transform: rotate(-220deg) scale(1.12); }
+  to { transform: rotate(0deg) scale(1.12); }
+}
+@keyframes splash-rise {
+  to { transform: translate3d(0, -140%, 0); opacity: 0; }
+}
+@keyframes splash-trail {
+  0% { opacity: 0; transform: scaleY(0.2); }
+  35% { opacity: 0.9; }
+  100% { opacity: 0; transform: scaleY(1.6); }
+}
+@keyframes splash-fall {
+  to { transform: translate3d(0, calc(100% + 200px), 0); }
+}
+/* Cada gota se queda atrás al caer la cortina y se estira en hebra (escala
+   desde su base), se suelta y la alcanza ya redondeada. */
+@keyframes splash-drip {
+  0% { transform: translate3d(0, 0, 0) scale(1, 1); }
+  55% { transform: translate3d(0, calc(var(--lag) * -1), 0) scale(0.8, 1.7); }
+  100% { transform: translate3d(0, calc(var(--lag) * -0.35), 0) scale(1, 1.1); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-splash="play"] .splash {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    overflow: clip;
+    cursor: pointer;
+    animation: splash-end 1350ms step-end both;
+  }
+  .splash-sheet {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(closest-side, rgba(37, 59, 214, 0.3), rgba(37, 59, 214, 0)) center / 70vmin 70vmin no-repeat,
+      #15171c;
+    animation: splash-fall 600ms cubic-bezier(0.6, 0, 0.8, 0.3) 750ms both;
+  }
+  /* Franja gooey del borde: más ancha que la ventana para que el filtro no
+     erosione las esquinas a la vista; su mitad inferior pisa la propia capa. */
+  .splash-goo {
+    position: absolute;
+    top: -120px;
+    left: -5%;
+    width: 110%;
+    height: 240px;
+    overflow: visible;
+    fill: #15171c;
+  }
+  .splash-goo circle {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: splash-drip 600ms cubic-bezier(0.45, 0, 0.55, 1) 750ms both;
+  }
+  .splash-skip {
+    position: absolute;
+    right: 1rem;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1px solid rgba(245, 240, 232, 0.25);
+    border-radius: 9999px;
+    color: rgba(245, 240, 232, 0.75);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .splash-skip:hover {
+    border-color: rgba(245, 240, 232, 0.6);
+    color: #f5f0e8;
+  }
+  .splash-rise {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: clamp(112px, 30vw, 152px);
+    aspect-ratio: 1;
+    margin: calc(clamp(112px, 30vw, 152px) / -2) 0 0 calc(clamp(112px, 30vw, 152px) / -2);
+    animation: splash-rise 300ms cubic-bezier(0.34, 1.35, 0.64, 1) 550ms both;
+  }
+  /* Estela: un haz cobalto bajo la burbuja que se estira mientras sube. */
+  .splash-rise::before {
+    content: "";
+    position: absolute;
+    top: 55%;
+    left: 30%;
+    width: 40%;
+    height: 170%;
+    border-radius: 9999px;
+    background: linear-gradient(rgba(37, 59, 214, 0.55), rgba(37, 59, 214, 0));
+    filter: blur(10px);
+    transform-origin: 50% 0;
+    animation: splash-trail 300ms ease-out 550ms both;
+  }
+  .splash-bubble {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: clip;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 1px rgba(245, 240, 232, 0.16),
+      0 0 56px 4px rgba(37, 59, 214, 0.5);
+    animation: splash-pop 550ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  /* Cristal: brillo especular arriba a la izquierda y borde cobalto líquido. */
+  .splash-bubble::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 24%),
+      radial-gradient(circle at 50% 50%, rgba(37, 59, 214, 0) 58%, rgba(37, 59, 214, 0.38) 74%, rgba(245, 240, 232, 0.28) 100%);
+    box-shadow:
+      inset 0 0 0 2px rgba(245, 240, 232, 0.22),
+      inset 0 -12px 24px rgba(37, 59, 214, 0.45);
+  }
+  .splash-logo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: splash-spin 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
 }
 
 /**

@@ -47,7 +47,7 @@ export function CopyEmailButton({
       <div className="relative">
         <button ref={button} type="button" onClick={copy} className={buttonVariants({ variant: "secondary", className: ["w-full", className] })}>
           {state === "copied" ? <Check aria-hidden="true" className="pop-in" /> : <Copy aria-hidden="true" />}
-          {state === "copied" ? labels.copied : labels.idle}
+          <span>{state === "copied" ? labels.copied : labels.idle}</span>
         </button>
         {state === "copied" && (
           // Debajo, sobre la línea de estado (vacía al copiar): no tapa el botón vecino en móvil.

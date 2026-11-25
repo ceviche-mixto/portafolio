@@ -1,5 +1,6 @@
 import { getImageProps } from "next/image"
 import Link from "next/link"
+import { ProceduralHeroBackdrop } from "@/components/motion/ProceduralHeroBackdrop"
 import { SplitText } from "@/components/motion/SplitText"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { gradeo } from "@/content/projects/gradeo"
@@ -20,6 +21,10 @@ const MOBILE_CAPTURE = { src: "/images/projects/gradeo-busqueda-movil.png", widt
  * prioridad de carga alta porque es el elemento LCP medido. Va dentro de una
  * ventana de recorte con borde cobalto; el escalado ligado al scroll es CSS
  * (`.hero-window`, `.hero-layer`) y la leyenda queda en flujo.
+ *
+ * Detrás, a todo el ancho, el fondo procedural (`ProceduralHeroBackdrop`). Se
+ * pinta sólo en el padding inferior y en los márgenes, así que padding y
+ * ancho máximo van emparejados con `.hb` en globals.css.
  */
 export function HeroSection({ lang }: { lang: Language }) {
   const t = translations[lang]
@@ -36,58 +41,58 @@ export function HeroSection({ lang }: { lang: Language }) {
   const { props: image } = getImageProps({ ...common, ...MOBILE_CAPTURE })
 
   return (
-    <section
-      aria-labelledby="hero-titulo"
-      className="mx-auto grid max-w-[1280px] items-center gap-12 px-6 pt-36 pb-20 sm:pt-32 lg:grid-cols-12 lg:gap-10 lg:px-10 lg:pb-28"
-    >
-      <div className="lg:col-span-5">
-        <p className="font-mono text-sm text-muted-foreground">{t.hero.eyebrow}</p>
-        <h1
-          id="hero-titulo"
-          className="mt-4 text-[clamp(2.25rem,5vw,4.75rem)] leading-[1.04] font-bold tracking-[-0.035em] text-balance text-foreground"
-        >
-          <SplitText text={t.hero.title} trigger="load" />
-        </h1>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-body">{t.hero.subtitle}</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a href="#proyectos" className={buttonVariants()}>
-            <span>{t.hero.primary}</span>
-          </a>
-          <a
-            href={CV_FILES[lang]}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${t.hero.secondary} (${t.nav.newTab})`}
-            className={buttonVariants({ variant: "secondary" })}
+    <section aria-labelledby="hero-titulo" className="relative isolate">
+      <ProceduralHeroBackdrop lang={lang} />
+      <div className="relative z-[1] mx-auto grid max-w-[1280px] items-center gap-12 px-6 pt-36 pb-28 sm:pt-32 lg:grid-cols-12 lg:gap-10 lg:px-10 lg:pb-48">
+        <div className="lg:col-span-5">
+          <p className="font-mono text-sm text-muted-foreground">{t.hero.eyebrow}</p>
+          <h1
+            id="hero-titulo"
+            className="mt-4 text-[clamp(2.25rem,5vw,4.75rem)] leading-[1.04] font-bold tracking-[-0.035em] text-balance text-foreground"
           >
-            <span>{t.hero.secondary}</span>
-          </a>
+            <SplitText text={t.hero.title} trigger="load" />
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-body">{t.hero.subtitle}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href="#proyectos" className={buttonVariants()}>
+              <span>{t.hero.primary}</span>
+            </a>
+            <a
+              href={CV_FILES[lang]}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${t.hero.secondary} (${t.nav.newTab})`}
+              className={buttonVariants({ variant: "secondary" })}
+            >
+              <span>{t.hero.secondary}</span>
+            </a>
+          </div>
+          <p className="mt-6 font-mono text-sm text-muted-foreground">{t.hero.availability}</p>
         </div>
-        <p className="mt-6 font-mono text-sm text-muted-foreground">{t.hero.availability}</p>
-      </div>
 
-      <figure className="relative lg:col-span-7">
-        {/* Ventana fija con borde cobalto; sólo la captura interior se escala (globals.css). */}
-        <div className="hero-window overflow-clip rounded-2xl border border-b-2 border-border border-b-highlight bg-surface-raised shadow-[0_12px_32px_-16px_rgba(21,23,28,0.35)]">
-          <picture className="hero-layer block">
-            <source media="(min-width: 768px)" srcSet={desktop} sizes={common.sizes} />
-            <img
-              {...image}
-              alt={image.alt}
-              className="aspect-[4/5] h-auto w-full object-cover object-top md:aspect-[16/10]"
-            />
-          </picture>
-        </div>
-        <figcaption className="mt-3 text-sm text-muted-foreground">
-          {t.hero.caption}{" "}
-          <Link
-            href={projectPath(lang, gradeo.slug)}
-            className="inline-flex min-h-11 items-center font-semibold text-highlight underline underline-offset-4"
-          >
-            {t.hero.captionLink}
-          </Link>
-        </figcaption>
-      </figure>
+        <figure className="relative lg:col-span-7">
+          {/* Ventana fija con borde cobalto; sólo la captura interior se escala (globals.css). */}
+          <div className="hero-window overflow-clip rounded-2xl border border-b-2 border-border border-b-highlight bg-surface-raised shadow-[0_12px_32px_-16px_rgba(21,23,28,0.35)]">
+            <picture className="hero-layer block">
+              <source media="(min-width: 768px)" srcSet={desktop} sizes={common.sizes} />
+              <img
+                {...image}
+                alt={image.alt}
+                className="aspect-[4/5] h-auto w-full object-cover object-top md:aspect-[16/10]"
+              />
+            </picture>
+          </div>
+          <figcaption className="mt-3 text-sm text-muted-foreground">
+            {t.hero.caption}{" "}
+            <Link
+              href={projectPath(lang, gradeo.slug)}
+              className="inline-flex min-h-11 items-center font-semibold text-highlight underline underline-offset-4"
+            >
+              {t.hero.captionLink}
+            </Link>
+          </figcaption>
+        </figure>
+      </div>
     </section>
   )
 }

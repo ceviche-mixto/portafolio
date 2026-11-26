@@ -360,7 +360,7 @@
      intro (SplashLoader) lo descubra. `[data-splash]` y no `="play"`: al pasar
      a "done" el retardo se mantiene y la animación en curso no salta. */
   html[data-splash] .split-load .split-char {
-    animation-delay: calc(1850ms + var(--i) * 24ms);
+    animation-delay: calc(1920ms + var(--i) * 24ms);
   }
 }
 
@@ -595,9 +595,10 @@
    Oculta por defecto: sin JS, con movimiento reducido o ya vista en la sesión
    no existe. El script en línea marca `data-splash="play"` en <html> antes de
    la primera pintura. A: la burbuja entra rodando desde abajo (0–560 ms).
-   B: da una vuelta completa en el centro y respira (560–1450 ms). C: sale por
-   arriba con impulso y deja estela (1450–1780 ms). D: la tinta cae como slime
-   (1700–2350 ms); a los 2400 ms `visibility` la retira sin esperar al JS. */
+   B: da una vuelta completa en el centro y respira (560–1420 ms). C: sube
+   acelerando y se desvanece al cruzar el borde superior (1420–1960 ms).
+   D: la tinta cae como slime (1820–2450 ms); a los 2500 ms `visibility` la
+   retira sin esperar al JS. */
 .splash {
   display: none;
 }
@@ -605,24 +606,26 @@
   to { visibility: hidden; }
 }
 /* Trayectoria (`.splash-rise`), giro (logo) y respiración (burbuja) duran lo
-   mismo y comparten porcentajes: 24 % = 560 ms, 62 % = 1450 ms, 76 % = 1780 ms. */
+   mismo y comparten porcentajes: 23 % = 560 ms, 58 % = 1420 ms, 74 % = 1810 ms,
+   80 % = 1960 ms. La salida es ease-in sin rebote: arranca despacio y acelera. */
 @keyframes splash-path {
   0% { transform: translate3d(0, 125vh, 0); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
-  24%, 62% { transform: translate3d(0, 0, 0); animation-timing-function: cubic-bezier(0.34, 1.35, 0.64, 1); }
-  76%, 100% { transform: translate3d(0, -135vh, 0); }
+  23%, 58% { transform: translate3d(0, 0, 0); animation-timing-function: cubic-bezier(0.32, 0, 0.67, 0); }
+  74% { opacity: 1; }
+  80%, 100% { transform: translate3d(0, -112vh, 0); opacity: 0; }
 }
 /* El giro de entrada llega con algo de velocidad y la vuelta central arranca
    con la misma: una sola inercia que se asienta antes del impulso de salida. */
 @keyframes splash-spin {
   0% { transform: rotate(-220deg) scale(1.12); animation-timing-function: cubic-bezier(0.2, 0.6, 0.6, 0.9); }
-  24% { transform: rotate(0deg) scale(1.12); animation-timing-function: cubic-bezier(0.4, 0.1, 0.2, 1); }
-  62% { transform: rotate(360deg) scale(1.12); animation-timing-function: cubic-bezier(0.34, 1.35, 0.64, 1); }
-  76%, 100% { transform: rotate(460deg) scale(1.12); }
+  23% { transform: rotate(0deg) scale(1.12); animation-timing-function: cubic-bezier(0.4, 0.1, 0.2, 1); }
+  58% { transform: rotate(360deg) scale(1.12); animation-timing-function: cubic-bezier(0.32, 0, 0.67, 0); }
+  80%, 100% { transform: rotate(450deg) scale(1.12); }
 }
 @keyframes splash-breathe {
-  0%, 24% { transform: scale(1); }
-  43% { transform: scale(1.06); }
-  62%, 100% { transform: scale(1); }
+  0%, 23% { transform: scale(1); }
+  40.5% { transform: scale(1.06); }
+  58%, 100% { transform: scale(1); }
 }
 @keyframes splash-trail {
   0% { opacity: 0; transform: scaleY(0.2); }
@@ -647,7 +650,7 @@
     z-index: 150;
     overflow: clip;
     cursor: pointer;
-    animation: splash-end 2400ms step-end both;
+    animation: splash-end 2500ms step-end both;
   }
   .splash-sheet {
     position: absolute;
@@ -655,7 +658,7 @@
     background:
       radial-gradient(closest-side, rgba(37, 59, 214, 0.3), rgba(37, 59, 214, 0)) center / 70vmin 70vmin no-repeat,
       #15171c;
-    animation: splash-fall 650ms cubic-bezier(0.6, 0, 0.8, 0.3) 1700ms both;
+    animation: splash-fall 630ms cubic-bezier(0.6, 0, 0.8, 0.3) 1820ms both;
   }
   /* Franja gooey del borde: más ancha que la ventana para que el filtro no
      erosione las esquinas a la vista; su mitad inferior pisa la propia capa. */
@@ -671,26 +674,7 @@
   .splash-goo circle {
     transform-box: fill-box;
     transform-origin: 50% 100%;
-    animation: splash-drip 650ms cubic-bezier(0.45, 0, 0.55, 1) 1700ms both;
-  }
-  .splash-skip {
-    position: absolute;
-    right: 1rem;
-    bottom: max(1rem, env(safe-area-inset-bottom));
-    min-height: 2.75rem;
-    padding: 0 1rem;
-    border: 1px solid rgba(245, 240, 232, 0.25);
-    border-radius: 9999px;
-    color: rgba(245, 240, 232, 0.75);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-  }
-  .splash-skip:hover {
-    border-color: rgba(245, 240, 232, 0.6);
-    color: #f5f0e8;
+    animation: splash-drip 630ms cubic-bezier(0.45, 0, 0.55, 1) 1820ms both;
   }
   .splash-rise {
     position: absolute;
@@ -699,7 +683,7 @@
     width: clamp(112px, 30vw, 152px);
     aspect-ratio: 1;
     margin: calc(clamp(112px, 30vw, 152px) / -2) 0 0 calc(clamp(112px, 30vw, 152px) / -2);
-    animation: splash-path 2350ms linear both;
+    animation: splash-path 2450ms linear both;
   }
   /* Estela: un haz cobalto bajo la burbuja que se estira mientras sube. */
   .splash-rise::before {
@@ -713,7 +697,7 @@
     background: linear-gradient(rgba(37, 59, 214, 0.55), rgba(37, 59, 214, 0));
     filter: blur(10px);
     transform-origin: 50% 0;
-    animation: splash-trail 330ms ease-out 1450ms both;
+    animation: splash-trail 540ms ease-in 1420ms both;
   }
   .splash-bubble {
     position: relative;
@@ -724,7 +708,7 @@
     box-shadow:
       0 0 0 1px rgba(245, 240, 232, 0.16),
       0 0 56px 4px rgba(37, 59, 214, 0.5);
-    animation: splash-breathe 2350ms ease-in-out both;
+    animation: splash-breathe 2450ms ease-in-out both;
   }
   /* Cristal: brillo especular arriba a la izquierda y borde cobalto líquido. */
   .splash-bubble::after {
@@ -744,7 +728,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    animation: splash-spin 2350ms linear both;
+    animation: splash-spin 2450ms linear both;
   }
 }
 

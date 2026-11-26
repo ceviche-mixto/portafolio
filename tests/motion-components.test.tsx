@@ -221,19 +221,21 @@ describe("SplashLoader", () => {
     delete document.documentElement.dataset.splash
   })
 
-  it("keeps the page in the DOM and offers an accessible skip", async () => {
-    const { container } = render(<main><h1>Portafolio</h1><SplashLoader lang="en" /></main>)
+  it("keeps the page in the DOM with no visible control of its own", async () => {
+    const { container } = render(<main><h1>Portafolio</h1><SplashLoader /></main>)
     expect(screen.getByRole("heading", { name: "Portafolio" })).toBeTruthy()
-    expect(screen.getByRole("button", { name: "Skip" })).toBeTruthy()
+    expect(screen.queryByRole("button")).toBeNull()
     expect(container.querySelector(".splash-bubble img")?.getAttribute("alt")).toBe("")
     const results = await axe.run(container)
     expect(results.violations.map((issue) => issue.id)).toEqual([])
   })
 
-  it("plays once per session and closes on any key", () => {
+  it("plays once per session and closes on Escape, not on Tab", () => {
     media()
-    const { container } = render(<SplashLoader lang="es" />)
+    const { container } = render(<SplashLoader />)
     run(container)
+    expect(document.documentElement.dataset.splash).toBe("play")
+    fireEvent.keyDown(document, { key: "Tab" })
     expect(document.documentElement.dataset.splash).toBe("play")
     fireEvent.keyDown(document, { key: "Escape" })
     expect(document.documentElement.dataset.splash).toBe("done")
@@ -245,9 +247,9 @@ describe("SplashLoader", () => {
 
   it("closes on click and when its own animation ends", () => {
     media()
-    const { container } = render(<SplashLoader lang="es" />)
+    const { container } = render(<SplashLoader />)
     run(container)
-    fireEvent.click(screen.getByRole("button", { name: "Saltar" }))
+    fireEvent.click(container.querySelector(".splash")!)
     expect(document.documentElement.dataset.splash).toBe("done")
     sessionStorage.clear()
     run(container)
@@ -260,7 +262,7 @@ describe("SplashLoader", () => {
 
   it("never plays with reduced motion", () => {
     media({ reduce: true })
-    const { container } = render(<SplashLoader lang="es" />)
+    const { container } = render(<SplashLoader />)
     run(container)
     expect(document.documentElement.dataset.splash).toBeUndefined()
   })

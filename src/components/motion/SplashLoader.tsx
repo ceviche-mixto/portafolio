@@ -1,8 +1,5 @@
 import type { CSSProperties } from "react"
-import type { Language } from "@/lib/language"
 import { MOTION_OK } from "./media"
-
-const SKIP = { es: "Saltar", en: "Skip" } as const
 
 /** Borde de la cortina: [x %, radio px, retraso px al caer]. Las de más retraso se estiran en hebras. */
 const DRIPS = [
@@ -23,17 +20,18 @@ const EDGE = 120
 /**
  * Decide antes de la primera pintura si la intro se reproduce: una vez por
  * sesión, nunca con movimiento reducido ni si el almacenamiento falla. Sin
- * JS no corre y la capa sigue en `display: none`. Cualquier tecla, un clic o
- * el final de la animación la retiran; la tecla llega antes del cambio de
- * foco, así que Tab cae en el enlace «Saltar al contenido».
+ * JS no corre y la capa sigue en `display: none`. La retiran Escape, un
+ * clic o toque sobre ella, o el final de su animación. Tab no la cierra: la
+ * navegación por teclado sigue su curso por debajo.
  */
-const SCRIPT = `(function(){var h=document.documentElement;try{if(sessionStorage.getItem("splash")||!matchMedia(${JSON.stringify(MOTION_OK)}).matches)return;sessionStorage.setItem("splash","1")}catch(e){return}h.dataset.splash="play";var types=["keydown","click","animationend"];function done(e){if(e.type==="animationend"&&!e.target.classList.contains("splash"))return;h.dataset.splash="done";types.forEach(function(t){document.removeEventListener(t,done,true)})}types.forEach(function(t){document.addEventListener(t,done,true)})})()`
+const SCRIPT = `(function(){var h=document.documentElement;try{if(sessionStorage.getItem("splash")||!matchMedia(${JSON.stringify(MOTION_OK)}).matches)return;sessionStorage.setItem("splash","1")}catch(e){return}h.dataset.splash="play";var types=["keydown","click","animationend"];function done(e){if(e.type==="keydown"&&e.key!=="Escape"||e.type==="animationend"&&!e.target.classList.contains("splash"))return;h.dataset.splash="done";types.forEach(function(t){document.removeEventListener(t,done,true)})}types.forEach(function(t){document.addEventListener(t,done,true)})})()`
 
 /**
- * Intro de marca (~2,35 s): la burbuja de cristal con el logo entra rodando
- * desde abajo, da una vuelta completa en el centro, sale por arriba con
- * impulso y la capa de tinta cae como slime revelando la página. El cierre lo
- * marca el final de la animación de la capa (2400 ms), no un temporizador.
+ * Intro de marca (~2,45 s): la burbuja de cristal con el logo entra rodando
+ * desde abajo, da una vuelta completa en el centro, sube acelerando hasta
+ * salir por arriba y la capa de tinta cae como slime revelando la página. El
+ * cierre lo marca el final de la animación de la capa (2500 ms), no un
+ * temporizador. Sin botón visible: la escena es sólo la burbuja.
  *
  * Sin estado ni hidratación: un script en línea marca `data-splash` en <html>
  * y la coreografía es CSS (globals.css, `.splash`), así que arranca en la
@@ -43,7 +41,7 @@ const SCRIPT = `(function(){var h=document.documentElement;try{if(sessionStorage
  * (`feGaussianBlur` + `feColorMatrix`) limitado a una franja de 240 px; el
  * resto sólo anima `transform` y `opacity`.
  */
-export function SplashLoader({ lang }: { lang: Language }) {
+export function SplashLoader() {
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: SCRIPT }} />
@@ -61,9 +59,6 @@ export function SplashLoader({ lang }: { lang: Language }) {
               ))}
             </g>
           </svg>
-          <button type="button" className="splash-skip">
-            {SKIP[lang]}
-          </button>
         </div>
         <div className="splash-rise" aria-hidden="true">
           <div className="splash-bubble">

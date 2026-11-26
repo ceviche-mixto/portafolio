@@ -24,7 +24,7 @@ export function RootDocument({
   return (
     <html lang={htmlLang(lang)} className={`scroll-smooth ${fontVariables}`} suppressHydrationWarning>
       <body className="antialiased bg-background text-foreground selection:bg-highlight/20">
-        <SplashLoader lang={lang} />
+        <SplashLoader />
         <SiteChrome lang={lang} />
         {children}
         <MagneticField />

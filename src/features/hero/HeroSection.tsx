@@ -1,60 +1,63 @@
-import { getImageProps } from "next/image"
-import Link from "next/link"
-import { ProceduralHeroBackdrop } from "@/components/motion/ProceduralHeroBackdrop"
-import { SplitText } from "@/components/motion/SplitText"
+import { LogoRunner } from "@/components/motion/LogoRunner"
+import { PixelText } from "@/components/motion/PixelText"
 import { buttonVariants } from "@/components/ui/button-variants"
-import { gradeo } from "@/content/projects/gradeo"
-import { projectPath } from "@/content/projects"
 import { translations } from "@/lib/i18n"
 import type { Language } from "@/lib/language"
 import { CV_FILES } from "@/lib/site"
+import { cn } from "@/lib/utils"
 
-const MOBILE_CAPTURE = { src: "/images/projects/gradeo-busqueda-movil.png", width: 780, height: 1688 }
+/** Telemetría decorativa del HUD: versión del sitio y coordenadas de Chiclayo. */
+const HUD = { left: "SYS://PORTFOLIO v2.0", right: "06.7714°S · 79.8409°W" }
+/** Miras vectoriales en las cuatro esquinas del panel. */
+const CORNERS = [
+  "top-3 left-3 border-t-2 border-l-2 rounded-tl-lg",
+  "top-3 right-3 border-t-2 border-r-2 rounded-tr-lg",
+  "bottom-3 left-3 border-b-2 border-l-2 rounded-bl-lg",
+  "bottom-3 right-3 border-b-2 border-r-2 rounded-br-lg",
+]
 
 /**
- * Hero con prueba real: GRADEO en producción. Titular, acciones y captura
- * llegan en el HTML; nada empieza con opacidad cero. El titular sube carácter
- * a carácter desde su máscara en CSS (`SplitText`, modo `load`) y los CTA son
- * magnéticos con puntero fino, como todos los botones (`MagneticField`).
+ * Hero centrado: quién soy, en breve. Un panel HUD de tinta flota sobre el
+ * fondo global (`GlobalProceduralBackdrop`, en la portada) con miras en las
+ * esquinas, scanlines, un barrido de entrada y borde con brillo cobalto/cian.
  *
- * La captura usa dirección de arte (móvil vertical, escritorio apaisada) y
- * prioridad de carga alta porque es el elemento LCP medido. Va dentro de una
- * ventana de recorte con borde cobalto; el escalado ligado al scroll es CSS
- * (`.hero-window`, `.hero-layer`) y la leyenda queda en flujo.
+ * El titular se decodifica letra a letra (`PixelText`, sólo CSS) y espera a
+ * la intro (SplashLoader) en la primera visita. Los CTA son magnéticos como
+ * todos los botones (`MagneticField`). Debajo, la escena del logo
+ * (`LogoRunner`), que trae la pausa compartida de todo el movimiento continuo.
  *
- * Detrás, a todo el ancho, el fondo procedural (`ProceduralHeroBackdrop`). Se
- * pinta sólo en el padding inferior y en los márgenes, así que padding y
- * ancho máximo van emparejados con `.hb` en globals.css.
+ * Los proyectos no se nombran aquí: GRADEO abre «Trabajo seleccionado», justo
+ * debajo. Toda la decoración es `aria-hidden` y `pointer-events: none`; el
+ * texto se mide contra la tinta sólida del panel.
  */
 export function HeroSection({ lang }: { lang: Language }) {
   const t = translations[lang]
-  const common = {
-    alt: gradeo.cover.alt[lang],
-    sizes: "(min-width: 1024px) 58vw, 100vw",
-    fetchPriority: "high" as const,
-    loading: "eager" as const,
-  }
-  const {
-    props: { srcSet: desktop },
-  } = getImageProps({ ...common, src: gradeo.cover.src, width: gradeo.cover.width, height: gradeo.cover.height })
-  // El <img> lleva la variante móvil; <source> la sustituye desde 768 px.
-  const { props: image } = getImageProps({ ...common, ...MOBILE_CAPTURE })
 
   return (
-    <section aria-labelledby="hero-titulo" className="relative isolate">
-      <ProceduralHeroBackdrop lang={lang} />
-      <div className="relative z-[1] mx-auto grid max-w-[1280px] items-center gap-12 px-6 pt-36 pb-28 sm:pt-32 lg:grid-cols-12 lg:gap-10 lg:px-10 lg:pb-48">
-        <div className="lg:col-span-5">
-          <p className="font-mono text-sm text-muted-foreground">{t.hero.eyebrow}</p>
+    <section aria-labelledby="hero-titulo" className="relative px-4 pt-36 pb-16 sm:px-6 sm:pt-28 lg:pb-24">
+      <div className="theme-ink relative mx-auto max-w-[1040px] overflow-clip rounded-[28px] border border-[#00F0FF]/30 shadow-[0_0_0_1px_rgba(37,59,214,0.45),0_0_64px_-12px_rgba(37,59,214,0.7),0_32px_80px_-32px_rgba(21,23,28,0.8)]">
+        <div aria-hidden="true" className="hud-glow pointer-events-none absolute inset-0" />
+        <div className="relative px-5 pt-5 pb-10 text-center sm:px-12 sm:pb-12">
+          <div aria-hidden="true" className="flex items-center justify-between gap-4 pl-4 font-mono text-[11px] tracking-[0.16em] text-muted-foreground uppercase sm:pr-4">
+            <span>{HUD.left}</span>
+            <span className="hidden sm:inline">{HUD.right}</span>
+          </div>
+          <p className="mt-10 font-mono text-[11px] tracking-[0.14em] text-balance text-[#00F0FF] uppercase sm:text-sm sm:tracking-[0.22em]">
+            <span aria-hidden="true" className="relative mr-3 inline-flex size-2.5 align-[-1px]">
+              <span className="hud-ping absolute inset-0 rounded-full bg-[#00F0FF]" />
+              <span className="relative size-2.5 rounded-full bg-[#00F0FF] shadow-[0_0_10px_#00F0FF]" />
+            </span>
+            {t.hero.eyebrow}
+          </p>
           <h1
             id="hero-titulo"
-            className="mt-4 text-[clamp(2.25rem,5vw,4.75rem)] leading-[1.04] font-bold tracking-[-0.035em] text-balance text-foreground"
+            className="mx-auto mt-6 max-w-[22ch] text-[clamp(2.1rem,5.4vw,4.25rem)] leading-[1.06] font-bold tracking-[-0.035em] text-balance text-foreground"
           >
-            <SplitText text={t.hero.title} trigger="load" />
+            <PixelText text={t.hero.title} />
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-body">{t.hero.subtitle}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#proyectos" className={buttonVariants()}>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-body sm:text-lg">{t.hero.subtitle}</p>
+          <div className="mt-9 flex flex-wrap justify-center gap-3">
+            <a href="#proyectos" className={cn(buttonVariants(), "hover:shadow-[0_0_28px_-4px_rgba(0,240,255,0.6)]")}>
               <span>{t.hero.primary}</span>
             </a>
             <a
@@ -62,36 +65,20 @@ export function HeroSection({ lang }: { lang: Language }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${t.hero.secondary} (${t.nav.newTab})`}
-              className={buttonVariants({ variant: "secondary" })}
+              className={cn(buttonVariants({ variant: "secondary" }), "hover:border-[#00F0FF]")}
             >
               <span>{t.hero.secondary}</span>
             </a>
           </div>
-          <p className="mt-6 font-mono text-sm text-muted-foreground">{t.hero.availability}</p>
         </div>
-
-        <figure className="relative lg:col-span-7">
-          {/* Ventana fija con borde cobalto; sólo la captura interior se escala (globals.css). */}
-          <div className="hero-window overflow-clip rounded-2xl border border-b-2 border-border border-b-highlight bg-surface-raised shadow-[0_12px_32px_-16px_rgba(21,23,28,0.35)]">
-            <picture className="hero-layer block">
-              <source media="(min-width: 768px)" srcSet={desktop} sizes={common.sizes} />
-              <img
-                {...image}
-                alt={image.alt}
-                className="aspect-[4/5] h-auto w-full object-cover object-top md:aspect-[16/10]"
-              />
-            </picture>
-          </div>
-          <figcaption className="mt-3 text-sm text-muted-foreground">
-            {t.hero.caption}{" "}
-            <Link
-              href={projectPath(lang, gradeo.slug)}
-              className="inline-flex min-h-11 items-center font-semibold text-highlight underline underline-offset-4"
-            >
-              {t.hero.captionLink}
-            </Link>
-          </figcaption>
-        </figure>
+        <div className="relative border-t border-[#00F0FF]/20 bg-[#0B0D12]">
+          <LogoRunner jumpLabel={t.hero.jump} pauseLabel={t.hero.pause} hint={t.hero.jumpHint} />
+        </div>
+        <div aria-hidden="true" className="hud-scan pointer-events-none absolute inset-0" />
+        <div aria-hidden="true" className="hud-sweep pointer-events-none absolute inset-x-0 top-0" />
+        {CORNERS.map((corner) => (
+          <span key={corner} aria-hidden="true" className={cn("hud-corner pointer-events-none", corner)} />
+        ))}
       </div>
     </section>
   )

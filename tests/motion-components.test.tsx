@@ -3,8 +3,11 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import axe from "axe-core"
 import { HoverImageReveal } from "@/components/motion/HoverImageReveal"
 import { MagneticField } from "@/components/motion/MagneticField"
-import { ProceduralHeroBackdrop } from "@/components/motion/ProceduralHeroBackdrop"
+import { GlobalProceduralBackdrop } from "@/components/motion/GlobalProceduralBackdrop"
+import { LogoRunner } from "@/components/motion/LogoRunner"
+import { setMotionPaused } from "@/components/motion/motion-pause"
 import { Odometer } from "@/components/motion/Odometer"
+import { PixelText } from "@/components/motion/PixelText"
 import { SplashLoader } from "@/components/motion/SplashLoader"
 import { SplitText } from "@/components/motion/SplitText"
 import { CopyEmailButton } from "@/components/ui/CopyEmailButton"
@@ -50,6 +53,7 @@ function waapi() {
 
 afterEach(() => {
   cleanup()
+  act(() => setMotionPaused(false))
   vi.unstubAllGlobals()
   delete (Element.prototype as { animate?: unknown }).animate
 })
@@ -268,71 +272,141 @@ describe("SplashLoader", () => {
   })
 })
 
-describe("ProceduralHeroBackdrop", () => {
-  /** Canvas 2D, observadores y rAF simulados: jsdom no los implementa. */
-  function stage({ hidden = false } = {}) {
-    const ctx = new Proxy({} as Record<string | symbol, unknown>, { get: (target, key) => (target[key] ??= vi.fn()) })
-    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(ctx as unknown as CanvasRenderingContext2D)
-    const io = observer()
-    vi.stubGlobal("ResizeObserver", class { constructor(private cb: () => void) {} observe() { this.cb() } disconnect() {} })
-    const raf = vi.fn(() => 7)
-    const cancel = vi.fn()
-    vi.stubGlobal("requestAnimationFrame", raf)
-    vi.stubGlobal("cancelAnimationFrame", cancel)
-    let isHidden = hidden
-    Object.defineProperty(document, "hidden", { configurable: true, get: () => isHidden })
-    const hide = (value: boolean) => act(() => { isHidden = value; document.dispatchEvent(new Event("visibilitychange")) })
-    return { ctx: ctx as Record<string, ReturnType<typeof vi.fn>>, io, raf, cancel, hide }
-  }
+describe("PixelText", () => {
+  const TEXT = "Desarrollo software con obsesión por el detalle."
 
-  it("stays behind the content and offers an accessible pause", async () => {
+  it("reads as one phrase and staggers every visible character", async () => {
+    const { container } = render(<h1><PixelText text={TEXT} /></h1>)
+    expect(screen.getByRole("heading", { name: TEXT })).toBeTruthy()
+    const chars = [...container.querySelectorAll<HTMLElement>(".px-char")]
+    expect(chars.map((char) => char.textContent).join("")).toBe(TEXT.replace(/ /g, ""))
+    expect(chars.map((char) => char.style.getPropertyValue("--i"))).toEqual(chars.map((_, i) => String(i)))
+    expect(chars[0].closest('[aria-hidden="true"]')).toBeTruthy()
+    const results = await axe.run(container)
+    expect(results.violations.map((issue) => issue.id)).toEqual([])
+  })
+})
+
+/** Canvas 2D, observadores y rAF simulados: jsdom no los implementa. `frames` guarda cada callback. */
+function stage({ hidden = false } = {}) {
+  const ctx = new Proxy({} as Record<string | symbol, unknown>, { get: (target, key) => (target[key] ??= vi.fn()) })
+  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(ctx as unknown as CanvasRenderingContext2D)
+  const io = observer()
+  vi.stubGlobal("ResizeObserver", class { constructor(private cb: () => void) {} observe() { this.cb() } disconnect() {} })
+  const frames: FrameRequestCallback[] = []
+  const raf = vi.fn((callback: FrameRequestCallback) => (frames.push(callback), 7))
+  const cancel = vi.fn()
+  vi.stubGlobal("requestAnimationFrame", raf)
+  vi.stubGlobal("cancelAnimationFrame", cancel)
+  let isHidden = hidden
+  Object.defineProperty(document, "hidden", { configurable: true, get: () => isHidden })
+  const hide = (value: boolean) => act(() => { isHidden = value; document.dispatchEvent(new Event("visibilitychange")) })
+  /** Ejecuta el último fotograma pedido, 16 ms después de ahora. */
+  const tick = () => act(() => frames.at(-1)?.(performance.now() + 16))
+  return { ctx: ctx as Record<string, ReturnType<typeof vi.fn>>, io, raf, cancel, hide, tick }
+}
+
+describe("GlobalProceduralBackdrop", () => {
+  it("stays fixed behind every section, hidden from assistive tech", async () => {
     media()
     stage()
-    const { container } = render(<ProceduralHeroBackdrop lang="es" />)
-    expect(container.querySelector(".hb")?.getAttribute("aria-hidden")).toBe("true")
-    const toggle = screen.getByRole("button", { name: "Pausar la animación del fondo" })
-    expect(toggle.getAttribute("aria-pressed")).toBe("false")
+    const { container } = render(<GlobalProceduralBackdrop />)
+    const root = container.querySelector(".gb")!
+    expect(root.getAttribute("aria-hidden")).toBe("true")
+    expect([...root.classList]).toEqual(expect.arrayContaining(["fixed", "inset-0", "-z-10", "pointer-events-none"]))
     const results = await axe.run(container)
     expect(results.violations.map((issue) => issue.id)).toEqual([])
   })
 
-  it("animates only while visible, in a visible tab and not paused", () => {
+  it("animates while the tab is visible and the shared pause is off", () => {
     media({ fine: true })
-    const { io, raf, cancel, hide } = stage()
+    const { raf, cancel, hide } = stage()
     const listen = vi.spyOn(window, "addEventListener")
-    const { container } = render(<ProceduralHeroBackdrop lang="en" />)
-    const root = container.querySelector<HTMLElement>(".hb")!
-    expect(raf).not.toHaveBeenCalled()
-    expect(listen.mock.calls.map(([type]) => type)).toContain("pointermove")
-    io.enter()
+    const { container } = render(<GlobalProceduralBackdrop />)
+    const root = container.querySelector<HTMLElement>(".gb")!
     expect(raf).toHaveBeenCalledTimes(1)
-    expect(root.dataset.paused).toBeUndefined()
+    expect(listen.mock.calls.map(([type]) => type)).toContain("pointermove")
     hide(true)
     expect(cancel).toHaveBeenCalledTimes(1)
     expect(root.dataset.paused).toBe("")
     hide(false)
     expect(raf).toHaveBeenCalledTimes(2)
-    fireEvent.click(screen.getByRole("button", { name: "Pause the background animation" }))
+    act(() => setMotionPaused(true))
     expect(cancel).toHaveBeenCalledTimes(2)
-    expect(screen.getByRole("button", { pressed: true })).toBeTruthy()
+    expect(root.dataset.paused).toBe("")
+  })
+
+  it("moves the grid with the page scroll, wrapping on its 160 px period", () => {
+    media({ fine: true })
+    const { tick } = stage()
+    const { container } = render(<GlobalProceduralBackdrop />)
+    Object.defineProperty(window, "scrollY", { configurable: true, value: 1400 })
+    tick()
+    // 1400 × 0,12 = 168 → 168 mod 160 = 8.
+    expect(container.querySelector<HTMLElement>(".gb-grid")!.style.transform).toBe("translate3d(0.00px, -8.00px, 0)")
+    Object.defineProperty(window, "scrollY", { configurable: true, value: 0 })
   })
 
   it("drifts on its own on touch, without pointer listeners", () => {
     media({ fine: false })
-    const { io, raf } = stage()
+    const { raf } = stage()
     const listen = vi.spyOn(window, "addEventListener")
-    render(<ProceduralHeroBackdrop lang="es" />)
-    io.enter()
+    render(<GlobalProceduralBackdrop />)
     expect(raf).toHaveBeenCalledTimes(1)
     expect(listen.mock.calls.filter(([type]) => String(type).startsWith("pointer"))).toEqual([])
   })
 
   it("draws one still frame with reduced motion", () => {
     media({ reduce: true })
+    const { ctx, raf } = stage()
+    render(<GlobalProceduralBackdrop />)
+    expect(raf).not.toHaveBeenCalled()
+    expect(ctx.arc).toHaveBeenCalled()
+  })
+})
+
+describe("LogoRunner", () => {
+  const LABELS = { jumpLabel: "Hacer saltar al logo", pauseLabel: "Pausar animaciones", hint: "Clic o Espacio: saltar" }
+
+  it("runs only on screen and offers a jump and a shared pause without violations", async () => {
+    media()
+    const { io, raf, cancel } = stage()
+    const { container } = render(<LogoRunner {...LABELS} />)
+    expect(container.querySelector("canvas")?.getAttribute("aria-hidden")).toBe("true")
+    expect(raf).not.toHaveBeenCalled()
+    io.enter()
+    expect(raf).toHaveBeenCalledTimes(1)
+    const pause = screen.getByRole("button", { name: "Pausar animaciones" })
+    fireEvent.click(pause)
+    expect(cancel).toHaveBeenCalledTimes(1)
+    expect(pause.getAttribute("aria-pressed")).toBe("true")
+    const results = await axe.run(container)
+    expect(results.violations.map((issue) => issue.id)).toEqual([])
+  })
+
+  it("jumps on click or Space without blocking the page scroll", () => {
+    media()
+    const { ctx, io, tick } = stage()
+    render(<LogoRunner {...LABELS} />)
+    io.enter()
+    tick()
+    const grounded = ctx.translate.mock.calls.at(-1)![1] as number
+    const jump = screen.getByRole("button", { name: "Hacer saltar al logo" })
+    // Un <button>: Espacio lo activa con el foco en él y el clic no cancela nada.
+    expect(jump.tagName).toBe("BUTTON")
+    expect(fireEvent.click(jump)).toBe(true)
+    tick()
+    expect(ctx.translate.mock.calls.at(-1)![1]).toBeLessThan(grounded)
+    expect(ctx.rotate.mock.calls.at(-1)![0]).toBeGreaterThan(0)
+  })
+
+  it("stays still with reduced motion: no loop and no controls", () => {
+    media({ reduce: true })
     const { ctx, io, raf } = stage()
-    render(<ProceduralHeroBackdrop lang="es" />)
+    render(<LogoRunner {...LABELS} />)
     io.enter()
     expect(raf).not.toHaveBeenCalled()
+    expect(screen.queryAllByRole("button")).toEqual([])
     expect(ctx.arc).toHaveBeenCalled()
   })
 })

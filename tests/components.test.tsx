@@ -9,6 +9,7 @@ import { HomePage } from "@/components/site/HomePage"
 import { CaseStudyArticle } from "@/components/case-study/CaseStudyArticle"
 import { LanguageSwitcher } from "@/components/mode-switcher/LanguageSwitcher"
 import { PROJECTS } from "@/content/projects"
+import { CV_FILES } from "@/lib/site"
 
 const pathname = vi.hoisted(() => ({ current: "/" }))
 vi.mock("next/navigation", () => ({ usePathname: () => pathname.current }))
@@ -43,6 +44,22 @@ describe("CV integrity and actions", () => {
     const { container } = render(<TrajectorySection lang="es" />)
     const results = await axe.run(container, { rules: AXE_RULES })
     expect(results.violations.map((issue) => issue.id)).toEqual([])
+  })
+})
+
+describe("hero", () => {
+  it.each([
+    ["es", "Desarrollo software con obsesión por el detalle."],
+    ["en", "I build software with an obsession for craft."],
+  ] as const)("introduces me in %s without naming projects, with only the two CTAs", (lang, title) => {
+    browserStubs()
+    const { container } = render(<HeroSection lang={lang} />)
+    expect(screen.getByRole("heading", { level: 1, name: title })).toBeTruthy()
+    expect(container.textContent).toContain("Giancarlo Larios // Chiclayo, PE")
+    // GRADEO abre «Trabajo seleccionado» justo debajo: el hero no repite su captura ni nombra proyectos.
+    expect(container.querySelector("img, picture")).toBeNull()
+    expect(container.textContent).not.toMatch(/GRADEO|OneCtrl|FARMAPLUS/i)
+    expect([...container.querySelectorAll("a[href]")].map((link) => link.getAttribute("href"))).toEqual(["#proyectos", CV_FILES[lang]])
   })
 })
 

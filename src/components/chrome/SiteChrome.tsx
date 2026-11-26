@@ -9,8 +9,8 @@ import { NAV_SECTIONS } from "@/lib/site"
  * Todo lo que flota por encima de la página. Se renderiza en el servidor; sólo
  * la barra (scroll-spy) y el idioma hidratan, y reciben ya resueltas las
  * cadenas que muestran. El movimiento sigue `prefers-reduced-motion` del
- * sistema; lo único que se mueve solo más de 5 s, el fondo del hero, trae su
- * propio botón de pausa.
+ * sistema; lo único que se mueve solo más de 5 s (el fondo global y la escena
+ * del logo en el hero) comparte un botón de pausa.
  *
  * Las anclas apuntan a la portada del idioma, así que también funcionan desde
  * la página de un caso.

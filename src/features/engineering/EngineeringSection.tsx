@@ -8,7 +8,8 @@ import type { Language } from "@/lib/language"
 
 /**
  * Enfoque de ingeniería: la decisión principal de cada caso, enlazada a su
- * explicación completa. Es la única superficie oscura de la portada.
+ * explicación completa. Superficie de tinta translúcida: deja ver el fondo
+ * global (`.ink-glass`).
  *
  * Las tarjetas van en un carrusel guiado por scroll (`ScrollCarousel`): en
  * escritorio avanzan en horizontal con el scroll vertical; en móvil son una
@@ -20,7 +21,7 @@ export function EngineeringSection({ lang }: { lang: Language }) {
   const total = String(PROJECTS.length).padStart(2, "0")
 
   return (
-    <section id="ingenieria" aria-labelledby="ingenieria-titulo" className="theme-ink py-24">
+    <section id="ingenieria" aria-labelledby="ingenieria-titulo" className="theme-ink ink-glass py-24">
       <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
         <h2 id="ingenieria-titulo" className="text-[clamp(1.75rem,3.5vw,2.75rem)] font-bold tracking-tight text-foreground">
           <SplitText text={t.engineering.title} />

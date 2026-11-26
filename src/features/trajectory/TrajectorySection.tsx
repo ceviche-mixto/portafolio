@@ -27,7 +27,7 @@ export function TrajectorySection({ lang }: { lang: Language }) {
   const t = translations[lang]
 
   return (
-    <section id="perfil" aria-labelledby="perfil-title" className="relative z-10 bg-background py-24">
+    <section id="perfil" aria-labelledby="perfil-title" className="relative z-10 py-24">
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <div className="mb-14">
           <div className="mb-4 flex items-center gap-4">

@@ -18,7 +18,7 @@ export function ContactSection({ lang }: { lang: Language }) {
   const t = translations[lang]
 
   return (
-    <section id="contacto" className="relative z-10 border-t border-soft bg-background pt-24 pb-24">
+    <section id="contacto" className="relative z-10 border-t border-soft pt-24 pb-24">
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 text-center">
         <h2 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
           <SplitText text={t.contact.sectionTitle} />

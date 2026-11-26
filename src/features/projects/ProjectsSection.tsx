@@ -27,7 +27,7 @@ export function ProjectsSection({ lang }: { lang: Language }) {
       : undefined
 
   return (
-    <section id="proyectos" aria-labelledby="proyectos-titulo" className="bg-background py-24">
+    <section id="proyectos" aria-labelledby="proyectos-titulo" className="py-24">
       <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
         <h2 id="proyectos-titulo" className="text-[clamp(1.75rem,3.5vw,2.75rem)] font-bold tracking-tight text-foreground">
           <SplitText text={t.work.title} />

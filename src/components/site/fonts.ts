@@ -6,12 +6,13 @@ const geistSans = Geist({
   display: "swap",
 })
 
-// Sólo etiquetas y código: no compite con la imagen LCP en la ruta crítica.
+// Etiquetas, código y el HUD del hero (texto centrado sobre el pliegue): se
+// precarga para que el cambio de fuente no desplace nada. El hero ya no tiene
+// imagen LCP con la que competir.
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
-  preload: false,
 })
 
 /**

@@ -9,7 +9,9 @@ import type { CSSProperties } from "react"
  * `steps`, así que arranca en la primera pintura. La letra real ocupa su
  * sitio desde el HTML (CLS 0) y el glifo es un pseudo-elemento encima. El
  * lector de pantalla lee la frase de corrido en el `sr-only`; la copia visual
- * va con `aria-hidden`. Con movimiento reducido el texto llega fijo.
+ * va con `aria-hidden`. Con movimiento reducido el texto llega fijo. Al
+ * terminar (480 ms por letra) no queda capa ni sombra: las animaciones
+ * rellenan sólo hacia atrás y el estilo base es la letra limpia.
  */
 export function PixelText({ text }: { text: string }) {
   const words = text.split(" ").map((word) => [...word])

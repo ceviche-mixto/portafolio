@@ -67,8 +67,9 @@ export function SiteNav({
     }
   }, [links])
 
+  // Papel al 95 %: sobre la tinta del hero, a 80 % el texto gris de la barra bajaba de 4,5:1.
   return (
-    <header ref={headerRef} className="fixed top-0 left-0 right-0 z-[100] border-b border-soft/60 bg-background/80 backdrop-blur-md">
+    <header ref={headerRef} className="fixed top-0 left-0 right-0 z-[100] border-b border-soft/60 bg-background/95 backdrop-blur-md">
       <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr] items-center gap-x-3 gap-y-2 px-4 py-2 sm:flex sm:gap-3 sm:py-3 md:px-6">
         <a
           href={home}

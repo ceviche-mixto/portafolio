@@ -63,6 +63,22 @@ describe("hero", () => {
   })
 })
 
+describe("motion pause", () => {
+  it("lives in the header of the home page only and toggles the shared pause", () => {
+    browserStubs()
+    const { unmount } = render(<SiteChrome lang="es" />)
+    const pause = screen.getByRole("button", { name: "Pausar animaciones" })
+    expect(pause.getAttribute("aria-pressed")).toBe("false")
+    fireEvent.click(pause)
+    expect(pause.getAttribute("aria-pressed")).toBe("true")
+    fireEvent.click(pause)
+    unmount()
+    pathname.current = "/proyectos/gradeo"
+    render(<SiteChrome lang="es" />)
+    expect(screen.queryByRole("button", { name: "Pausar animaciones" })).toBeNull()
+  })
+})
+
 describe("language switch", () => {
   it.each([
     ["es", "/", "/en", "en", "EN"],

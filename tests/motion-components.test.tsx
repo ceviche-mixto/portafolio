@@ -366,47 +366,89 @@ describe("GlobalProceduralBackdrop", () => {
 })
 
 describe("LogoRunner", () => {
-  const LABELS = { jumpLabel: "Hacer saltar al logo", pauseLabel: "Pausar animaciones", hint: "Clic o Espacio: saltar" }
+  afterEach(() => vi.restoreAllMocks())
 
-  it("runs only on screen and offers a jump and a shared pause without violations", async () => {
+  /** Pista de 1280 × 140 px: jsdom no maqueta, así que se fija la caja. */
+  function sized() {
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 1280, height: 140, right: 1280, bottom: 140, x: 0, y: 0, toJSON() {} } as DOMRect)
+  }
+  /** Avanza `n` fotogramas de 50 ms (el tope de `dt`) sobre el último callback pedido. */
+  function advance(raf: ReturnType<typeof vi.fn>, n: number) {
+    for (let i = 0; i < n; i++) act(() => raf.mock.calls.at(-1)![0]((clock += 50)))
+  }
+  let clock = 0
+  /** Posición del logo en el último fotograma: sólo él usa `translate`. */
+  const logo = (ctx: Record<string, ReturnType<typeof vi.fn>>) => ctx.translate.mock.calls.at(-1) as [number, number]
+
+  it("runs only on screen and under the shared pause, hidden from assistive tech", async () => {
     media()
+    sized()
     const { io, raf, cancel } = stage()
-    const { container } = render(<LogoRunner {...LABELS} />)
-    expect(container.querySelector("canvas")?.getAttribute("aria-hidden")).toBe("true")
+    const { container } = render(<LogoRunner />)
+    expect(container.querySelector(".runner")?.getAttribute("aria-hidden")).toBe("true")
+    expect(screen.queryAllByRole("button")).toEqual([])
     expect(raf).not.toHaveBeenCalled()
     io.enter()
     expect(raf).toHaveBeenCalledTimes(1)
-    const pause = screen.getByRole("button", { name: "Pausar animaciones" })
-    fireEvent.click(pause)
+    act(() => setMotionPaused(true))
     expect(cancel).toHaveBeenCalledTimes(1)
-    expect(pause.getAttribute("aria-pressed")).toBe("true")
     const results = await axe.run(container)
     expect(results.violations.map((issue) => issue.id)).toEqual([])
   })
 
-  it("jumps on click or Space without blocking the page scroll", () => {
+  it("enters from off the left edge and jumps the spikes on its own", () => {
     media()
-    const { ctx, io, tick } = stage()
-    render(<LogoRunner {...LABELS} />)
+    sized()
+    const { ctx, io, raf } = stage()
+    render(<LogoRunner />)
+    clock = performance.now()
     io.enter()
-    tick()
-    const grounded = ctx.translate.mock.calls.at(-1)![1] as number
-    const jump = screen.getByRole("button", { name: "Hacer saltar al logo" })
-    // Un <button>: Espacio lo activa con el foco en él y el clic no cancela nada.
-    expect(jump.tagName).toBe("BUTTON")
-    expect(fireEvent.click(jump)).toBe(true)
-    tick()
-    expect(ctx.translate.mock.calls.at(-1)![1]).toBeLessThan(grounded)
-    expect(ctx.rotate.mock.calls.at(-1)![0]).toBeGreaterThan(0)
+    advance(raf, 1)
+    expect(logo(ctx)[0]).toBeLessThan(0)
+    const heights = Array.from({ length: 80 }, () => (advance(raf, 1), logo(ctx)[1]))
+    expect(Math.min(...heights)).toBeLessThan(Math.max(...heights))
+    expect(ctx.rotate.mock.calls.some(([angle]) => angle > 0)).toBe(true)
   })
 
-  it("stays still with reduced motion: no loop and no controls", () => {
+  it("explodes only when the logo itself is clicked, without cancelling the click, and comes back", () => {
+    media()
+    sized()
+    const { ctx, io, raf, tick } = stage()
+    const { container } = render(<LogoRunner />)
+    const track = container.querySelector<HTMLElement>(".runner")!
+    clock = performance.now()
+    io.enter()
+    advance(raf, 20)
+    const [x, y] = logo(ctx)
+    expect(fireEvent.click(track, { clientX: x + 200, clientY: y })).toBe(true)
+    // `tick` llega con dt 0: el logo no se mueve y se comprueba el hitbox bajo el cursor.
+    tick()
+    expect(track.style.cursor).toBe("")
+    fireEvent.pointerMove(track, { clientX: x, clientY: y })
+    tick()
+    expect(track.style.cursor).toBe("pointer")
+    expect(fireEvent.click(track, { clientX: x, clientY: y })).toBe(true)
+    const drawn = ctx.translate.mock.calls.length
+    tick()
+    expect(ctx.translate.mock.calls.length).toBe(drawn)
+    expect(track.style.cursor).toBe("")
+    // A los 1,8 s sale otro desde fuera del borde izquierdo.
+    clock = performance.now() + 16
+    advance(raf, 40)
+    expect(ctx.translate.mock.calls.length).toBeGreaterThan(drawn)
+    expect(logo(ctx)[0]).toBeLessThan(0)
+  })
+
+  it("rests on the track with reduced motion: no loop and no listeners", () => {
     media({ reduce: true })
+    sized()
     const { ctx, io, raf } = stage()
-    render(<LogoRunner {...LABELS} />)
+    const listen = vi.spyOn(HTMLElement.prototype, "addEventListener")
+    const { container } = render(<LogoRunner />)
     io.enter()
     expect(raf).not.toHaveBeenCalled()
-    expect(screen.queryAllByRole("button")).toEqual([])
-    expect(ctx.arc).toHaveBeenCalled()
+    const track = container.querySelector(".runner")
+    expect(listen.mock.contexts.filter((context) => context === track)).toEqual([])
+    expect(logo(ctx)[0]).toBeGreaterThan(0)
   })
 })

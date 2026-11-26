@@ -104,7 +104,7 @@ const pick = <T,>(list: readonly T[]) => list[Math.floor(Math.random() * list.le
  * - Velo: una máscara baja la intensidad en la columna central, donde va el
  *   texto, y la deja plena en los márgenes (globals.css, `.gb`).
  * - Un solo bucle `requestAnimationFrame`, parado con la pestaña oculta o
- *   tras la pausa compartida (`motion-pause`, botón en `LogoRunner`).
+ *   tras la pausa compartida (`motion-pause`, botón en la cabecera).
  * - Movimiento reducido: un único fotograma estático, sin bucle.
  *
  * Todo es `aria-hidden` y `pointer-events: none`; nada ocupa sitio en el flujo (CLS 0).

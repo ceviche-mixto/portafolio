@@ -360,7 +360,7 @@
      intro (SplashLoader) lo descubra. `[data-splash]` y no `="play"`: al pasar
      a "done" el retardo se mantiene y la animación en curso no salta. */
   html[data-splash] .split-load .split-char {
-    animation-delay: calc(950ms + var(--i) * 24ms);
+    animation-delay: calc(1850ms + var(--i) * 24ms);
   }
 }
 
@@ -594,27 +594,35 @@
 /* ── Intro de marca (SplashLoader) ──────────────────────────────────────────
    Oculta por defecto: sin JS, con movimiento reducido o ya vista en la sesión
    no existe. El script en línea marca `data-splash="play"` en <html> antes de
-   la primera pintura. A: el logo gira en su burbuja (0–550 ms). B: la burbuja
-   sube con impulso y deja estela (550–850 ms). C: la tinta cae como slime
-   (750–1350 ms); al final `visibility` la retira sin esperar al JS. */
+   la primera pintura. A: la burbuja entra rodando desde abajo (0–560 ms).
+   B: da una vuelta completa en el centro y respira (560–1450 ms). C: sale por
+   arriba con impulso y deja estela (1450–1780 ms). D: la tinta cae como slime
+   (1700–2350 ms); a los 2400 ms `visibility` la retira sin esperar al JS. */
 .splash {
   display: none;
 }
 @keyframes splash-end {
   to { visibility: hidden; }
 }
-@keyframes splash-pop {
-  0% { opacity: 0; transform: scale(0.6); }
-  35% { opacity: 1; transform: scale(1.06); }
-  70% { transform: scale(0.98); }
-  100% { opacity: 1; transform: scale(1.02); }
+/* Trayectoria (`.splash-rise`), giro (logo) y respiración (burbuja) duran lo
+   mismo y comparten porcentajes: 24 % = 560 ms, 62 % = 1450 ms, 76 % = 1780 ms. */
+@keyframes splash-path {
+  0% { transform: translate3d(0, 125vh, 0); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
+  24%, 62% { transform: translate3d(0, 0, 0); animation-timing-function: cubic-bezier(0.34, 1.35, 0.64, 1); }
+  76%, 100% { transform: translate3d(0, -135vh, 0); }
 }
+/* El giro de entrada llega con algo de velocidad y la vuelta central arranca
+   con la misma: una sola inercia que se asienta antes del impulso de salida. */
 @keyframes splash-spin {
-  from { transform: rotate(-220deg) scale(1.12); }
-  to { transform: rotate(0deg) scale(1.12); }
+  0% { transform: rotate(-220deg) scale(1.12); animation-timing-function: cubic-bezier(0.2, 0.6, 0.6, 0.9); }
+  24% { transform: rotate(0deg) scale(1.12); animation-timing-function: cubic-bezier(0.4, 0.1, 0.2, 1); }
+  62% { transform: rotate(360deg) scale(1.12); animation-timing-function: cubic-bezier(0.34, 1.35, 0.64, 1); }
+  76%, 100% { transform: rotate(460deg) scale(1.12); }
 }
-@keyframes splash-rise {
-  to { transform: translate3d(0, -140%, 0); opacity: 0; }
+@keyframes splash-breathe {
+  0%, 24% { transform: scale(1); }
+  43% { transform: scale(1.06); }
+  62%, 100% { transform: scale(1); }
 }
 @keyframes splash-trail {
   0% { opacity: 0; transform: scaleY(0.2); }
@@ -639,7 +647,7 @@
     z-index: 150;
     overflow: clip;
     cursor: pointer;
-    animation: splash-end 1350ms step-end both;
+    animation: splash-end 2400ms step-end both;
   }
   .splash-sheet {
     position: absolute;
@@ -647,7 +655,7 @@
     background:
       radial-gradient(closest-side, rgba(37, 59, 214, 0.3), rgba(37, 59, 214, 0)) center / 70vmin 70vmin no-repeat,
       #15171c;
-    animation: splash-fall 600ms cubic-bezier(0.6, 0, 0.8, 0.3) 750ms both;
+    animation: splash-fall 650ms cubic-bezier(0.6, 0, 0.8, 0.3) 1700ms both;
   }
   /* Franja gooey del borde: más ancha que la ventana para que el filtro no
      erosione las esquinas a la vista; su mitad inferior pisa la propia capa. */
@@ -663,7 +671,7 @@
   .splash-goo circle {
     transform-box: fill-box;
     transform-origin: 50% 100%;
-    animation: splash-drip 600ms cubic-bezier(0.45, 0, 0.55, 1) 750ms both;
+    animation: splash-drip 650ms cubic-bezier(0.45, 0, 0.55, 1) 1700ms both;
   }
   .splash-skip {
     position: absolute;
@@ -691,7 +699,7 @@
     width: clamp(112px, 30vw, 152px);
     aspect-ratio: 1;
     margin: calc(clamp(112px, 30vw, 152px) / -2) 0 0 calc(clamp(112px, 30vw, 152px) / -2);
-    animation: splash-rise 300ms cubic-bezier(0.34, 1.35, 0.64, 1) 550ms both;
+    animation: splash-path 2350ms linear both;
   }
   /* Estela: un haz cobalto bajo la burbuja que se estira mientras sube. */
   .splash-rise::before {
@@ -705,7 +713,7 @@
     background: linear-gradient(rgba(37, 59, 214, 0.55), rgba(37, 59, 214, 0));
     filter: blur(10px);
     transform-origin: 50% 0;
-    animation: splash-trail 300ms ease-out 550ms both;
+    animation: splash-trail 330ms ease-out 1450ms both;
   }
   .splash-bubble {
     position: relative;
@@ -716,7 +724,7 @@
     box-shadow:
       0 0 0 1px rgba(245, 240, 232, 0.16),
       0 0 56px 4px rgba(37, 59, 214, 0.5);
-    animation: splash-pop 550ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation: splash-breathe 2350ms ease-in-out both;
   }
   /* Cristal: brillo especular arriba a la izquierda y borde cobalto líquido. */
   .splash-bubble::after {
@@ -736,7 +744,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    animation: splash-spin 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: splash-spin 2350ms linear both;
   }
 }
 

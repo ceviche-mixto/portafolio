@@ -30,8 +30,10 @@ const EDGE = 120
 const SCRIPT = `(function(){var h=document.documentElement;try{if(sessionStorage.getItem("splash")||!matchMedia(${JSON.stringify(MOTION_OK)}).matches)return;sessionStorage.setItem("splash","1")}catch(e){return}h.dataset.splash="play";var types=["keydown","click","animationend"];function done(e){if(e.type==="animationend"&&!e.target.classList.contains("splash"))return;h.dataset.splash="done";types.forEach(function(t){document.removeEventListener(t,done,true)})}types.forEach(function(t){document.addEventListener(t,done,true)})})()`
 
 /**
- * Intro de marca (~1,35 s): el logo gira dentro de una burbuja de cristal,
- * sube con impulso y la capa de tinta cae como slime revelando la página.
+ * Intro de marca (~2,35 s): la burbuja de cristal con el logo entra rodando
+ * desde abajo, da una vuelta completa en el centro, sale por arriba con
+ * impulso y la capa de tinta cae como slime revelando la página. El cierre lo
+ * marca el final de la animación de la capa (2400 ms), no un temporizador.
  *
  * Sin estado ni hidratación: un script en línea marca `data-splash` en <html>
  * y la coreografía es CSS (globals.css, `.splash`), así que arranca en la
